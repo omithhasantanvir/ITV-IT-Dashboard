@@ -1,0 +1,6 @@
+node_modules
+backend/.env
+Client/node_modules
+Client/dist
+backend/uploads/*
+_out.txt
