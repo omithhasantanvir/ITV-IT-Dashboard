@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ComputerInventory } from '@/components/ComputerInventory';
+import { EmployeeDirectory } from '@/components/EmployeeDirectory';
 import { ExtensionDirectory } from '@/components/ExtensionDirectory';
 import { ServerHealthPill, ServerOutagePopup } from '@/components/ServerHealth';
 import { ServerStatusOverview } from '@/components/ServerStatusOverview';
@@ -371,7 +372,7 @@ function GenericPage({ title, description }) {
 }
 
 function EmployeesPage() {
-  return <GenericPage title="Employees" description="Employee directory and HR records" />;
+  return <EmployeeDirectory />;
 }
 
 function ComputersPage() {

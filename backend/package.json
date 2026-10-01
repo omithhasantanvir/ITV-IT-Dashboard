@@ -8,6 +8,7 @@
     "server": "node server.js",
     "start": "node server.js",
     "seed": "node scripts/seed.js",
+    "seed:it-team": "node scripts/seedITTeam.js",
     "seed:servers": "node scripts/syncServers.js",
     "seed:extensions": "node scripts/syncExtensions.js"
   },

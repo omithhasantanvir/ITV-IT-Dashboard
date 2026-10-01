@@ -31,6 +31,12 @@ export const updateEmployee = async (req, res) => {
   res.json({ success: true, data: user });
 };
 
+export const deleteEmployee = async (req, res) => {
+  const user = await User.findByIdAndDelete(req.params.id);
+  if (!user) return res.status(404).json({ success: false, message: 'Employee not found' });
+  res.json({ success: true, data: user });
+};
+
 export const getITTeam = async (req, res) => {
   const team = await User.find({ isITTeam: true }).sort({ name: 1 });
   res.json({ success: true, data: team });
