@@ -72,7 +72,7 @@ return (
           <p className="mt-1 text-sm text-muted-foreground">Asset Control System</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 rounded-xl border border-border bg-card/95 p-6 shadow-soft backdrop-blur-2xl">
+        <form onSubmit={handleSubmit} className="mt-8 rounded-xl border border-border bg-card p-6 shadow-soft backdrop-blur-2xl">
           <div className="flex items-center gap-2 text-muted-foreground">
             <ShieldCheck className="h-4 w-4" />
             <p className="text-xs font-medium uppercase tracking-[0.2em]">Sign in</p>
