@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Eye, EyeOff, Loader2, Moon, Sun } from 'lucide-react';
-import { BrandLogo, BrandMark, LoginDecor } from '@/components/BrandLogo';
+import { BrandMark, LoginDecor } from '@/components/BrandLogo';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
@@ -73,20 +74,20 @@ return (
 
       {/* Two-column shell: oversized mark on the left, sign-in card on the right. */}
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center gap-12 px-6 py-12 lg:flex-row lg:justify-between lg:gap-8">
-        <div className="flex flex-col items-center gap-6 lg:items-start">
-          <BrandMark className="h-56 w-56 lg:h-80 lg:w-80" />
-          <div className="text-center lg:text-left">
-            <p className="text-3xl font-bold tracking-tight text-brand-red lg:text-4xl">INDEPENDENT</p>
-            <p className="mt-1 text-sm text-muted-foreground">Asset Control System</p>
-          </div>
+        <div className="flex w-full max-w-sm flex-col items-center justify-center text-center">
+          <BrandMark className="mx-auto block w-40 lg:w-52" />
+          <p className="mt-4 w-full text-center text-2xl font-bold tracking-[0.25em] indent-[0.25em] text-foreground lg:text-3xl">
+            INDEPENDENT
+          </p>
+          <p className="mt-2 w-full text-center text-base font-medium tracking-[0.18em] indent-[0.18em] text-muted-foreground lg:text-lg">
+            TELEVISION
+          </p>
         </div>
 
         <div className="w-full max-w-md">
           <Card className="border-border/70 shadow-card">
             <CardContent className="p-8">
               <div className="flex flex-col items-center text-center">
-                <BrandLogo className="h-16 w-16" alt="Independent" />
-                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">Independent</p>
                 <h1 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">Welcome Engineer!</h1>
                 <p className="mt-1 text-sm text-muted-foreground">Sign in with your IT desk credentials.</p>
               </div>
@@ -157,7 +158,12 @@ return (
                   <FieldError message={errors.password?.message} />
                 </div>
 
-                <Button type="submit" className="h-11 w-full bg-brand-red text-white hover:bg-brand-red/90" disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  className="h-11 w-full bg-[#C8102E] font-semibold text-white hover:bg-[#A50D26]"
+                  style={{ backgroundColor: '#C8102E', color: '#ffffff', opacity: 1, visibility: 'visible' }}
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />

@@ -49,7 +49,7 @@ export default {
       // Brand accent taken from the INDEPENDENT logo (the red in the mark),
         // used for the sign-in screen artwork and its submit button.
         'brand-red': {
-          DEFAULT: 'hsl(var(--brand-red))',
+          DEFAULT: 'hsl(var(--brand-red) / <alpha-value>)',
         },
       },
       backgroundImage: {

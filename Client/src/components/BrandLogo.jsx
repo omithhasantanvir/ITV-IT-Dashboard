@@ -4,29 +4,36 @@ import { cn } from '@/lib/utils';
 // site root. Referencing it as a plain string (instead of an `import`) keeps the
 // bytes out of the JS bundle and lets the browser cache it on its own.
 //
-// `logo-removebg-preview.png` is the cut-out version (transparent background),
+// `independent logo.png` is the clean red `O` emblem (transparent background),
 // so it drops onto light and dark surfaces alike. `1.png` is the full circular
 // plate and is used as the dashboard backdrop rather than as a logo.
 //
-// The mark file holds the mark and the wordmark together, so the hero placement
-// crops to the upper portion (object-top) and pairs it with real <h1> text.
-export const BRAND_LOGO_SRC = '/logo-removebg-preview.png';
+// The mark file holds ONLY the emblem (no baked-in wordmark), so the hero
+// placement renders it as-is and pairs it with real text underneath.
+//
+export const BRAND_LOGO_SRC = '/Independent%20logo.png';
 export const BRAND_PLATE_SRC = '/1.png';
-export const BRAND_MARK_SRC = '/logo-removebg-preview.png';
+export const BRAND_MARK_SRC = '/Independent%20logo.png';
 
 export function BrandLogo({ className, alt = 'Independent', src = BRAND_LOGO_SRC }) {
   return <img src={src} alt={alt} className={cn('select-none object-contain', className)} draggable="false" />;
 }
 
-// The cut-out mark on its own, for the oversized hero placement on the sign-in
-// screen where the wordmark is rendered as real text beside it.
+// The clean emblem on its own, for the oversized hero placement on the sign-in
+// screen. The source PNG is just the red `O` (no baked-in wordmark), so no
+// cropping is needed — "INDEPENDENT TELEVISION" is rendered as real HTML text
+// in LoginPage, which keeps it visible in both dark and light mode.
 export function BrandMark({ className }) {
   return (
-    <BrandLogo
-      src={BRAND_MARK_SRC}
-      alt="Independent"
-      className={cn('object-contain object-top', className)}
-    />
+    <div className={cn('w-28 lg:w-32', className)}>
+      <img
+        src={BRAND_MARK_SRC}
+        alt=""
+        aria-hidden="true"
+        draggable="false"
+        className="h-auto w-full object-contain"
+      />
+    </div>
   );
 }
 
