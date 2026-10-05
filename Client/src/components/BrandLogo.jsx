@@ -7,11 +7,53 @@ import { cn } from '@/lib/utils';
 // `logo-removebg-preview.png` is the cut-out version (transparent background),
 // so it drops onto light and dark surfaces alike. `1.png` is the full circular
 // plate and is used as the dashboard backdrop rather than as a logo.
+//
+// The mark file holds the mark and the wordmark together, so the hero placement
+// crops to the upper portion (object-top) and pairs it with real <h1> text.
 export const BRAND_LOGO_SRC = '/logo-removebg-preview.png';
 export const BRAND_PLATE_SRC = '/1.png';
+export const BRAND_MARK_SRC = '/logo-removebg-preview.png';
 
 export function BrandLogo({ className, alt = 'Independent', src = BRAND_LOGO_SRC }) {
   return <img src={src} alt={alt} className={cn('select-none object-contain', className)} draggable="false" />;
+}
+
+// The cut-out mark on its own, for the oversized hero placement on the sign-in
+// screen where the wordmark is rendered as real text beside it.
+export function BrandMark({ className }) {
+  return (
+    <BrandLogo
+      src={BRAND_MARK_SRC}
+      alt="Independent"
+      className={cn('object-contain object-top', className)}
+    />
+  );
+}
+
+// Decorative shapes behind the sign-in screen: the brand-red blobs on the right
+// edge and the dotted gradient field. Drawn with CSS rather than an asset
+// because there is no matching artwork in public/.
+export function LoginDecor() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      {/* Brand-red organic blobs hugging the right edge. */}
+      <div className="absolute -right-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-brand-red/90" />
+      <div className="absolute right-16 top-40 h-[26rem] w-[26rem] rounded-full bg-brand-red" />
+      <div className="absolute -bottom-32 -right-24 h-[30rem] w-[30rem] rounded-full bg-brand-red/95" />
+
+      {/* Dotted field fading toward the centre. */}
+      <div
+        className="absolute right-0 top-0 h-full w-[62%] bg-dots opacity-70"
+        style={{
+          maskImage: 'radial-gradient(circle at 78% 50%, #000 30%, transparent 78%)',
+          WebkitMaskImage: 'radial-gradient(circle at 78% 50%, #000 30%, transparent 78%)',
+        }}
+      />
+
+      {/* Soft white wash under the card so the form stays readable. */}
+      <div className="absolute left-0 top-0 h-full w-[58%] bg-gradient-to-r from-background via-background/85 to-transparent" />
+    </div>
+  );
 }
 
 // Full-bleed artwork behind the dashboard. `fixed` + a low opacity keeps it

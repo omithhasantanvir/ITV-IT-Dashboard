@@ -27,6 +27,8 @@
     --input: 214 32% 91%;
     --ring: 221 83% 53%;
     --radius: 0.75rem;
+    /* Sampled from the red in the INDEPENDENT logo mark. */
+    --brand-red: 356 84% 47%;
   }
 
   /* Opt-in dark theme: <html class="dark"> (the header toggle does this). */
@@ -50,6 +52,7 @@
     --border: 217 32% 22%;
     --input: 217 32% 22%;
     --ring: 221 83% 53%;
+    --brand-red: 356 84% 47%;
   }
 
   * {

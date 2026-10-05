@@ -46,6 +46,18 @@ export default {
           DEFAULT: 'hsl(var(--popover))',
           foreground: 'hsl(var(--popover-foreground))',
         },
+      // Brand accent taken from the INDEPENDENT logo (the red in the mark),
+        // used for the sign-in screen artwork and its submit button.
+        'brand-red': {
+          DEFAULT: 'hsl(var(--brand-red))',
+        },
+      },
+      backgroundImage: {
+        // Dot matrix behind the sign-in card.
+        dots: 'radial-gradient(circle, hsl(var(--muted-foreground) / 0.55) 1.5px, transparent 1.5px)',
+      },
+      backgroundSize: {
+        dots: '22px 22px',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -54,6 +66,7 @@ export default {
       },
       boxShadow: {
         soft: '0 1px 2px rgba(15, 23, 42, 0.06), 0 12px 32px -16px rgba(15, 23, 42, 0.22)',
+        card: '0 24px 60px -24px rgba(15, 23, 42, 0.28), 0 2px 8px rgba(15, 23, 42, 0.04)',
       },
       keyframes: {
         'accordion-down': {
