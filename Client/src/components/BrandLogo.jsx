@@ -26,4 +26,23 @@ export function BrandBackdrop({ className }) {
   );
 }
 
+// Same artwork, tuned for the sign-in screen: the login page has no tables or
+// live status behind it, so the plate can sit centred and much more visible.
+// The centre-weighted scrim keeps the username/password text readable while
+// still showing the artwork around the card.
+export function LoginBackdrop({ className }) {
+  return (
+    <div className={cn('pointer-events-none fixed inset-0 -z-10 overflow-hidden', className)} aria-hidden="true">
+      <img
+        src={BRAND_PLATE_SRC}
+        alt=""
+        className="h-full w-full scale-110 object-cover object-center opacity-25 dark:opacity-40"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/55 to-background/85" />
+      {/* Soft halo behind the form so the inputs never sit directly on artwork. */}
+      <div className="absolute left-1/2 top-1/2 h-[70vh] w-[70vw] max-w-3xl -translate-x-1/2 -translate-y-1/2 rounded-full bg-background/60 blur-3xl" />
+    </div>
+  );
+}
+
 export default BrandLogo;

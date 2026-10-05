@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { AlertCircle, Eye, EyeOff, Loader2, LogIn, Moon, ShieldCheck, Sun } from 'lucide-react';
-import { BrandBackdrop, BrandLogo } from '@/components/BrandLogo';
+import { BrandLogo, LoginBackdrop } from '@/components/BrandLogo';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/hooks/useTheme';
@@ -49,7 +49,7 @@ export function LoginPage() {
   };
 return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-background px-4 py-10 text-foreground">
-      <BrandBackdrop />
+      <LoginBackdrop />
       <Button
         variant="ghost"
         size="icon"
@@ -72,7 +72,7 @@ return (
           <p className="mt-1 text-sm text-muted-foreground">Asset Control System</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 rounded-xl border border-border bg-card/90 p-6 shadow-soft backdrop-blur-xl">
+        <form onSubmit={handleSubmit} className="mt-8 rounded-xl border border-border/80 bg-card/80 p-6 shadow-soft backdrop-blur-2xl">
           <div className="flex items-center gap-2 text-muted-foreground">
             <ShieldCheck className="h-4 w-4" />
             <p className="text-xs font-medium uppercase tracking-[0.2em]">Sign in</p>
