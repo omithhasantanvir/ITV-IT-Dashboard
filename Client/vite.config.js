@@ -25,6 +25,18 @@ export default defineConfig({
       '/uploads': { target: process.env.VITE_PROXY_TARGET || 'http://127.0.0.1:5000', changeOrigin: true },
     },
   },
+  build: {
+    // Zod + react-hook-form are only needed on the sign-in screen, which is a
+    // small slice of the app. Splitting them keeps the authenticated dashboard
+    // bundle from carrying validation code nobody on that page uses.
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'form-validation': ['react-hook-form', 'zod', '@hookform/resolvers'],
+        },
+      },
+    },
+  },
   preview: {
     port: 4173,
     host: '0.0.0.0',

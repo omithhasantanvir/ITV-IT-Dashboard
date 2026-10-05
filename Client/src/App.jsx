@@ -4,6 +4,7 @@ import {
   BarChart3,
   Bell,
   BriefcaseBusiness,
+  ChevronDown,
   Computer,
   LayoutDashboard,
   Loader2,
@@ -19,6 +20,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BrandBackdrop, BrandLogo } from '@/components/BrandLogo';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ComputerInventory } from '@/components/ComputerInventory';
 import { EmployeeDirectory } from '@/components/EmployeeDirectory';
@@ -400,27 +409,60 @@ function ActivityPage() {
 }
 
 // Signed-in identity chip plus the sign-out control, shown in the header so the
-// current operator is always visible on a shared office machine.
+// current operator is always visible on a shared office machine. Collapses into
+// an avatar-only trigger on small screens to keep the header usable.
 function UserMenu() {
   const { user, signOut } = useAuth();
 
   return (
-    <div className="flex items-center gap-3">
-      <div className="hidden items-center gap-3 sm:flex">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-          {initialsOf(user?.name)}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className="flex items-center gap-3 rounded-full border border-border bg-card/60 py-1 pl-1 pr-3 transition-colors hover:bg-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          aria-label="Account menu"
+        >
+          <Avatar className="h-8 w-8">
+            {user?.profilePhoto ? <AvatarImage src={user.profilePhoto} alt="" /> : null}
+            <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
+              {initialsOf(user?.name)}
+            </AvatarFallback>
+          </Avatar>
+          <span className="hidden text-left leading-tight md:block">
+            <span className="block max-w-[140px] truncate text-sm font-medium">{user?.name}</span>
+            <span className="block text-xs text-muted-foreground">{user?.role || 'IT Staff'}</span>
+          </span>
+          <ChevronDown className="hidden h-4 w-4 text-muted-foreground md:block" />
+        </button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="end" className="w-64">
+        <div className="flex items-center gap-3 px-2 py-2">
+          <Avatar className="h-10 w-10">
+            {user?.profilePhoto ? <AvatarImage src={user.profilePhoto} alt="" /> : null}
+            <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
+              {initialsOf(user?.name)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 leading-tight">
+            <p className="truncate text-sm font-medium">{user?.name}</p>
+            <p className="truncate text-xs text-muted-foreground">
+              {user?.designation || user?.department || 'IT Staff'}
+            </p>
+          </div>
         </div>
-        <div className="leading-tight">
-          <p className="max-w-[160px] truncate text-sm font-medium">{user?.name}</p>
-          <p className="text-xs text-muted-foreground">{user?.designation || user?.department || 'IT Staff'}</p>
+        <div className="px-2 pb-2">
+          {user?.role ? <Badge variant="secondary">{user.role}</Badge> : null}
+          {user?.employeeId ? (
+            <span className="ml-2 font-mono text-xs text-muted-foreground">{user.employeeId}</span>
+          ) : null}
         </div>
-        {user?.role ? <Badge variant="secondary">{user.role}</Badge> : null}
-      </div>
-      <Button variant="outline" size="sm" onClick={signOut}>
-        <LogOut className="h-4 w-4" />
-        Sign out
-      </Button>
-    </div>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={signOut} className="text-destructive focus:text-destructive">
+          <LogOut className="h-4 w-4" />
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
