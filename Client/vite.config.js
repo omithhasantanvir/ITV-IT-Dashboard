@@ -14,6 +14,10 @@ export default defineConfig({
   server: {
     port: 5173,
     host: '0.0.0.0',
+    // Vite's default recursive chokidar watcher fails hard on Windows when a
+    // file under public/ is momentarily locked (EBUSY kills the whole dev
+    // server). Polling keeps hot reload reliable here at a small CPU cost.
+    watch: { usePolling: true, interval: 300 },
     proxy: {
       // Lets the browser call /api on the Vite origin, so LAN users do not need
       // to know the API host and no CORS pre-flight is required.

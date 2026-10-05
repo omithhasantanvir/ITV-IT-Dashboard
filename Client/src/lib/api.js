@@ -16,6 +16,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Dispatched when the API rejects a request because the JWT is missing, expired
+// or invalid. AuthContext listens for it and drops the session so the shell
+// falls back to the login page instead of rendering empty panels forever.
+export const SESSION_EXPIRED_EVENT = 'it-management:session-expired';
+
+const endSession = () => {
+  window.localStorage.removeItem(TOKEN_KEY);
+  window.localStorage.removeItem(USER_KEY);
+  window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+};
+
 // The API wraps payloads as { success, data }. Unwrap here so callers get data.
 api.interceptors.response.use(
   (response) => {
@@ -26,6 +37,13 @@ api.interceptors.response.use(
     return payload;
   },
   (error) => {
+    const status = error.response?.status;
+
+    // A 401 on /auth/login is just "wrong password" — the login form renders
+    // that inline, so it must not be treated as an expired session.
+    const isLoginAttempt = error.config?.url?.includes('/auth/login');
+    if (status === 401 && !isLoginAttempt) endSession();
+
     const message =
       error.response?.data?.message ||
       (error.code === 'ECONNABORTED'
@@ -34,7 +52,7 @@ api.interceptors.response.use(
           ? 'Cannot reach the API. Is the backend running on port 5000?'
           : error.message) ||
       'Request failed';
-    return Promise.reject(Object.assign(error, { message, status: error.response?.status }));
+    return Promise.reject(Object.assign(error, { message, status }));
   }
 );
 

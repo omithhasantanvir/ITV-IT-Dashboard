@@ -1,9 +1,11 @@
 import jwt from 'jsonwebtoken';
 
-// Temporary local-development escape hatch. When REQUIRE_AUTH=false is set in
-// backend/.env AND NODE_ENV is not "production", requests pass through with a
-// synthetic Super Admin identity so the dashboard can be wired to real data
-// before the login flow exists. The bypass can never activate in production.
+// Local-development escape hatch, kept for the rare case where you need to
+// inspect API responses without a session (Postman, curl, debugging a probe).
+//
+// It is OFF by default and can never activate when NODE_ENV=production, so a
+// production deploy is unaffected by this file. Prefer signing in with a real
+// account — REQUIRE_AUTH=true in backend/.env is the supported setup.
 export const isAuthBypassed = () =>
   process.env.NODE_ENV !== 'production' && process.env.REQUIRE_AUTH === 'false';
 

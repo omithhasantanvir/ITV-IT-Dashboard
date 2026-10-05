@@ -5,8 +5,9 @@ import {
   Bell,
   BriefcaseBusiness,
   Computer,
-  HardDrive,
   LayoutDashboard,
+  Loader2,
+  LogOut,
   Moon,
   RefreshCw,
   Search,
@@ -17,12 +18,15 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { BrandBackdrop, BrandLogo } from '@/components/BrandLogo';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ComputerInventory } from '@/components/ComputerInventory';
 import { EmployeeDirectory } from '@/components/EmployeeDirectory';
 import { ExtensionDirectory } from '@/components/ExtensionDirectory';
+import { LoginPage } from '@/components/LoginPage';
 import { ServerHealthPill, ServerOutagePopup } from '@/components/ServerHealth';
 import { ServerStatusOverview } from '@/components/ServerStatusOverview';
+import { useAuth } from '@/context/AuthContext';
 import { useDashboardSummary } from '@/hooks/useDashboardSummary';
 import { useTheme } from '@/hooks/useTheme';
 import { initialsOf, itStatusVariant, serverDotClass, serverStatusVariant } from '@/lib/status';
@@ -395,19 +399,59 @@ function ActivityPage() {
   return <GenericPage title="Activity Log" description="System events and operational history" />;
 }
 
+// Signed-in identity chip plus the sign-out control, shown in the header so the
+// current operator is always visible on a shared office machine.
+function UserMenu() {
+  const { user, signOut } = useAuth();
+
+  return (
+    <div className="flex items-center gap-3">
+      <div className="hidden items-center gap-3 sm:flex">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+          {initialsOf(user?.name)}
+        </div>
+        <div className="leading-tight">
+          <p className="max-w-[160px] truncate text-sm font-medium">{user?.name}</p>
+          <p className="text-xs text-muted-foreground">{user?.designation || user?.department || 'IT Staff'}</p>
+        </div>
+        {user?.role ? <Badge variant="secondary">{user.role}</Badge> : null}
+      </div>
+      <Button variant="outline" size="sm" onClick={signOut}>
+        <LogOut className="h-4 w-4" />
+        Sign out
+      </Button>
+    </div>
+  );
+}
+
 function App() {
   const { theme, toggleTheme } = useTheme();
+  const { isAuthenticated, checking } = useAuth();
+
+  // Validating a stored token on boot; showing the login screen early would
+  // flash a spurious "please sign in" at a user who is still signed in.
+  if (checking) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) return <LoginPage />;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {/* Decorative brand plate spanning the whole dashboard, behind every panel. */}
+      <BrandBackdrop />
       <div className="flex min-h-screen flex-col lg:flex-row">
-        <aside className="w-full border-b border-border bg-card/70 backdrop-blur-xl lg:w-72 lg:border-b-0 lg:border-r">
+        <aside className="w-full border-b border-border bg-card/85 backdrop-blur-xl lg:w-72 lg:border-b-0 lg:border-r">
           <div className="flex items-center gap-3 p-6">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <HardDrive className="h-5 w-5" />
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-background p-1.5 ring-1 ring-border">
+              <BrandLogo className="h-full w-full" alt="Independent" />
             </div>
-            <div>
-              <p className="text-xl font-semibold tracking-tight">IT Operations</p>
+            <div className="min-w-0">
+              <p className="truncate text-xl font-semibold tracking-tight">IT Operations</p>
               <p className="text-xs text-muted-foreground">Asset Control</p>
             </div>
           </div>
@@ -423,7 +467,7 @@ function App() {
         </aside>
 
         <main className="flex-1">
-          <header className="border-b border-border bg-card/60 backdrop-blur-xl">
+          <header className="border-b border-border bg-card/85 backdrop-blur-xl">
             <div className="flex flex-col gap-4 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary">Internal Dashboard</p>
@@ -450,6 +494,7 @@ function App() {
                   />
                 </div>
                 <ServerHealthPill />
+                <UserMenu />
               </div>
             </div>
           </header>
