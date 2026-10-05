@@ -79,8 +79,9 @@ export function useEmployees() {
   const deleteEmployee = useCallback(async (id) => {
     const removed = await api.delete('/employees/' + id);
     if (mounted.current) {
-      setEmployees((previous) => previous.filter((item) => keyOf(item) !== id));
-      setItTeam((previous) => previous.filter((item) => keyOf(item) !== id));
+      const gone = (item) => keyOf(item) !== id;
+      setEmployees((previous) => previous.filter(gone));
+      setItTeam((previous) => previous.filter(gone));
       setLastUpdated(new Date());
       setError(null);
     }

@@ -277,7 +277,8 @@ function EmpView({ open, employee, onOpenChange }) {
 }
 
 export function EmployeeDirectory() {
-  const { employees, itTeam, loading, refreshing, error, lastUpdated, refresh, createEmployee, updateEmployee, deleteEmployee } = useEmployees();
+  const { employees, itTeam, loading, refreshing, error, lastUpdated, refresh, createEmployee, updateEmployee, deleteEmployee } =
+    useEmployees();
   const [q, setQ] = useState('');
   const [dlg, setDlg] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -335,7 +336,7 @@ export function EmployeeDirectory() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold">Employees</h2>
-          <p className="text-xs text-muted-foreground">{loading ? 'Loading' : 'Updated ' + clockOf(lastUpdated)}</p>
+          <p className="text-xs text-muted-foreground">{loading ? 'Loading…' : 'Updated ' + formatClock(lastUpdated)}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button size="sm" variant="outline" onClick={() => refresh({ silent: true })} disabled={loading || refreshing}>
@@ -417,5 +418,3 @@ export function EmployeeDirectory() {
     </div>
   );
 }
-
-export { EmployeeDirectory };
