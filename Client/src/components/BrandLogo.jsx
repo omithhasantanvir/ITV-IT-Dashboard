@@ -26,16 +26,20 @@ export function BrandBackdrop({ className }) {
   );
 }
 
-// Sign-in screen backdrop. Unlike the dashboard version this deliberately does
-// NOT crop the artwork: `object-contain` (no scale, no object-cover) keeps the
-// entire plate visible, centred in the viewport. The scrim is kept very light so
-// the image reads clearly while the form text stays legible on top of it.
+// Sign-in screen backdrop.
+//
+// The plate is a small 455x256 source, so it has to be *scaled up* to act as a
+// real page background. `object-cover` + a large scale fills the viewport edge to
+// edge; the scrim is a light wash so the form text stays readable on top.
 export function LoginBackdrop({ className }) {
   return (
-    <div className={cn('pointer-events-none fixed inset-0 -z-10 flex items-center justify-center', className)} aria-hidden="true">
-      <img src={BRAND_PLATE_SRC} alt="" className="max-h-full max-w-full object-contain opacity-100" />
-      {/* Faint wash only — enough to lift the form off the artwork, no dimming. */}
-      <div className="absolute inset-0 bg-background/25" />
+    <div className={cn('pointer-events-none fixed inset-0 -z-10 overflow-hidden', className)} aria-hidden="true">
+      <img
+        src={BRAND_PLATE_SRC}
+        alt=""
+        className="h-full w-full scale-150 object-cover object-center opacity-100"
+      />
+      <div className="absolute inset-0 bg-background/35" />
     </div>
   );
 }
