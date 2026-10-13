@@ -344,13 +344,20 @@ export default function EmployeesPage() {
 
     setSubmitting(true);
     try {
+      const isEx = formData.employmentStatus !== 'Active';
+
       if (editingEmployee) {
         // Update existing employee
         const payload: any = {
           ...formData,
           joiningDate: formData.joiningDate || undefined,
-          leavingDate: formData.employmentStatus !== 'Active' && formData.leavingDate ? formData.leavingDate : null,
+          leavingDate: isEx && formData.leavingDate ? formData.leavingDate : null,
         };
+        if (isEx) {
+          payload.extensionNumber = null;
+          payload.officeLocation = null;
+          payload.itStatus = 'OFFLINE';
+        }
         // If password field is empty during edit, do not overwrite existing password
         if (!payload.password || payload.password.trim() === '') {
           delete payload.password;
@@ -371,10 +378,28 @@ export default function EmployeesPage() {
         const payload: any = {
           ...formData,
           isITTeam: true,
-          department: 'Information Technology',
+          department: formData.department || 'Information Technology',
           joiningDate: formData.joiningDate || undefined,
-          leavingDate: formData.employmentStatus !== 'Active' && formData.leavingDate ? formData.leavingDate : null,
+          leavingDate: isEx && formData.leavingDate ? formData.leavingDate : null,
         };
+
+        if (isEx) {
+          const safeSlug = (payload.name || 'ex.user').toLowerCase().replace(/[^a-z0-9]/g, '.');
+          const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+          if (!payload.username || payload.username.trim() === '') {
+            payload.username = `${safeSlug}.${randomSuffix}`;
+          }
+          if (!payload.email || payload.email.trim() === '') {
+            payload.email = `${payload.username}@ex.independent24.tv`;
+          }
+          if (!payload.password || payload.password.trim() === '') {
+            payload.password = 'Welcome@123';
+          }
+          payload.role = 'VIEWER';
+          payload.extensionNumber = null;
+          payload.officeLocation = null;
+          payload.itStatus = 'OFFLINE';
+        }
 
         const res = await api.post('/api/users', payload);
         if (res.data?.success) {
@@ -1189,105 +1214,135 @@ export default function EmployeesPage() {
                 </div>
               </div>
 
-              {/* Grid: Email, Username */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground">Corporate Email</label>
-                  <input
-                    type="email"
-                    placeholder="e.g. tanvir.ahmed@company.local"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  />
-                </div>
+              {/* Grid: Email, Username - only for Active IT Employees */}
+              {formData.employmentStatus === 'Active' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">Corporate Email</label>
+                    <input
+                      type="email"
+                      placeholder="e.g. tanvir.ahmed@company.local"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                  </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground">System Username</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. tanvir.ahmed"
-                    value={formData.username}
-                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 font-mono"
-                  />
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">System Username</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. tanvir.ahmed"
+                      value={formData.username}
+                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 font-mono"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Grid: Designation & Role */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground">IT Designation</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. IT Support Engineer"
-                    value={formData.designation}
-                    onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  />
-                </div>
+              {/* Grid: Designation & Contact (Tailored for EX vs Active) */}
+              {formData.employmentStatus !== 'Active' ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">IT Designation</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Junior Broadcast Engineer"
+                      value={formData.designation}
+                      onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                  </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground flex items-center justify-between">
-                    <span>System Role</span>
-                    {editingEmployee?.role === 'SUPER_ADMIN' && (
-                      <span className="text-[10px] text-amber-500 font-bold flex items-center gap-1">
-                        <Lock className="h-3 w-3" /> Protected
-                      </span>
-                    )}
-                  </label>
-                  <select
-                    value={formData.role}
-                    disabled={editingEmployee?.role === 'SUPER_ADMIN'}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    className={cn(
-                      "w-full px-3.5 py-2.5 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40",
-                      editingEmployee?.role === 'SUPER_ADMIN' && "opacity-80 cursor-not-allowed bg-muted/40"
-                    )}
-                  >
-                    <option value="IT_SUPPORT">IT Support (Technician)</option>
-                    <option value="IT_ADMIN">IT Admin (Network / Systems)</option>
-                    <option value="SUPER_ADMIN">Super Admin (IT Lead)</option>
-                    <option value="VIEWER">Viewer</option>
-                  </select>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">Mobile Phone</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. +880 1700-000000"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-foreground">IT Designation</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. IT Support Engineer"
+                        value={formData.designation}
+                        onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      />
+                    </div>
 
-              {/* Grid: Extension, Phone, Office Location */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground">PABX Extension</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 1104"
-                    value={formData.extensionNumber}
-                    onChange={(e) => setFormData({ ...formData, extensionNumber: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 font-mono"
-                  />
-                </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-foreground flex items-center justify-between">
+                        <span>System Role</span>
+                        {editingEmployee?.role === 'SUPER_ADMIN' && (
+                          <span className="text-[10px] text-amber-500 font-bold flex items-center gap-1">
+                            <Lock className="h-3 w-3" /> Protected
+                          </span>
+                        )}
+                      </label>
+                      <select
+                        value={formData.role}
+                        disabled={editingEmployee?.role === 'SUPER_ADMIN'}
+                        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                        className={cn(
+                          "w-full px-3.5 py-2.5 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40",
+                          editingEmployee?.role === 'SUPER_ADMIN' && "opacity-80 cursor-not-allowed bg-muted/40"
+                        )}
+                      >
+                        <option value="IT_SUPPORT">IT Support (Technician)</option>
+                        <option value="IT_ADMIN">IT Admin (Network / Systems)</option>
+                        <option value="SUPER_ADMIN">Super Admin (IT Lead)</option>
+                        <option value="VIEWER">Viewer</option>
+                      </select>
+                    </div>
+                  </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground">Mobile Phone</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. +880 1700-000000"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  />
-                </div>
+                  {/* Grid: Extension, Phone, Office Location */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-foreground">PABX Extension</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 1104"
+                        value={formData.extensionNumber}
+                        onChange={(e) => setFormData({ ...formData, extensionNumber: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 font-mono"
+                      />
+                    </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground">Office Location</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. HQ Floor 4"
-                    value={formData.officeLocation}
-                    onChange={(e) => setFormData({ ...formData, officeLocation: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  />
-                </div>
-              </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-foreground">Mobile Phone</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. +880 1700-000000"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-foreground">Office Location</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. HQ Floor 4"
+                        value={formData.officeLocation}
+                        onChange={(e) => setFormData({ ...formData, officeLocation: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
 
               {/* Service Dates */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1331,49 +1386,58 @@ export default function EmployeesPage() {
                 )}
               </div>
 
-              {/* Password & Remarks */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {(!editingEmployee || isSuperAdmin) ? (
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-foreground">
-                      {editingEmployee ? 'Change Password (Super Admin Only)' : 'Initial Password'}{' '}
-                      <span className="text-[10px] text-muted-foreground">
-                        {editingEmployee ? '(Leave empty to keep current)' : '(Default: Welcome@123)'}
-                      </span>
-                    </label>
-                    <input
-                      type="password"
-                      placeholder={editingEmployee ? 'Leave empty to keep existing password' : 'Leave empty for Welcome@123'}
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    />
-                  </div>
-                ) : (
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-muted-foreground">Password Management</label>
-                    <div className="p-2.5 rounded-xl border border-border bg-muted/20 text-[11px] text-muted-foreground flex items-center gap-2">
-                      <Lock className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                      <span>Password can only be modified by Super Admin.</span>
-                    </div>
-                  </div>
-                )}
-
+              {/* Password & Remarks (Tailored for EX vs Active) */}
+              {formData.employmentStatus !== 'Active' ? (
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-foreground">Remarks / Handover Notes</label>
                   <input
                     type="text"
-                    placeholder={
-                      formData.employmentStatus === 'Active'
-                        ? 'e.g. Lead for Server Migration'
-                        : 'e.g. Cleared IT clearance and returned assets'
-                    }
+                    placeholder="e.g. Cleared IT clearance and returned assets"
                     value={formData.remarks}
                     onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
                   />
                 </div>
-              </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {(!editingEmployee || isSuperAdmin) ? (
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-foreground">
+                        {editingEmployee ? 'Change Password (Super Admin Only)' : 'Initial Password'}{' '}
+                        <span className="text-[10px] text-muted-foreground">
+                          {editingEmployee ? '(Leave empty to keep current)' : '(Default: Welcome@123)'}
+                        </span>
+                      </label>
+                      <input
+                        type="password"
+                        placeholder={editingEmployee ? 'Leave empty to keep existing password' : 'Leave empty for Welcome@123'}
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      />
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-muted-foreground">Password Management</label>
+                      <div className="p-2.5 rounded-xl border border-border bg-muted/20 text-[11px] text-muted-foreground flex items-center gap-2">
+                        <Lock className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                        <span>Password can only be modified by Super Admin.</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground">Remarks / Handover Notes</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Lead for Server Migration"
+                      value={formData.remarks}
+                      onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="pt-3 border-t border-border flex items-center justify-end gap-3">
