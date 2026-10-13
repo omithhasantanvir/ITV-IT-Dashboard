@@ -633,7 +633,7 @@ export default function ServersPage() {
             MAIN VIEW: 2 SIDE-BY-SIDE STANDARDIZED PHOTO RACKS (7 SERVERS EACH)
             ========================================================================= */}
         {viewMode === 'rack' ? (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 items-start max-w-[1100px] mx-auto px-2 sm:px-4">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 lg:gap-6 items-start max-w-[860px] mx-auto px-2 sm:px-3">
             {/* RACK 01: Core Enterprise & Newsroom Rack (7 Servers) */}
             <UniformServerRack
               rackNumber="01"
@@ -772,19 +772,19 @@ function ITVBrandLogo() {
   return (
     <div className="flex items-center gap-1.5 shrink-0">
       {/* Exact Official Independent TV "I" Logo */}
-      <div className="h-7 w-5 flex items-center justify-center shrink-0">
+      <div className="h-5 w-4 flex items-center justify-center shrink-0">
         <img
           src="/itv-logo.png"
           alt="Independent TV Logo"
-          className="h-7 w-auto object-contain drop-shadow-[0_0_10px_rgba(225,29,72,0.85)] select-none"
+          className="h-5 w-auto object-contain drop-shadow-[0_0_8px_rgba(225,29,72,0.85)] select-none"
         />
       </div>
 
       <div className="flex flex-col leading-none hidden sm:flex">
-        <span className="font-black text-[10px] tracking-tight text-white font-sans">
+        <span className="font-black text-[9px] tracking-tight text-white font-sans">
           INDEPENDENT
         </span>
-        <span className="text-[7px] tracking-[0.2em] text-zinc-400 uppercase font-mono font-bold">
+        <span className="text-[6.5px] tracking-[0.18em] text-zinc-400 uppercase font-mono font-bold">
           TELEVISION
         </span>
       </div>
@@ -849,7 +849,7 @@ function UniformServerRack({
   const isRack1 = rackNumber === '01';
 
   return (
-    <div className="w-full max-w-[490px] mx-auto relative group/rack">
+    <div className="w-full max-w-[400px] mx-auto relative group/rack">
       {/* Datacenter Cabinet Enclosure */}
       <div className="w-full font-mono relative">
         {/* -------------------------------------------------------------
@@ -858,10 +858,10 @@ function UniformServerRack({
         {is3DMode && (
           <div className="relative z-30 mb-[-1px]">
             {/* Top Roof Angled Lid Plate */}
-            <div className="mx-2 h-7 rounded-t-2xl bg-gradient-to-b from-[#2a2d39] via-[#1a1b24] to-[#0f1017] border-t border-x border-zinc-700/70 shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_-6px_20px_rgba(0,0,0,0.7)] px-3 flex items-center justify-between">
+            <div className="mx-2 h-5 rounded-t-xl bg-gradient-to-b from-[#2a2d39] via-[#1a1b24] to-[#0f1017] border-t border-x border-zinc-700/70 shadow-[inset_0_2px_4px_rgba(255,255,255,0.15),0_-4px_12px_rgba(0,0,0,0.7)] px-2.5 flex items-center justify-between">
               {/* Dual Exhaust Fan 1 (Left) */}
-              <div className="flex items-center gap-1.5">
-                <div className="relative h-5 w-5 rounded-full border border-cyan-500/40 bg-zinc-950/80 p-0.5 flex items-center justify-center shadow-[0_0_8px_rgba(6,182,212,0.35)] overflow-hidden">
+              <div className="flex items-center gap-1">
+                <div className="relative h-3.5 w-3.5 rounded-full border border-cyan-500/40 bg-zinc-950/80 p-0.5 flex items-center justify-center shadow-[0_0_6px_rgba(6,182,212,0.35)] overflow-hidden">
                   <svg
                     className="h-full w-full text-cyan-400 animate-spin"
                     style={{ animationDuration: '2.4s' }}
@@ -869,13 +869,13 @@ function UniformServerRack({
                     fill="currentColor"
                   >
                     <path d="M12 12c-2.2 0-4-1.8-4-4 0-3.3 4-7 4-7s4 3.7 4 7c0 2.2-1.8 4-4 4zm0 0c0-2.2 1.8-4 4-4 3.3 0 7 4 7 4s-3.7 4-7 4c-2.2 0-4-1.8-4-4zm0 0c2.2 0 4 1.8 4 4 0 3.3-4 7-4 7s-4-3.7-4-7c0-2.2 1.8-4 4-4zm0 0c0 2.2-1.8 4-4 4-3.3 0-7-4-7-4s3.7-4 7-4c2.2 0 4 1.8 4 4z" />
-                    <circle cx="12" cy="12" r="2.5" fill="#090a0f" stroke="#06b6d4" strokeWidth="1" />
+                    <circle cx="12" cy="12" r="2" fill="#090a0f" stroke="#06b6d4" strokeWidth="1" />
                   </svg>
                   <div className="absolute inset-0 bg-cyan-400/10 pointer-events-none rounded-full" />
                 </div>
-                <div className="hidden sm:flex flex-col text-[6.5px] leading-tight text-zinc-400 font-mono">
+                <div className="hidden sm:flex flex-col text-[5.5px] leading-tight text-zinc-400 font-mono">
                   <span className="text-cyan-400 font-bold flex items-center gap-0.5">
-                    <span className="h-1 w-1 rounded-full bg-cyan-400 animate-ping inline-block" />
+                    <span className="h-0.5 w-0.5 rounded-full bg-cyan-400 animate-ping inline-block" />
                     FAN 1
                   </span>
                   <span>2450 RPM</span>
@@ -883,21 +883,21 @@ function UniformServerRack({
               </div>
 
               {/* Cable Pass-Through Chimney / Center Badge */}
-              <div className="px-2.5 py-0.5 rounded-full bg-zinc-950/90 border border-zinc-800 text-[7.5px] font-mono text-zinc-400 font-bold tracking-wider flex items-center gap-1.5 shadow-inner">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" />
-                <span>42U ENCLOSURE • {isRack1 ? 'MCR-A' : 'MCR-B'}</span>
+              <div className="px-2 py-0.2 rounded-full bg-zinc-950/90 border border-zinc-800 text-[6.5px] font-mono text-zinc-400 font-bold tracking-wider flex items-center gap-1 shadow-inner">
+                <span className="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_4px_#34d399]" />
+                <span>42U • {isRack1 ? 'MCR-A' : 'MCR-B'}</span>
               </div>
 
               {/* Dual Exhaust Fan 2 (Right) */}
-              <div className="flex items-center gap-1.5">
-                <div className="hidden sm:flex flex-col items-end text-[6.5px] leading-tight text-zinc-400 font-mono">
+              <div className="flex items-center gap-1">
+                <div className="hidden sm:flex flex-col items-end text-[5.5px] leading-tight text-zinc-400 font-mono">
                   <span className="text-cyan-400 font-bold flex items-center gap-0.5">
                     FAN 2
-                    <span className="h-1 w-1 rounded-full bg-cyan-400 animate-ping inline-block" />
+                    <span className="h-0.5 w-0.5 rounded-full bg-cyan-400 animate-ping inline-block" />
                   </span>
                   <span>2480 RPM</span>
                 </div>
-                <div className="relative h-5 w-5 rounded-full border border-cyan-500/40 bg-zinc-950/80 p-0.5 flex items-center justify-center shadow-[0_0_8px_rgba(6,182,212,0.35)] overflow-hidden">
+                <div className="relative h-3.5 w-3.5 rounded-full border border-cyan-500/40 bg-zinc-950/80 p-0.5 flex items-center justify-center shadow-[0_0_6px_rgba(6,182,212,0.35)] overflow-hidden">
                   <svg
                     className="h-full w-full text-cyan-400 animate-spin"
                     style={{ animationDuration: '2.2s' }}
@@ -905,7 +905,7 @@ function UniformServerRack({
                     fill="currentColor"
                   >
                     <path d="M12 12c-2.2 0-4-1.8-4-4 0-3.3 4-7 4-7s4 3.7 4 7c0 2.2-1.8 4-4 4zm0 0c0-2.2 1.8-4 4-4 3.3 0 7 4 7 4s-3.7 4-7 4c-2.2 0-4-1.8-4-4zm0 0c2.2 0 4 1.8 4 4 0 3.3-4 7-4 7s-4-3.7-4-7c0-2.2 1.8-4 4-4zm0 0c0 2.2-1.8 4-4 4-3.3 0-7-4-7-4s3.7-4 7-4c2.2 0 4 1.8 4 4z" />
-                    <circle cx="12" cy="12" r="2.5" fill="#090a0f" stroke="#06b6d4" strokeWidth="1" />
+                    <circle cx="12" cy="12" r="2" fill="#090a0f" stroke="#06b6d4" strokeWidth="1" />
                   </svg>
                   <div className="absolute inset-0 bg-cyan-400/10 pointer-events-none rounded-full" />
                 </div>
@@ -935,26 +935,26 @@ function UniformServerRack({
       {/* -------------------------------------------------------------
           1. TOP ITV RACK HEADER (INDEPENDENT TV LOGO & "ITV Rack 01 / 02")
           ------------------------------------------------------------- */}
-      <div className="px-3 py-2 bg-gradient-to-b from-[#1b1c26] via-[#111219] to-[#0a0b0e] border-b border-zinc-800 flex items-center justify-between gap-2 relative z-30 rounded-t-xl">
+      <div className="px-2.5 py-1.5 bg-gradient-to-b from-[#1b1c26] via-[#111219] to-[#0a0b0e] border-b border-zinc-800 flex items-center justify-between gap-1.5 relative z-30 rounded-t-xl">
         {/* Left: Independent Television Logo & "ITV Rack 01 / 02" */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           {/* ITV Brand Logo */}
           <ITVBrandLogo />
 
           {/* Divider */}
-          <div className="h-6 w-px bg-zinc-700/80 hidden sm:block" />
+          <div className="h-5 w-px bg-zinc-700/80 hidden sm:block" />
 
           {/* ITV Rack 01 / 02 Header Title */}
           <div>
-            <div className="flex items-center gap-2">
-              <h2 className="font-mono font-black text-sm sm:text-base tracking-wider text-white uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+            <div className="flex items-center gap-1.5">
+              <h2 className="font-mono font-black text-xs sm:text-sm tracking-wider text-white uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                 ITV Rack {rackNumber}
               </h2>
-              <span className="text-[8px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-red-500/20 text-red-400 border border-red-500/40">
+              <span className="text-[7px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-red-500/20 text-red-400 border border-red-500/40">
                 ACTIVE
               </span>
             </div>
-            <p className="text-[8.5px] text-zinc-400 font-mono tracking-wide font-semibold mt-0.5">
+            <p className="text-[7.5px] text-zinc-400 font-mono tracking-wide font-semibold mt-0.5">
               {rackNumber === '01' ? 'CORE ENTERPRISE & NEWSROOM' : 'GRASS VALLEY BROADCAST SYSTEM'}
             </p>
           </div>
@@ -964,58 +964,54 @@ function UniformServerRack({
         <div className="flex items-center p-0.5 rounded-lg bg-black/70 border border-zinc-800">
           <button
             onClick={() => setRackView('blades')}
-            className={`px-2 py-0.5 rounded text-[7.5px] font-mono font-bold transition ${
+            className={`px-1.5 py-0.5 rounded text-[7px] font-mono font-bold transition ${
               rackView === 'blades'
                 ? 'bg-zinc-800 text-white shadow-sm'
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
-            Blades (7U)
+            Blades
           </button>
           <button
             onClick={() => setRackView('cabling')}
-            className={`px-2 py-0.5 rounded text-[7.5px] font-mono font-bold transition flex items-center gap-1 ${
+            className={`px-1.5 py-0.5 rounded text-[7px] font-mono font-bold transition flex items-center gap-1 ${
               rackView === 'cabling'
                 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
-            <Cable className="h-2.5 w-2.5 text-cyan-400" />
-            Cabling Bay
+            <Cable className="h-2 w-2 text-cyan-400" />
+            Cabling
           </button>
         </div>
 
         {/* Right: Suprema Door Status Lock Button & Hardware Marker */}
-        <div className="flex flex-col items-end gap-1 shrink-0">
+        <div className="flex flex-col items-end gap-0.5 shrink-0">
           {/* Interactive Door Lock/Unlock Toggle with Suprema Status */}
           <button
             onClick={handleOpenDoorRequested}
-            className={`px-2 py-0.5 rounded-full text-[8px] font-mono font-bold flex items-center gap-1.5 border transition-all duration-200 cursor-pointer ${
+            className={`px-1.5 py-0.5 rounded-full text-[7px] font-mono font-bold flex items-center gap-1 border transition-all duration-200 cursor-pointer ${
               doorOpen
-                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50 hover:bg-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.25)]'
-                : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50 hover:bg-cyan-500/30 shadow-[0_0_8px_rgba(6,182,212,0.25)]'
+                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50 hover:bg-emerald-500/30 shadow-[0_0_6px_rgba(16,185,129,0.25)]'
+                : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50 hover:bg-cyan-500/30 shadow-[0_0_6px_rgba(6,182,212,0.25)]'
             }`}
             title={doorOpen ? "Click to close and lock glass door" : "Click to enter Employee ID via Suprema and open door"}
           >
             {doorOpen ? (
               <>
-                <Unlock className="h-2.5 w-2.5 text-emerald-400 animate-pulse" />
-                <span>DOOR: OPEN</span>
+                <Unlock className="h-2 w-2 text-emerald-400 animate-pulse" />
+                <span>OPEN</span>
               </>
             ) : (
               <>
-                <Fingerprint className="h-2.5 w-2.5 text-cyan-400 animate-pulse" />
-                <span>SUPREMA: LOCKED</span>
+                <Fingerprint className="h-2 w-2 text-cyan-400 animate-pulse" />
+                <span>LOCKED</span>
               </>
             )}
           </button>
 
-          <div className="text-[8px] font-mono text-zinc-400 flex items-center gap-1">
-            <span className="text-zinc-200 font-semibold">{rackNumber === '01' ? '172.19.4.x' : '10.1.2.x'}</span>
-            <span>•</span>
-            <span className="px-1 py-0.2 rounded bg-zinc-800 border border-zinc-700 text-zinc-300 font-bold">
-              R.F. MOTE
-            </span>
+          <div className="text-[7px] font-mono text-zinc-400 flex items-center gap-1">
+            <span className="text-zinc-300 font-semibold">{rackNumber === '01' ? '172.19.4.x' : '10.1.2.x'}</span>
           </div>
         </div>
       </div>
@@ -1061,33 +1057,33 @@ function UniformServerRack({
         ) : (
           <div>
             {/* 2. CISCO 48G SWITCH WITH DRAPED FIBER OPTIC PATCH CABLES */}
-            <div className="p-2 bg-[#0a0b0e] border-b border-zinc-800/90 relative">
-              <div className="relative h-8 sm:h-8.5 bg-[#111218] rounded-md border border-zinc-800 px-2 py-0.5 flex items-center justify-between overflow-hidden">
+            <div className="p-1.5 sm:p-2 bg-[#0a0b0e] border-b border-zinc-800/90 relative">
+              <div className="relative h-6 sm:h-6.5 bg-[#111218] rounded border border-zinc-800 px-1.5 py-0.5 flex items-center justify-between overflow-hidden">
                 {/* Left Switch Ports */}
                 <div className="flex items-center gap-1.5">
                   <div className="flex flex-col gap-0.5">
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-0.5">
                       {Array.from({ length: 8 }).map((_, i) => (
                         <div
                           key={i}
-                          className={`h-1 w-1 rounded-sm ${
+                          className={`h-0.5 w-0.5 sm:h-1 sm:w-1 rounded-sm ${
                             i % 3 === 0 ? 'bg-emerald-400 animate-pulse' : 'bg-emerald-500/70'
                           }`}
                         />
                       ))}
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-0.5">
                       {Array.from({ length: 8 }).map((_, i) => (
                         <div
                           key={i}
-                          className={`h-1 w-1 rounded-sm ${
+                          className={`h-0.5 w-0.5 sm:h-1 sm:w-1 rounded-sm ${
                             i % 2 === 0 ? 'bg-amber-400 animate-pulse' : 'bg-emerald-500/80'
                           }`}
                         />
                       ))}
                     </div>
                   </div>
-                  <span className="text-[7.5px] font-mono text-zinc-400 font-bold ml-1 hidden sm:inline">
+                  <span className="text-[7px] font-mono text-zinc-400 font-bold ml-0.5 hidden sm:inline">
                     CISCO 48G
                   </span>
                 </div>
@@ -1098,7 +1094,7 @@ function UniformServerRack({
                     d="M 45,5 C 80,-6 115,18 150,8 C 185,-2 220,18 260,10"
                     fill="none"
                     stroke="#2dd4bf"
-                    strokeWidth="2"
+                    strokeWidth="1.5"
                     strokeLinecap="round"
                     opacity="0.95"
                   />
@@ -1106,7 +1102,7 @@ function UniformServerRack({
                     d="M 110,6 C 145,-4 175,22 215,11"
                     fill="none"
                     stroke="#3b82f6"
-                    strokeWidth="2.2"
+                    strokeWidth="1.6"
                     strokeLinecap="round"
                     opacity="0.95"
                   />
@@ -1114,30 +1110,30 @@ function UniformServerRack({
 
                 {/* Right SFP+ Optical Uplink */}
                 <div className="flex items-center gap-1 relative z-10">
-                  <span className="text-[7.5px] font-mono text-emerald-400 font-bold hidden sm:inline">10G SFP+</span>
-                  <div className="h-2 w-5 rounded bg-black border border-zinc-700 flex items-center justify-around px-0.5">
-                    <div className="h-1 w-1 rounded-full bg-cyan-400 animate-pulse" />
-                    <div className="h-1 w-1 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[7px] font-mono text-emerald-400 font-bold hidden sm:inline">10G SFP+</span>
+                  <div className="h-2 w-4 rounded bg-black border border-zinc-700 flex items-center justify-around px-0.5">
+                    <div className="h-0.5 w-0.5 rounded-full bg-cyan-400 animate-pulse" />
+                    <div className="h-0.5 w-0.5 rounded-full bg-emerald-400 animate-pulse" />
                   </div>
                 </div>
               </div>
             </div>
 
             {/* 3. CYBERPOWER 1U PDU POWER BAR */}
-            <div className="px-2.5 py-1 bg-gradient-to-r from-zinc-900 via-black to-zinc-900 border-b border-zinc-800 flex items-center justify-between text-xs font-mono">
-              <div className="flex items-center gap-1.5">
+            <div className="px-2 py-0.5 bg-gradient-to-r from-zinc-900 via-black to-zinc-900 border-b border-zinc-800 flex items-center justify-between text-xs font-mono">
+              <div className="flex items-center gap-1">
                 {/* Rocker Switch with Red Guard */}
-                <div className="h-3 w-5 rounded bg-[#7f1d1d] border border-red-500 flex items-center justify-center">
-                  <div className="h-1 w-2 bg-red-500 rounded-sm" />
+                <div className="h-2.5 w-4 rounded bg-[#7f1d1d] border border-red-500 flex items-center justify-center">
+                  <div className="h-0.5 w-1.5 bg-red-500 rounded-sm" />
                 </div>
                 <div className="flex items-center gap-0.5">
-                  <div className="h-1 w-1 rounded-full bg-black border border-zinc-700" />
-                  <div className="h-1 w-1 rounded-full bg-black border border-zinc-700" />
+                  <div className="h-0.5 w-0.5 rounded-full bg-black border border-zinc-700" />
+                  <div className="h-0.5 w-0.5 rounded-full bg-black border border-zinc-700" />
                 </div>
               </div>
 
-              <div className="flex items-center gap-2.5">
-                <div className="flex items-center gap-1.5 text-[7.5px]">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 text-[7px]">
                   <span className="flex items-center gap-0.5 text-zinc-400">
                     <span className="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_4px_#34d399]" />
                     Power
@@ -1147,14 +1143,14 @@ function UniformServerRack({
                     Surge
                   </span>
                 </div>
-                <span className="font-bold tracking-wider text-zinc-200 uppercase text-[8.5px]">
-                  CyberPower <span className="text-[7px] text-zinc-400 font-normal">PDU</span>
+                <span className="font-bold tracking-wider text-zinc-200 uppercase text-[7.5px]">
+                  CyberPower <span className="text-[6.5px] text-zinc-400 font-normal">PDU</span>
                 </span>
               </div>
             </div>
 
             {/* 4. STANDARDIZED 2U SERVERS STACK */}
-            <div className="p-2 sm:p-2.5 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#12131a] via-[#090a0d] to-black space-y-1.5 relative">
+            <div className="p-1.5 sm:p-2 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#12131a] via-[#090a0d] to-black space-y-1 relative">
               {loading ? (
                 <div className="flex flex-col items-center justify-center h-48 space-y-2 text-zinc-500">
                   <RefreshCw className="h-5 w-5 animate-spin text-primary" />
@@ -1196,19 +1192,19 @@ function UniformServerRack({
                     >
                       {/* Telescoping Stainless Steel Ball-Bearing Slide Rail */}
                       <div
-                        className={`absolute -left-3.5 sm:-left-5 top-1/2 -translate-y-1/2 h-3.5 server-steel-rail rounded-l border border-zinc-400 transition-all duration-300 pointer-events-none ${
-                          isExtracted && doorOpen ? 'w-3.5 sm:w-5 opacity-100 shadow-[0_3px_8px_rgba(0,0,0,0.8)]' : 'w-0 opacity-0'
+                        className={`absolute -left-3 sm:-left-4 top-1/2 -translate-y-1/2 h-2.5 server-steel-rail rounded-l border border-zinc-400 transition-all duration-300 pointer-events-none ${
+                          isExtracted && doorOpen ? 'w-3 sm:w-4 opacity-100 shadow-[0_3px_8px_rgba(0,0,0,0.8)]' : 'w-0 opacity-0'
                         }`}
                       >
                         <div className="h-full flex items-center justify-around px-0.5">
-                          <div className="h-1 w-1 rounded-full bg-zinc-300 border border-zinc-600" />
-                          <div className="h-1 w-1 rounded-full bg-zinc-300 border border-zinc-600" />
+                          <div className="h-0.5 w-0.5 rounded-full bg-zinc-300 border border-zinc-600" />
+                          <div className="h-0.5 w-0.5 rounded-full bg-zinc-300 border border-zinc-600" />
                         </div>
                       </div>
 
                       {/* 2U Server Chassis Faceplate */}
                       <div
-                        className={`rounded-md border transition-all duration-300 cursor-pointer relative overflow-hidden ${
+                        className={`rounded border transition-all duration-300 cursor-pointer relative overflow-hidden ${
                           isExtracted && doorOpen
                             ? isOnline
                               ? 'border-emerald-400 bg-[#161720] shadow-[0_10px_25px_rgba(16,185,129,0.22)]'
@@ -1219,33 +1215,33 @@ function UniformServerRack({
                         }`}
                       >
                         {/* Front Panel Grid */}
-                        <div className="p-1 sm:p-1.5 flex items-center justify-between gap-1.5">
+                        <div className="p-0.5 sm:p-1 flex items-center justify-between gap-1">
                           {/* Left Heavy Brushed Silver Handle */}
-                          <div className="w-2 sm:w-2.5 h-8.5 sm:h-9 server-handle-silver rounded-sm shrink-0 flex flex-col justify-between py-1 px-0.5">
-                            <div className="h-1 w-full rounded-full bg-zinc-600" />
-                            <div className="h-1 w-full rounded-full bg-zinc-600" />
+                          <div className="w-1.5 sm:w-2 h-6 sm:h-6.5 server-handle-silver rounded-sm shrink-0 flex flex-col justify-between py-0.5 px-0.5">
+                            <div className="h-0.5 w-full rounded-full bg-zinc-600" />
+                            <div className="h-0.5 w-full rounded-full bg-zinc-600" />
                           </div>
 
                           {/* Left Status Ear: Slot Badge + Power & NIC Activity LEDs */}
-                          <div className="w-8 sm:w-9 h-8.5 sm:h-9 bg-[#13141b] rounded border border-zinc-800 p-0.5 flex flex-col justify-between shrink-0">
-                            <span className="text-[7px] font-mono text-zinc-500 font-bold">{uSlot}</span>
+                          <div className="w-6 sm:w-7 h-6 sm:h-6.5 bg-[#13141b] rounded border border-zinc-800 p-0.5 flex flex-col justify-between shrink-0">
+                            <span className="text-[6px] font-mono text-zinc-500 font-bold">{uSlot}</span>
                             <div className="flex items-center gap-1">
                               {/* Power LED */}
                               <div
-                                className={`h-1.5 w-1.5 rounded-full ${
+                                className={`h-1 w-1 rounded-full ${
                                   isOnline
-                                    ? 'bg-emerald-400 shadow-[0_0_6px_#34d399] animate-pulse'
-                                    : 'bg-rose-500 shadow-[0_0_6px_#f43f5e] animate-ping'
+                                    ? 'bg-emerald-400 shadow-[0_0_5px_#34d399] animate-pulse'
+                                    : 'bg-rose-500 shadow-[0_0_5px_#f43f5e] animate-ping'
                                 }`}
                               />
                               {/* NIC Traffic LED */}
-                              <div className="h-1 w-1 rounded-full bg-amber-400 animate-nic-flicker" />
+                              <div className="h-0.5 w-0.5 rounded-full bg-amber-400 animate-nic-flicker" />
                             </div>
                           </div>
 
                           {/* Center: Dual Honeycomb Ventilation Grilles with Green Label Tape */}
-                          <div className="flex-1 h-8.5 sm:h-9 server-honeycomb-grill rounded border border-zinc-800 relative flex items-center justify-center px-1.5 overflow-hidden">
-                            <div className="server-tape-label px-2 py-0.5 text-[8.5px] sm:text-[9.5px] truncate">
+                          <div className="flex-1 h-6 sm:h-6.5 server-honeycomb-grill rounded border border-zinc-800 relative flex items-center justify-center px-1 overflow-hidden">
+                            <div className="server-tape-label px-1.5 py-0.2 text-[7.5px] sm:text-[8px] truncate">
                               {srv.serverName} - {srv.ipAddress || 'DHCP'}
                             </div>
                           </div>
@@ -1255,21 +1251,21 @@ function UniformServerRack({
                             {Array.from({ length: 4 }).map((_, i) => (
                               <div
                                 key={i}
-                                className="w-1.5 sm:w-2.5 h-8 sm:h-8.5 bg-[#171822] rounded-sm border border-zinc-700 flex flex-col justify-between py-0.5 px-0.5"
+                                className="w-1 sm:w-1.5 h-5.5 sm:h-6 bg-[#171822] rounded-sm border border-zinc-700 flex flex-col justify-between py-0.5 px-0.5"
                               >
                                 {/* Signature Blue Release Latch */}
-                                <div className="h-1.5 w-full server-caddy-latch-blue rounded-[1px]" />
+                                <div className="h-1 w-full server-caddy-latch-blue rounded-[1px]" />
                                 {/* Drive Activity LED */}
                                 <div className="h-0.5 w-full bg-zinc-600 rounded-[1px] animate-drive-flicker" />
-                                <div className="h-1 w-full bg-zinc-800 rounded-[1px]" />
+                                <div className="h-0.5 w-full bg-zinc-800 rounded-[1px]" />
                               </div>
                             ))}
                           </div>
 
                           {/* Right Heavy Brushed Silver Handle */}
-                          <div className="w-2 sm:w-2.5 h-8.5 sm:h-9 server-handle-silver rounded-sm shrink-0 flex flex-col justify-between py-1 px-0.5">
-                            <div className="h-1 w-full rounded-full bg-zinc-600" />
-                            <div className="h-1 w-full rounded-full bg-zinc-600" />
+                          <div className="w-1.5 sm:w-2 h-6 sm:h-6.5 server-handle-silver rounded-sm shrink-0 flex flex-col justify-between py-0.5 px-0.5">
+                            <div className="h-0.5 w-full rounded-full bg-zinc-600" />
+                            <div className="h-0.5 w-full rounded-full bg-zinc-600" />
                           </div>
                         </div>
 

@@ -357,9 +357,9 @@ export function Datacenter3DViewer({
       // Inward slight tilt towards center aisle
       rackGroup.rotation.y = rackNumber === '01' ? -0.05 : 0.05;
 
-      const rackWidth = 1.35;
-      const rackHeight = 3.6;
-      const rackDepth = 1.8;
+      const rackWidth = 1.15;
+      const rackHeight = 2.85;
+      const rackDepth = 1.5;
 
       // 1. Outer Frame (Steel matte charcoal enclosure)
       const frameMat = new THREE.MeshStandardMaterial({
@@ -497,26 +497,26 @@ export function Datacenter3DViewer({
 
       // 5. EIA 19" Vertical Rack Rail Uprights (with RU ticks)
       const railMat = new THREE.MeshStandardMaterial({ color: 0x3f3f46, metalness: 0.9, roughness: 0.3 });
-      const railGeo = new THREE.BoxGeometry(0.05, rackHeight - 0.4, 0.05);
+      const railGeo = new THREE.BoxGeometry(0.04, rackHeight - 0.4, 0.04);
 
       const railLeft = new THREE.Mesh(railGeo, railMat);
-      railLeft.position.set(-0.58, (rackHeight - 0.4) / 2 + 0.25, rackDepth / 2 - 0.15);
+      railLeft.position.set(-rackWidth / 2 + 0.08, (rackHeight - 0.4) / 2 + 0.25, rackDepth / 2 - 0.15);
       rackGroup.add(railLeft);
 
       const railRight = new THREE.Mesh(railGeo, railMat);
-      railRight.position.set(0.58, (rackHeight - 0.4) / 2 + 0.25, rackDepth / 2 - 0.15);
+      railRight.position.set(rackWidth / 2 - 0.08, (rackHeight - 0.4) / 2 + 0.25, rackDepth / 2 - 0.15);
       rackGroup.add(railRight);
 
       // 6. 7 Server Blades Mounted Inside
-      const serverStartY = 0.42;
-      const serverSpacing = 0.44;
+      const serverStartY = 0.35;
+      const serverSpacing = 0.34;
 
       rackServers.forEach((srv, idx) => {
         const isOnline = srv.status === 'ONLINE' || srv.online === true;
         const srvY = serverStartY + idx * serverSpacing;
 
         // Server Blade Chassis Box
-        const bladeGeo = new THREE.BoxGeometry(1.12, 0.36, 1.45);
+        const bladeGeo = new THREE.BoxGeometry(0.96, 0.24, 1.25);
 
         // Faceplate material with custom dynamic canvas texture
         const faceTex = createServerFaceplateTexture(srv, isOnline, selectedServer?.id === srv.id);
@@ -602,7 +602,7 @@ export function Datacenter3DViewer({
         metalness: 0.9,
       });
       const supremaMesh = new THREE.Mesh(supremaGeo, supremaMat);
-      supremaMesh.position.set(doorWidth * 0.82, 2.1, 0.025);
+      supremaMesh.position.set(doorWidth * 0.82, doorHeight * 0.58, 0.025);
 
       // Glowing Suprema Fingerprint Scanner Sensor (Green/Cyan)
       const fingerSensorGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.01, 16);
