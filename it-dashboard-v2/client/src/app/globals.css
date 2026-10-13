@@ -1,0 +1,488 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 215 25% 93%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 215 20% 94%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 215 25% 90%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+    --card: 224 71% 7%;
+    --card-foreground: 213 31% 91%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 222 47% 14%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 223 47% 11%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+    --ring: 224 76% 48%;
+  }
+}
+
+body {
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Smooth glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* =========================================================================
+   SweetAlert2 Premium Design System (100% Theme & Button Polish)
+   ========================================================================= */
+
+.swal2-container {
+  z-index: 99999 !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.swal2-popup {
+  border-radius: 1.5rem !important;
+  padding: 1.75rem 1.5rem !important;
+  font-family: inherit !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.08) !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  max-width: 26rem !important;
+  width: 90% !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+}
+
+.dark .swal2-popup {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(51, 65, 85, 0.7) !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+}
+
+.swal2-title {
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  color: #0f172a !important;
+  margin: 0.75rem 0 0.35rem 0 !important;
+  padding: 0 !important;
+}
+
+.dark .swal2-title {
+  color: #f8fafc !important;
+}
+
+.swal2-html-container {
+  font-size: 0.875rem !important;
+  color: #64748b !important;
+  line-height: 1.5 !important;
+  margin: 0.25rem 0 1.25rem 0 !important;
+  padding: 0 !important;
+}
+
+.dark .swal2-html-container {
+  color: #94a3b8 !important;
+}
+
+/* Custom Icon sizing */
+.swal2-icon {
+  margin: 0.25rem auto 0.75rem auto !important;
+  transform: scale(0.85) !important;
+  border-width: 3px !important;
+}
+
+/* Actions & Button container */
+.swal2-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.75rem !important;
+  margin: 1rem 0 0 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+/* Cancel Button */
+.swal2-cancel {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.625rem 1.25rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 700 !important;
+  border-radius: 0.75rem !important;
+  background-color: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.15s ease-in-out !important;
+  cursor: pointer !important;
+  min-width: 6.5rem !important;
+}
+
+.swal2-cancel:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  transform: translateY(-1px) !important;
+}
+
+.dark .swal2-cancel {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+  border: 1px solid #334155 !important;
+}
+
+.dark .swal2-cancel:hover {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+}
+
+/* Confirm Button - Guaranteed Solid High-Contrast Styling */
+.swal2-confirm {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.625rem 1.4rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 800 !important;
+  border-radius: 0.75rem !important;
+  background: #e11d48 !important;
+  background-image: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px 0 rgba(225, 29, 72, 0.45) !important;
+  transition: all 0.15s ease-in-out !important;
+  cursor: pointer !important;
+  min-width: 8rem !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+}
+
+.swal2-confirm:hover {
+  background-image: linear-gradient(135deg, #fb7185 0%, #f43f5e 100%) !important;
+  box-shadow: 0 6px 20px 0 rgba(225, 29, 72, 0.55) !important;
+  transform: translateY(-1px) !important;
+}
+
+.swal2-confirm:active,
+.swal2-cancel:active {
+  transform: scale(0.97) !important;
+}
+
+/* ==========================================================================
+   Animated Sign Out / Log Out Button Animations (Video Reference)
+   ========================================================================== */
+@keyframes walkBob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes legStrideLeft {
+  0%, 100% {
+    transform: rotate(20deg);
+  }
+  50% {
+    transform: rotate(-22deg);
+  }
+}
+
+@keyframes legStrideRight {
+  0%, 100% {
+    transform: rotate(-22deg);
+  }
+  50% {
+    transform: rotate(20deg);
+  }
+}
+
+@keyframes armSwingLeft {
+  0%, 100% {
+    transform: rotate(-25deg);
+  }
+  50% {
+    transform: rotate(28deg);
+  }
+}
+
+@keyframes armSwingRight {
+  0%, 100% {
+    transform: rotate(28deg);
+  }
+  50% {
+    transform: rotate(-25deg);
+  }
+}
+
+@keyframes doorLightGlow {
+  0%, 100% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.9));
+  }
+}
+
+.animate-walk-bob {
+  animation: walkBob 0.45s ease-in-out infinite;
+}
+
+.animate-leg-left {
+  transform-origin: 10px 14px;
+  animation: legStrideLeft 0.45s ease-in-out infinite;
+}
+
+.animate-leg-right {
+  transform-origin: 13px 14px;
+  animation: legStrideRight 0.45s ease-in-out infinite;
+}
+
+.animate-arm-left {
+  transform-origin: 9px 8px;
+  animation: armSwingLeft 0.45s ease-in-out infinite;
+}
+
+.animate-arm-right {
+  transform-origin: 14px 8px;
+  animation: armSwingRight 0.45s ease-in-out infinite;
+}
+
+.animate-door-light {
+  animation: doorLightGlow 1.5s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Falling Character to Bottom of Screen & Door Slam (User Request)
+   ========================================================================== */
+@keyframes characterGravityFall {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  12% {
+    /* Slip / stumble hop upwards first */
+    transform: translate(14px, -22px) rotate(35deg) scale(1.1);
+    opacity: 1;
+  }
+  28% {
+    transform: translate(25px, 60px) rotate(120deg) scale(1.05);
+    opacity: 1;
+  }
+  55% {
+    transform: translate(38px, 320px) rotate(340deg) scale(0.96);
+    opacity: 0.95;
+  }
+  80% {
+    transform: translate(46px, 80vh) rotate(580deg) scale(0.85);
+    opacity: 0.9;
+  }
+  100% {
+    /* Plunges completely past the bottom of the website viewport */
+    transform: translate(52px, 120vh) rotate(780deg) scale(0.65);
+    opacity: 0;
+  }
+}
+
+@keyframes armFlailLeft {
+  0%, 100% {
+    transform: rotate(-45deg);
+  }
+  50% {
+    transform: rotate(50deg);
+  }
+}
+
+@keyframes armFlailRight {
+  0%, 100% {
+    transform: rotate(50deg);
+  }
+  50% {
+    transform: rotate(-45deg);
+  }
+}
+
+@keyframes legFlailLeft {
+  0%, 100% {
+    transform: rotate(50deg);
+  }
+  50% {
+    transform: rotate(-50deg);
+  }
+}
+
+@keyframes legFlailRight {
+  0%, 100% {
+    transform: rotate(-50deg);
+  }
+  50% {
+    transform: rotate(50deg);
+  }
+}
+
+@keyframes doorSlamShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-4px);
+  }
+  40%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes bangPop {
+  0% {
+    transform: scale(0.3) rotate(-15deg);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(1.3) rotate(5deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.7) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+.animate-gravity-fall {
+  animation: characterGravityFall 0.95s cubic-bezier(0.5, 0.05, 0.75, 0.15) forwards;
+}
+
+.animate-arm-flail-left {
+  transform-origin: 9px 8px;
+  animation: armFlailLeft 0.12s ease-in-out infinite;
+}
+
+.animate-arm-flail-right {
+  transform-origin: 14px 8px;
+  animation: armFlailRight 0.12s ease-in-out infinite;
+}
+
+.animate-leg-flail-left {
+  transform-origin: 10px 14px;
+  animation: legFlailLeft 0.12s ease-in-out infinite;
+}
+
+.animate-leg-flail-right {
+  transform-origin: 13px 14px;
+  animation: legFlailRight 0.12s ease-in-out infinite;
+}
+
+.animate-door-slam {
+  animation: doorSlamShake 0.35s ease-in-out;
+}
+
+.animate-bang {
+  animation: bangPop 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* =========================================================================
+   Realistic Datacenter Server Rack Simulation Styles
+   ========================================================================= */
+
+.server-honeycomb-grill {
+  background-color: #0d0e12;
+  background-image: 
+    radial-gradient(#1e222d 15%, transparent 16%),
+    radial-gradient(#1e222d 15%, transparent 16%);
+  background-size: 6px 6px;
+  background-position: 0 0, 3px 3px;
+}
+
+.server-tape-label {
+  background: linear-gradient(180deg, #93c5b5 0%, #76ad9b 60%, #649685 100%);
+  color: #111e17;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-weight: 800;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.05em;
+  border-radius: 2px;
+}
+
+.server-handle-silver {
+  background: linear-gradient(90deg, #9ca3af 0%, #f3f4f6 35%, #e5e7eb 65%, #6b7280 100%);
+  box-shadow: inset 1px 0 1px rgba(255, 255, 255, 0.8), inset -1px 0 1px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.server-caddy-latch-blue {
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 60%, #0369a1 100%);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.server-caddy-latch-red {
+  background: linear-gradient(180deg, #f87171 0%, #dc2626 60%, #991b1b 100%);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.server-steel-rail {
+  background: linear-gradient(180deg, #4b5563 0%, #9ca3af 40%, #e5e7eb 50%, #6b7280 60%, #374151 100%);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.8);
+}
+
+@keyframes nicFlicker {
+  0%, 100% { opacity: 0.2; transform: scale(0.9); }
+  25% { opacity: 1; transform: scale(1.1); }
+  50% { opacity: 0.3; transform: scale(0.95); }
+  75% { opacity: 0.95; transform: scale(1.05); }
+}
+
+.animate-nic-flicker {
+  animation: nicFlicker 0.22s ease-in-out infinite;
+}
+
+@keyframes driveFlicker {
+  0%, 100% { opacity: 0.15; }
+  35% { opacity: 0.9; }
+  45% { opacity: 0.15; }
+  80% { opacity: 0.85; }
+}
+
+.animate-drive-flicker {
+  animation: driveFlicker 0.45s ease-in-out infinite;
+}
+
+
+
+

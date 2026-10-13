@@ -1,0 +1,23 @@
+{
+  "name": "it-dashboard-v2",
+  "version": "2.0.0",
+  "private": true,
+  "description": "IT Management & Operations Platform - Migrated to Next.js, Express.js, TypeScript, Tailwind CSS, Prisma (PostgreSQL)",
+  "scripts": {
+    "dev": "concurrently -k -p \"[{name}]\" -n \"SERVER,CLIENT\" -c \"cyan.bold,green.bold\" \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "build:server": "npm --prefix server run build",
+    "build:client": "npm --prefix client run build",
+    "build": "npm run build:server && npm run build:client",
+    "start:server": "npm --prefix server start",
+    "start:client": "npm --prefix client start",
+    "prisma:generate": "npm --prefix server run prisma:generate",
+    "prisma:migrate": "npm --prefix server run prisma:migrate",
+    "prisma:studio": "npm --prefix server run prisma:studio",
+    "seed": "npm --prefix server run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

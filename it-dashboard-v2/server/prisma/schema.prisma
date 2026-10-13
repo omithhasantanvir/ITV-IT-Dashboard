@@ -1,0 +1,305 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  SUPER_ADMIN
+  IT_ADMIN
+  IT_SUPPORT
+  VIEWER
+}
+
+enum ITStatus {
+  AVAILABLE
+  BUSY
+  AWAY
+  OFFLINE
+}
+
+enum ComputerStatus {
+  AVAILABLE
+  ASSIGNED
+  REPAIR
+  MAINTENANCE
+  RETIRED
+  LOST
+  DISPOSED
+}
+
+enum ComputerCondition {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+}
+
+enum ExtensionStatus {
+  AVAILABLE
+  ASSIGNED
+  DISABLED
+  RESERVED
+}
+
+enum SSDStatus {
+  AVAILABLE
+  INSTALLED
+  SPARE
+  FAULTY
+  WARRANTY
+  DISPOSED
+}
+
+enum ServerStatus {
+  ONLINE
+  OFFLINE
+  WARNING
+  MAINTENANCE
+  UNKNOWN
+}
+
+enum SlipStatus {
+  ISSUED
+  PRINTED
+  DOWNLOADED
+}
+
+enum ShiftType {
+  MORNING
+  EVENING
+  NIGHT
+  GENERAL
+  ON_CALL
+  WEEKEND_DUTY
+}
+
+enum RosterStatus {
+  SCHEDULED
+  ON_DUTY
+  COMPLETED
+  SWAPPED
+  ABSENT
+  LEAVE
+}
+
+model User {
+  id                  String       @id @default(uuid())
+  employeeId          String       @unique
+  name                String
+  username            String       @unique
+  password            String
+  email               String       @unique
+  department          String?
+  designation         String?
+  extensionNumber     String?
+  phone               String?
+  profilePhoto        String?      @default("")
+  joiningDate         DateTime?
+  leavingDate         DateTime?
+  employmentStatus    String       @default("Active")
+  role                Role         @default(VIEWER)
+  isITTeam            Boolean      @default(false)
+  itStatus            ITStatus     @default(AVAILABLE)
+  reportingManager    String?
+  officeLocation      String?
+  previousDepartment  String?
+  previousDesignation String?
+  previousComputer    String?
+  previousExtension   String?
+  remarks             String?
+  customPermissions   String?      @default("")
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  computers           Computer[]
+  extensions          Extension[]
+  userSlips           UserSlip[]
+  rosters             DutyRoster[]
+
+  @@index([employeeId])
+  @@index([username])
+  @@index([email])
+}
+
+model Computer {
+  id               String            @id @default(uuid())
+  assetId          String            @unique
+  barcode          String?           @unique
+  computerType     String            @default("Desktop")
+  brand            String?
+  model            String?
+  serialNumber     String?           @unique
+  processor        String?
+  ram              String?
+  storage          String?
+  ssd              String?
+  monitor          String?
+  operatingSystem  String?
+  macAddress       String?
+  ipAddress        String?
+  purchaseDate     DateTime?
+  warranty         String?
+  location         String?
+  department       String?
+  status           ComputerStatus    @default(AVAILABLE)
+  condition        ComputerCondition @default(GOOD)
+  remarks          String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  assignedUserId   String?
+  assignedUser     User?             @relation(fields: [assignedUserId], references: [id], onDelete: SetNull)
+  ssds             SSD[]
+  userSlips        UserSlip[]
+
+  @@index([assetId])
+  @@index([status])
+}
+
+model Extension {
+  id              String          @id @default(uuid())
+  extensionNumber String          @unique
+  holderName      String?
+  designation     String?
+  mobile          String?
+  department      String?
+  location        String?
+  deskRoom        String?
+  status          ExtensionStatus @default(AVAILABLE)
+  remarks         String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  employeeId         String?
+  customEmployeeId   String?
+  employee           User?           @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+
+  @@index([extensionNumber])
+  @@index([status])
+}
+
+model SSD {
+  id                 String     @id @default(uuid())
+  ssdId              String     @unique
+  serialNumber       String     @unique
+  brand              String?
+  model              String?
+  capacity           String?
+  interface          String?
+  health             String?
+  purchaseDate       DateTime?
+  warranty           String?
+  location           String?
+  status             SSDStatus  @default(AVAILABLE)
+  remarks            String?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  assignedComputerId String?
+  assignedComputer   Computer?  @relation(fields: [assignedComputerId], references: [id], onDelete: SetNull)
+
+  @@index([ssdId])
+}
+
+model Server {
+  id                 String       @id @default(uuid())
+  serverName         String       @unique
+  hostname           String?
+  ipAddress          String?
+  serverType         String?
+  operatingSystem    String?
+  location           String?
+  cpu                String?
+  ram                String?
+  diskUsage          String?
+  uptime             String?
+  lastChecked        DateTime?
+  status             ServerStatus @default(UNKNOWN)
+  purpose            String?
+  administrator      String?
+  remarks            String?
+  monitoringInterval String       @default("1m")
+  port               Int          @default(80)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  @@index([serverName])
+  @@index([status])
+}
+
+model UserSlip {
+  id              String     @id @default(uuid())
+  slipNumber      String     @unique
+  department      String?
+  designation     String?
+  extensionNumber String?
+  joiningDate     DateTime?
+  accessories     String[]   @default([])
+  issuedBy        String?
+  receivedBy      String?
+  issueDate       DateTime   @default(now())
+  status          SlipStatus @default(ISSUED)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  employeeId      String?
+  employee        User?      @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  computerId      String?
+  computer        Computer?  @relation(fields: [computerId], references: [id], onDelete: SetNull)
+
+  @@index([slipNumber])
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  user      String?
+  action    String?
+  module    String?
+  recordId  String?
+  ipAddress String?
+  oldData   Json?
+  newData   Json?
+  timestamp DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@index([module])
+  @@index([createdAt])
+}
+
+model Settings {
+  id                 String   @id @default("default-settings")
+  companyName        String   @default("IT Management & Asset Control System")
+  subtitle           String   @default("Internal IT Operations Dashboard")
+  monitoringInterval String   @default("1m")
+  allowLANAccess     Boolean  @default(true)
+  rolePermissions    String?  @default("{}")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model DutyRoster {
+  id          String       @id @default(uuid())
+  date        DateTime
+  shift       ShiftType    @default(GENERAL)
+  startTime   String?      @default("09:00 AM")
+  endTime     String?      @default("06:00 PM")
+  location    String?      @default("HQ Floor 4 / Server Room")
+  tasks       String?
+  status      RosterStatus @default(SCHEDULED)
+  isEmergency Boolean      @default(false)
+  notes       String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  employeeId  String?
+  employee    User?        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([date])
+  @@index([shift])
+  @@index([status])
+  @@index([employeeId])
+}

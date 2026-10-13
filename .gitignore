@@ -1,6 +1,37 @@
-node_modules
-backend/.env
-Client/node_modules
-Client/dist
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment Variables & Secrets
+.env
+**/.env
+.env.local
+**/.env.local
+.env.*.local
+**/.env.*.local
+
+# Next.js & Build Outputs
+.next/
+**/.next/
+dist/
+**/dist/
+build/
+**/build/
+out/
+**/out/
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# Logs & Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Old Project Artifacts
 backend/uploads/*
 _out.txt
