@@ -702,14 +702,14 @@ export default function EmployeesPage() {
                 <th className="p-4">Status & Category</th>
                 <th className="p-4">Duty Status</th>
                 <th className="p-4">Service Timeline</th>
-                <th className="p-4">PABX & Hardware</th>
+                {activeTab !== 'EX' && <th className="p-4">PABX & Hardware</th>}
                 <th className="p-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="p-12 text-center text-muted-foreground">
+                  <td colSpan={activeTab === 'EX' ? 6 : 7} className="p-12 text-center text-muted-foreground">
                     <div className="inline-flex items-center gap-2 text-xs">
                       <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                       <span>Loading IT employee records...</span>
@@ -718,7 +718,7 @@ export default function EmployeesPage() {
                 </tr>
               ) : displayedEmployees.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-12 text-center">
+                  <td colSpan={activeTab === 'EX' ? 6 : 7} className="p-12 text-center">
                     <div className="max-w-xs mx-auto space-y-3">
                       <div className="h-12 w-12 rounded-2xl bg-muted/60 text-muted-foreground mx-auto flex items-center justify-center">
                         <Users className="h-6 w-6" />
@@ -881,33 +881,35 @@ export default function EmployeesPage() {
                       </td>
 
                       {/* Hardware & Extensions */}
-                      <td className="p-4">
-                        <div className="space-y-1">
-                          {emp.extensionNumber ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
-                              <PhoneCall className="h-2.5 w-2.5" />
-                              <span>Ext {emp.extensionNumber}</span>
-                            </span>
-                          ) : (
-                            <span className="text-[10px] text-muted-foreground">No Extension</span>
-                          )}
-
-                          <div>
-                            {emp.computers && emp.computers.length > 0 ? (
-                              emp.computers.map((c: any) => (
-                                <span
-                                  key={c.id || c.assetId}
-                                  className="inline-block text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground mr-1"
-                                >
-                                  {c.assetId}
-                                </span>
-                              ))
+                      {activeTab !== 'EX' && (
+                        <td className="p-4">
+                          <div className="space-y-1">
+                            {emp.extensionNumber ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+                                <PhoneCall className="h-2.5 w-2.5" />
+                                <span>Ext {emp.extensionNumber}</span>
+                              </span>
                             ) : (
-                              <p className="text-[10px] text-muted-foreground">0 Workstations</p>
+                              <span className="text-[10px] text-muted-foreground">No Extension</span>
                             )}
+
+                            <div>
+                              {emp.computers && emp.computers.length > 0 ? (
+                                emp.computers.map((c: any) => (
+                                  <span
+                                    key={c.id || c.assetId}
+                                    className="inline-block text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground mr-1"
+                                  >
+                                    {c.assetId}
+                                  </span>
+                                ))
+                              ) : (
+                                <p className="text-[10px] text-muted-foreground">0 Workstations</p>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
+                      )}
 
                       {/* Actions */}
                       <td className="p-4 text-right">
@@ -921,8 +923,8 @@ export default function EmployeesPage() {
                             <Eye className="h-4 w-4" />
                           </button>
 
-                          {/* Super Admin Reset Password Button */}
-                          {isSuperAdmin && (
+                          {/* Super Admin Reset Password Button - only for active/running employees */}
+                          {isSuperAdmin && isRunning && (
                             <button
                               onClick={() => {
                                 setAdminResetTarget(emp);

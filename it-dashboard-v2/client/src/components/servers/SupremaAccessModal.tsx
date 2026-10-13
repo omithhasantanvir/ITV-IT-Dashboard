@@ -175,7 +175,7 @@ export function SupremaAccessModal({
       }
       // 3. Match numeric digits against existing employee numeric IDs (minimum 4 digits to prevent random collision)
       else if (cleanDigits && cleanDigits.length >= 4) {
-        for (const emp of employeeMap.values()) {
+        for (const emp of Array.from(employeeMap.values())) {
           const empDigits = emp.employeeId.replace(/\D/g, '');
           if (empDigits === cleanDigits) {
             matchedEmployee = emp;
