@@ -1380,7 +1380,7 @@ export default function ComputersPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-[11px] font-semibold text-foreground block mb-1">Brand</label>
                     <select
@@ -1411,7 +1411,9 @@ export default function ComputersPage() {
                       className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-indigo-500/40"
                     />
                   </div>
+                </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-[11px] font-semibold text-foreground block mb-1">Capacity</label>
                     <select
@@ -1428,9 +1430,7 @@ export default function ComputersPage() {
                       <option value="4TB">4 TB</option>
                     </select>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-[11px] font-semibold text-foreground block mb-1">Interface Type</label>
                     <select
@@ -1442,20 +1442,6 @@ export default function ComputersPage() {
                       <option value="M.2 NVMe PCIe 3.0">M.2 NVMe PCIe 3.0</option>
                       <option value="SATA III 2.5-inch">SATA III 2.5-inch</option>
                       <option value="External USB-C SSD">External USB-C SSD</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="text-[11px] font-semibold text-foreground block mb-1">Drive Health</label>
-                    <select
-                      value={ssdForm.health}
-                      onChange={(e) => setSsdForm({ ...ssdForm, health: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-indigo-500/40"
-                    >
-                      <option value="100% Healthy">100% Healthy</option>
-                      <option value="95% Normal">95% Normal</option>
-                      <option value="80% Warning">80% Warning</option>
-                      <option value="Faulty">Faulty / Degraded</option>
                     </select>
                   </div>
                 </div>
