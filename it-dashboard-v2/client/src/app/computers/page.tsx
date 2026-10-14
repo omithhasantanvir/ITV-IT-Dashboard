@@ -22,6 +22,7 @@ import {
   Monitor,
   Sparkles,
   Wifi,
+  ChevronDown,
 } from 'lucide-react';
 import api, { getErrorMessage } from '@/lib/api';
 import { AccessGuard } from '@/components/AccessGuard';
@@ -184,6 +185,43 @@ export default function ComputersPage() {
   });
 
   const [submitting, setSubmitting] = useState(false);
+
+  // SSD computer search state
+  const [allComputers, setAllComputers] = useState<ComputerItem[]>([]);
+  const [pcSearchQuery, setPcSearchQuery] = useState('');
+  const [isPcDropdownOpen, setIsPcDropdownOpen] = useState(false);
+
+  const computersPool = allComputers.length > 0 ? allComputers : computers;
+
+  const selectedComputerForSsd = useMemo(() => {
+    if (!ssdForm.assignedComputerId) return null;
+    return computersPool.find((c) => c.id === ssdForm.assignedComputerId) || null;
+  }, [computersPool, ssdForm.assignedComputerId]);
+
+  const filteredComputersForSsd = useMemo(() => {
+    if (!pcSearchQuery.trim()) return computersPool;
+    const q = pcSearchQuery.toLowerCase().trim();
+    return computersPool.filter((c) => {
+      const hostName = (c.assetId || '').toLowerCase();
+      const brand = (c.brand || '').toLowerCase();
+      const model = (c.model || '').toLowerCase();
+      const assigned = (c.assignedTo || c.assignedUser?.name || '').toLowerCase();
+      const dept = (c.department || c.assignedUser?.department || '').toLowerCase();
+      const location = (c.location || '').toLowerCase();
+      const serial = (c.serialNumber || '').toLowerCase();
+      const empId = (c.assignedUser?.employeeId || '').toLowerCase();
+      return (
+        hostName.includes(q) ||
+        brand.includes(q) ||
+        model.includes(q) ||
+        assigned.includes(q) ||
+        dept.includes(q) ||
+        location.includes(q) ||
+        serial.includes(q) ||
+        empId.includes(q)
+      );
+    });
+  }, [computersPool, pcSearchQuery]);
 
   // Fetch computers
   const fetchComputers = async () => {
@@ -359,6 +397,14 @@ export default function ComputersPage() {
 
   // Handle open SSD Modal
   const handleOpenSsdModal = (ssd?: SSDItem, preselectedCompId?: string) => {
+    setPcSearchQuery('');
+    setIsPcDropdownOpen(false);
+    api.get('/api/computers')
+      .then((res) => {
+        if (res.data?.data) setAllComputers(res.data.data);
+      })
+      .catch((err) => console.error('fetchComputers for SSD modal error:', err));
+
     if (ssd) {
       setEditingSsd(ssd);
       setSsdForm({
@@ -1415,30 +1461,188 @@ export default function ComputersPage() {
                 </div>
 
                 {/* PC Linking */}
-                <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/80 space-y-2">
-                  <label className="text-[11px] font-bold text-indigo-500 flex items-center gap-1.5 uppercase tracking-wider">
-                    <ComputerIcon className="h-3.5 w-3.5" />
-                    <span>Install In Computer / Link to PC</span>
-                  </label>
-                  <select
-                    value={ssdForm.assignedComputerId}
-                    onChange={(e) => {
-                      const compId = e.target.value;
-                      setSsdForm({
-                        ...ssdForm,
-                        assignedComputerId: compId,
-                        status: compId ? 'INSTALLED' : 'AVAILABLE',
-                      });
-                    }}
-                    className="w-full px-3 py-2 rounded-xl border border-border bg-card text-xs text-foreground focus:ring-2 focus:ring-indigo-500/40"
-                  >
-                    <option value="">-- Spare / Not Installed in any PC --</option>
-                    {computers.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.assetId} - {c.brand} {c.model} {c.assignedUser ? `(Assigned: ${c.assignedUser.name})` : '(Unassigned)'}
-                      </option>
-                    ))}
-                  </select>
+                <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/80 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold text-indigo-500 flex items-center gap-1.5 uppercase tracking-wider">
+                      <ComputerIcon className="h-3.5 w-3.5" />
+                      <span>Install In Computer / Link to PC</span>
+                    </label>
+                    {ssdForm.assignedComputerId && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSsdForm({
+                            ...ssdForm,
+                            assignedComputerId: '',
+                            status: 'AVAILABLE',
+                          });
+                          setPcSearchQuery('');
+                          setIsPcDropdownOpen(false);
+                        }}
+                        className="text-[11px] text-rose-500 hover:underline font-medium"
+                      >
+                        Clear / Set as Spare
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Selected Computer Card */}
+                  {selectedComputerForSsd && (
+                    <div className="flex items-center justify-between p-2.5 rounded-xl bg-card border border-indigo-500/30 shadow-xs">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="h-8 w-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                          <ComputerIcon className="h-4 w-4 text-indigo-500" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-bold text-xs text-foreground truncate">
+                              {selectedComputerForSsd.assetId}
+                            </span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground font-medium">
+                              {selectedComputerForSsd.brand} {selectedComputerForSsd.model}
+                            </span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 font-semibold">
+                              Linked
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-muted-foreground flex items-center gap-2 mt-0.5 truncate">
+                            <span>👤 {selectedComputerForSsd.assignedUser?.name || selectedComputerForSsd.assignedTo || 'Unassigned'}</span>
+                            {(selectedComputerForSsd.department || selectedComputerForSsd.assignedUser?.department) && (
+                              <span>• {selectedComputerForSsd.department || selectedComputerForSsd.assignedUser?.department}</span>
+                            )}
+                            {selectedComputerForSsd.location && <span>• 📍 {selectedComputerForSsd.location}</span>}
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSsdForm({
+                            ...ssdForm,
+                            assignedComputerId: '',
+                            status: 'AVAILABLE',
+                          });
+                          setPcSearchQuery('');
+                        }}
+                        title="Unlink PC"
+                        className="p-1 rounded-lg text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors ml-2 shrink-0"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Searchable PC Combobox */}
+                  <div className="relative">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                      <input
+                        type="text"
+                        value={pcSearchQuery}
+                        onChange={(e) => {
+                          setPcSearchQuery(e.target.value);
+                          setIsPcDropdownOpen(true);
+                        }}
+                        onFocus={() => setIsPcDropdownOpen(true)}
+                        placeholder={selectedComputerForSsd ? "Type to search and change PC..." : "Search PC by Host Name, Brand, Model, Employee..."}
+                        className="w-full pl-9 pr-8 py-2 rounded-xl border border-border bg-card text-xs text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-indigo-500/40"
+                      />
+                      {pcSearchQuery ? (
+                        <button
+                          type="button"
+                          onClick={() => setPcSearchQuery('')}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setIsPcDropdownOpen(!isPcDropdownOpen)}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground hover:text-foreground"
+                        >
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Dropdown Options */}
+                    {isPcDropdownOpen && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-40"
+                          onClick={() => setIsPcDropdownOpen(false)}
+                        />
+                        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 max-h-60 overflow-y-auto rounded-xl border border-border bg-popover shadow-xl p-1 divide-y divide-border/40">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSsdForm({
+                                ...ssdForm,
+                                assignedComputerId: '',
+                                status: 'AVAILABLE',
+                              });
+                              setPcSearchQuery('');
+                              setIsPcDropdownOpen(false);
+                            }}
+                            className={cn(
+                              "w-full text-left px-3 py-2 text-xs rounded-lg flex items-center justify-between transition-colors",
+                              !ssdForm.assignedComputerId ? "bg-indigo-500/10 text-indigo-500 font-semibold" : "hover:bg-muted text-foreground"
+                            )}
+                          >
+                            <span className="italic text-muted-foreground">-- Spare / Not Installed in any PC --</span>
+                            {!ssdForm.assignedComputerId && <CheckCircle2 className="h-3.5 w-3.5 text-indigo-500" />}
+                          </button>
+
+                          {filteredComputersForSsd.length === 0 ? (
+                            <div className="px-3 py-4 text-center text-xs text-muted-foreground">
+                              No computers match "{pcSearchQuery}"
+                            </div>
+                          ) : (
+                            filteredComputersForSsd.map((c) => {
+                              const isSelected = ssdForm.assignedComputerId === c.id;
+                              const assignedName = c.assignedUser?.name || c.assignedTo || 'Unassigned';
+                              return (
+                                <button
+                                  key={c.id}
+                                  type="button"
+                                  onClick={() => {
+                                    setSsdForm({
+                                      ...ssdForm,
+                                      assignedComputerId: c.id,
+                                      status: 'INSTALLED',
+                                      installedDate: ssdForm.installedDate || new Date().toISOString().split('T')[0],
+                                    });
+                                    setPcSearchQuery('');
+                                    setIsPcDropdownOpen(false);
+                                  }}
+                                  className={cn(
+                                    "w-full text-left px-3 py-2 text-xs rounded-lg flex items-center justify-between transition-colors",
+                                    isSelected ? "bg-indigo-500/10 text-indigo-500 font-semibold" : "hover:bg-muted text-foreground"
+                                  )}
+                                >
+                                  <div className="min-w-0 pr-2">
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="font-semibold text-foreground">{c.assetId}</span>
+                                      <span className="text-[10px] text-muted-foreground">({c.brand} {c.model})</span>
+                                    </div>
+                                    <div className="text-[10px] text-muted-foreground flex items-center gap-2 mt-0.5">
+                                      <span>👤 {assignedName}</span>
+                                      {(c.department || c.assignedUser?.department) && (
+                                        <span>• {c.department || c.assignedUser?.department}</span>
+                                      )}
+                                      {c.location && <span>• 📍 {c.location}</span>}
+                                    </div>
+                                  </div>
+                                  {isSelected && <CheckCircle2 className="h-4 w-4 text-indigo-500 shrink-0" />}
+                                </button>
+                              );
+                            })
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
                   <p className="text-[10px] text-muted-foreground">
                     Selecting a computer will automatically bind this SSD to the PC and mark it as "INSTALLED".
                   </p>
