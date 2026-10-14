@@ -136,6 +136,7 @@ model Computer {
   processor        String?
   ram              String?
   storage          String?
+  graphicsCard     String?
   ssd              String?
   monitor          String?
   operatingSystem  String?
@@ -147,7 +148,10 @@ model Computer {
   department       String?
   status           ComputerStatus    @default(AVAILABLE)
   condition        ComputerCondition @default(GOOD)
+  pcUsage          String?
+  internetAccess   String?
   remarks          String?
+  assignedTo       String?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 

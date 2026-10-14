@@ -21,6 +21,7 @@ import {
   Server,
   Monitor,
   Sparkles,
+  Wifi,
 } from 'lucide-react';
 import api, { getErrorMessage } from '@/lib/api';
 import { AccessGuard } from '@/components/AccessGuard';
@@ -51,6 +52,10 @@ interface ComputerItem {
   department?: string | null;
   status: string;
   condition: string;
+  graphicsCard?: string | null;
+  assignedTo?: string | null;
+  pcUsage?: string | null;
+  internetAccess?: string | null;
   remarks?: string | null;
   assignedUserId?: string | null;
   assignedUser?: {
@@ -131,7 +136,6 @@ export default function ComputersPage() {
   // Computer Form Data
   const [compForm, setCompForm] = useState({
     assetId: '',
-    barcode: '',
     computerType: 'Desktop',
     brand: '',
     model: '',
@@ -139,6 +143,7 @@ export default function ComputersPage() {
     processor: '',
     ram: '',
     storage: '',
+    graphicsCard: '',
     ssd: '',
     monitor: '',
     operatingSystem: 'Windows 11 Pro',
@@ -150,7 +155,10 @@ export default function ComputersPage() {
     condition: 'GOOD',
     purchaseDate: '',
     warranty: '',
+    pcUsage: 'Office Work, Video Editing',
+    internetAccess: 'Limited Access',
     remarks: '',
+    assignedTo: '',
     assignedUserId: '',
   });
 
@@ -242,7 +250,6 @@ export default function ComputersPage() {
       setEditingComp(comp);
       setCompForm({
         assetId: comp.assetId || '',
-        barcode: comp.barcode || '',
         computerType: comp.computerType || 'Desktop',
         brand: comp.brand || '',
         model: comp.model || '',
@@ -250,6 +257,7 @@ export default function ComputersPage() {
         processor: comp.processor || '',
         ram: comp.ram || '',
         storage: comp.storage || '',
+        graphicsCard: comp.graphicsCard || '',
         ssd: comp.ssd || '',
         monitor: comp.monitor || '',
         operatingSystem: comp.operatingSystem || 'Windows 11 Pro',
@@ -261,14 +269,16 @@ export default function ComputersPage() {
         condition: comp.condition || 'GOOD',
         purchaseDate: comp.purchaseDate ? comp.purchaseDate.split('T')[0] : '',
         warranty: comp.warranty || '',
+        pcUsage: comp.pcUsage || 'Office Work, Video Editing',
+        internetAccess: comp.internetAccess || 'Limited Access',
         remarks: comp.remarks || '',
+        assignedTo: comp.assignedTo || comp.assignedUser?.name || '',
         assignedUserId: comp.assignedUserId || '',
       });
     } else {
       setEditingComp(null);
       setCompForm({
-        assetId: `PC-${Date.now().toString().slice(-4)}`,
-        barcode: '',
+        assetId: `HOST-${Date.now().toString().slice(-4)}`,
         computerType: 'Desktop',
         brand: 'Dell',
         model: 'OptiPlex',
@@ -276,6 +286,7 @@ export default function ComputersPage() {
         processor: 'Intel Core i7',
         ram: '16GB DDR4',
         storage: '512GB NVMe SSD',
+        graphicsCard: '',
         ssd: '',
         monitor: '24" Full HD',
         operatingSystem: 'Windows 11 Pro',
@@ -287,7 +298,10 @@ export default function ComputersPage() {
         condition: 'GOOD',
         purchaseDate: new Date().toISOString().split('T')[0],
         warranty: '3 Years',
+        pcUsage: 'Office Work, Video Editing',
+        internetAccess: 'Limited Access',
         remarks: '',
+        assignedTo: '',
         assignedUserId: '',
       });
     }
@@ -298,7 +312,7 @@ export default function ComputersPage() {
   const handleSubmitComputer = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!compForm.assetId.trim()) {
-      showErrorAlert('Asset ID is required');
+      showErrorAlert('Host Name is required');
       return;
     }
 
@@ -557,7 +571,7 @@ export default function ComputersPage() {
                 <Search className="h-4 w-4 absolute left-3.5 top-2.5 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Search by Asset ID, brand, model, serial number, IP address..."
+                  placeholder="Search by Host Name, brand, model, graphics card, employee, serial number..."
                   value={compSearch}
                   onChange={(e) => setCompSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500"
@@ -599,7 +613,7 @@ export default function ComputersPage() {
                 <table className="w-full text-left text-xs">
                   <thead className="bg-muted/40 border-b border-border text-muted-foreground font-semibold">
                     <tr>
-                      <th className="p-3.5">Asset ID</th>
+                      <th className="p-3.5">Host Name</th>
                       <th className="p-3.5">Brand & Model</th>
                       <th className="p-3.5">Hardware Specs</th>
                       <th className="p-3.5">Assigned Employee</th>
@@ -658,6 +672,12 @@ export default function ComputersPage() {
                               <Cpu className="h-3 w-3 text-blue-500 shrink-0" />
                               <span>{comp.processor || 'CPU'} &bull; {comp.ram || 'RAM'}</span>
                             </div>
+                            {comp.graphicsCard && (
+                              <div className="flex items-center gap-1.5 text-[11px] text-purple-400 font-medium">
+                                <Sparkles className="h-3 w-3 text-purple-400 shrink-0" />
+                                <span>{comp.graphicsCard}</span>
+                              </div>
+                            )}
                             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                               <HardDrive className="h-3 w-3 text-indigo-400 shrink-0" />
                               <span>{comp.storage || 'Storage'}</span>
@@ -672,14 +692,14 @@ export default function ComputersPage() {
                           </td>
 
                           <td className="p-3.5">
-                            {comp.assignedUser ? (
+                            {comp.assignedTo || comp.assignedUser ? (
                               <div>
                                 <p className="font-semibold text-foreground flex items-center gap-1.5">
                                   <User className="h-3 w-3 text-primary" />
-                                  <span>{comp.assignedUser.name}</span>
+                                  <span>{comp.assignedTo || comp.assignedUser?.name}</span>
                                 </p>
                                 <p className="text-[10px] text-muted-foreground pl-4">
-                                  {comp.assignedUser.designation || comp.assignedUser.department || 'Staff'}
+                                  {comp.department || comp.assignedUser?.department || 'Staff'}
                                 </p>
                               </div>
                             ) : (
@@ -947,15 +967,15 @@ export default function ComputersPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <label className="text-[11px] font-semibold text-foreground block mb-1">
-                        Asset ID <span className="text-rose-500">*</span>
+                        Host Name <span className="text-rose-500">*</span>
                       </label>
                       <input
                         type="text"
                         required
                         value={compForm.assetId}
                         onChange={(e) => setCompForm({ ...compForm, assetId: e.target.value })}
-                        placeholder="e.g. PC-001"
-                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-blue-500/40"
+                        placeholder="e.g. ITV-WS-001"
+                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-blue-500/40 font-mono"
                       />
                     </div>
 
@@ -986,7 +1006,7 @@ export default function ComputersPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="text-[11px] font-semibold text-foreground block mb-1">Brand</label>
                       <input
@@ -1005,17 +1025,6 @@ export default function ComputersPage() {
                         value={compForm.model}
                         onChange={(e) => setCompForm({ ...compForm, model: e.target.value })}
                         placeholder="e.g. OptiPlex 7090"
-                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-blue-500/40"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-[11px] font-semibold text-foreground block mb-1">Barcode</label>
-                      <input
-                        type="text"
-                        value={compForm.barcode}
-                        onChange={(e) => setCompForm({ ...compForm, barcode: e.target.value })}
-                        placeholder="e.g. BC-10492"
                         className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-blue-500/40"
                       />
                     </div>
@@ -1063,7 +1072,18 @@ export default function ComputersPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="text-[11px] font-semibold text-foreground block mb-1">Graphics Card</label>
+                      <input
+                        type="text"
+                        value={compForm.graphicsCard}
+                        onChange={(e) => setCompForm({ ...compForm, graphicsCard: e.target.value })}
+                        placeholder="e.g. NVIDIA RTX 3060 12GB"
+                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-blue-500/40"
+                      />
+                    </div>
+
                     <div>
                       <label className="text-[11px] font-semibold text-foreground block mb-1">Monitor / Display</label>
                       <input
@@ -1096,27 +1116,14 @@ export default function ComputersPage() {
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[11px] font-semibold text-foreground block mb-1">Assigned Employee</label>
-                      <select
-                        value={compForm.assignedUserId}
-                        onChange={(e) => {
-                          const uid = e.target.value;
-                          const selectedEmp = employees.find((em) => em.id === uid);
-                          setCompForm({
-                            ...compForm,
-                            assignedUserId: uid,
-                            department: selectedEmp?.department || compForm.department,
-                          });
-                        }}
+                      <label className="text-[11px] font-semibold text-foreground block mb-1">Assign Employee</label>
+                      <input
+                        type="text"
+                        value={compForm.assignedTo}
+                        onChange={(e) => setCompForm({ ...compForm, assignedTo: e.target.value })}
+                        placeholder="Type employee name (e.g. Tanvir Ahmed)"
                         className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-blue-500/40"
-                      >
-                        <option value="">-- Unassigned (Stock / Pool) --</option>
-                        {employees.map((emp) => (
-                          <option key={emp.id} value={emp.id}>
-                            {emp.name} ({emp.designation || emp.department || emp.employeeId})
-                          </option>
-                        ))}
-                      </select>
+                      />
                     </div>
 
                     <div>
@@ -1167,62 +1174,55 @@ export default function ComputersPage() {
                   </div>
                 </div>
 
-                {/* 4. Status & Lifecycle */}
+                {/* 4. Usage & Network Policy */}
                 <div className="space-y-3 pt-2 border-t border-border/80">
-                  <h3 className="text-xs font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
-                    <ShieldCheck className="h-3.5 w-3.5" />
-                    <span>Status & Warranty</span>
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                      <label className="text-[11px] font-semibold text-foreground block mb-1">Status</label>
-                      <select
-                        value={compForm.status}
-                        onChange={(e) => setCompForm({ ...compForm, status: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-blue-500/40"
-                      >
-                        <option value="AVAILABLE">Available</option>
-                        <option value="ASSIGNED">Assigned</option>
-                        <option value="REPAIR">In Repair</option>
-                        <option value="MAINTENANCE">Maintenance</option>
-                        <option value="RETIRED">Retired</option>
-                      </select>
-                    </div>
+                  <div className="flex items-center gap-2 text-foreground font-bold text-sm">
+                    <Wifi className="h-4 w-4 text-indigo-500" />
+                    <span>Usage & Network Policy</span>
+                  </div>
 
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-[11px] font-semibold text-foreground block mb-1">Condition</label>
-                      <select
-                        value={compForm.condition}
-                        onChange={(e) => setCompForm({ ...compForm, condition: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-blue-500/40"
-                      >
-                        <option value="EXCELLENT">Excellent</option>
-                        <option value="GOOD">Good</option>
-                        <option value="FAIR">Fair</option>
-                        <option value="POOR">Poor</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-[11px] font-semibold text-foreground block mb-1">Warranty Period</label>
+                      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-1.5">
+                        PC USAGE <span className="text-rose-500">*</span>
+                      </label>
                       <input
                         type="text"
-                        value={compForm.warranty}
-                        onChange={(e) => setCompForm({ ...compForm, warranty: e.target.value })}
-                        placeholder="e.g. 3 Years (Valid till 2027)"
-                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-blue-500/40"
+                        value={compForm.pcUsage}
+                        onChange={(e) => setCompForm({ ...compForm, pcUsage: e.target.value })}
+                        placeholder="Office Work, Video Editing"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-border/80 bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/40 placeholder:text-muted-foreground/60"
                       />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-1.5">
+                        INTERNET ACCESS <span className="text-rose-500">*</span>
+                      </label>
+                      <select
+                        value={compForm.internetAccess}
+                        onChange={(e) => setCompForm({ ...compForm, internetAccess: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-blue-500/80 bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                      >
+                        <option value="Limited Access">Limited Access</option>
+                        <option value="Full Access">Full Access</option>
+                        <option value="No Internet">No Internet</option>
+                        <option value="Restricted Browsing">Restricted Browsing</option>
+                        <option value="VIP Access">VIP Access</option>
+                      </select>
                     </div>
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-semibold text-foreground block mb-1">Remarks / Internal Notes</label>
+                    <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-1.5">
+                      NOTE
+                    </label>
                     <textarea
-                      rows={2}
+                      rows={3}
                       value={compForm.remarks}
                       onChange={(e) => setCompForm({ ...compForm, remarks: e.target.value })}
-                      placeholder="Add any specific notes or allocation remarks..."
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-blue-500/40"
+                      placeholder="Special service or configuration notes..."
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-border/80 bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/40 placeholder:text-muted-foreground/60"
                     />
                   </div>
                 </div>

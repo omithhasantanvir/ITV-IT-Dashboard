@@ -23,6 +23,8 @@ export const getComputers = async (req: Request, res: Response) => {
     if (search && typeof search === 'string') {
       where.OR = [
         { assetId: { contains: search, mode: 'insensitive' } },
+        { assignedTo: { contains: search, mode: 'insensitive' } },
+        { graphicsCard: { contains: search, mode: 'insensitive' } },
         { barcode: { contains: search, mode: 'insensitive' } },
         { brand: { contains: search, mode: 'insensitive' } },
         { model: { contains: search, mode: 'insensitive' } },
@@ -90,6 +92,7 @@ export const createComputer = async (req: AuthRequest, res: Response) => {
       processor,
       ram,
       storage,
+      graphicsCard,
       ssd,
       monitor,
       operatingSystem,
@@ -101,39 +104,45 @@ export const createComputer = async (req: AuthRequest, res: Response) => {
       department,
       status = ComputerStatus.AVAILABLE,
       condition = ComputerCondition.GOOD,
+      pcUsage,
+      internetAccess,
       remarks,
+      assignedTo,
       assignedUserId,
     } = req.body;
 
-    if (!assetId) {
-      return res.status(400).json({ success: false, message: 'Asset ID is required.' });
+    if (!assetId || !assetId.trim()) {
+      return res.status(400).json({ success: false, message: 'Host Name is required.' });
     }
+
+    const cleanHostName = assetId.trim();
 
     const existing = await prisma.computer.findFirst({
       where: {
         OR: [
-          { assetId },
-          ...(serialNumber ? [{ serialNumber }] : []),
-          ...(barcode ? [{ barcode }] : []),
+          { assetId: cleanHostName },
+          ...(serialNumber && serialNumber.trim() ? [{ serialNumber: serialNumber.trim() }] : []),
+          ...(barcode && barcode.trim() ? [{ barcode: barcode.trim() }] : []),
         ],
       },
     });
 
     if (existing) {
-      return res.status(409).json({ success: false, message: 'Computer with this Asset ID, Barcode, or Serial Number already exists.' });
+      return res.status(409).json({ success: false, message: 'Computer with this Host Name or Serial Number already exists.' });
     }
 
     const computer = await prisma.computer.create({
       data: {
-        assetId,
-        barcode,
+        assetId: cleanHostName,
+        barcode: barcode && barcode.trim() ? barcode.trim() : null,
         computerType,
         brand,
         model,
-        serialNumber,
+        serialNumber: serialNumber && serialNumber.trim() ? serialNumber.trim() : null,
         processor,
         ram,
         storage,
+        graphicsCard: graphicsCard || null,
         ssd,
         monitor,
         operatingSystem,
@@ -143,9 +152,12 @@ export const createComputer = async (req: AuthRequest, res: Response) => {
         warranty,
         location,
         department,
-        status: assignedUserId ? ComputerStatus.ASSIGNED : (status as ComputerStatus),
+        status: (assignedUserId || (assignedTo && assignedTo.trim())) ? ComputerStatus.ASSIGNED : (status as ComputerStatus),
         condition: condition as ComputerCondition,
-        remarks,
+        pcUsage: pcUsage || null,
+        internetAccess: internetAccess || null,
+        remarks: remarks || null,
+        assignedTo: assignedTo && assignedTo.trim() ? assignedTo.trim() : null,
         assignedUserId: assignedUserId || null,
       },
       include: { assignedUser: true },
@@ -175,9 +187,22 @@ export const updateComputer = async (req: AuthRequest, res: Response) => {
 
     if (updateData.purchaseDate) {
       updateData.purchaseDate = new Date(updateData.purchaseDate);
+    } else if (updateData.purchaseDate === '' || updateData.purchaseDate === null) {
+      updateData.purchaseDate = null;
     }
     if (updateData.assignedUserId === '') {
       updateData.assignedUserId = null;
+    }
+    if (updateData.barcode === '') {
+      updateData.barcode = null;
+    }
+    if (updateData.serialNumber === '') {
+      updateData.serialNumber = null;
+    }
+    if (updateData.assignedTo && updateData.assignedTo.trim()) {
+      if (!updateData.status || updateData.status === 'AVAILABLE') {
+        updateData.status = ComputerStatus.ASSIGNED;
+      }
     }
 
     const updated = await prisma.computer.update({
