@@ -563,3 +563,23 @@ body {
 .animate-itv-border-glow {
   animation: itvBorderGlow 6s ease-in-out infinite;
 }
+
+@keyframes itvTicker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-itv-ticker {
+  animation: itvTicker 35s linear infinite;
+}
+
+@keyframes itvMeshGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-itv-mesh {
+  background-size: 200% 200%;
+  animation: itvMeshGradient 16s ease infinite;
+}
