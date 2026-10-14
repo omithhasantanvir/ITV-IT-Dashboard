@@ -483,6 +483,83 @@ body {
   animation: driveFlicker 0.45s ease-in-out infinite;
 }
 
+/* =========================================================================
+   Independent Television (ITV) Broadcast Portal Animations
+   ========================================================================= */
 
+@keyframes itvFloatSlow {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -40px) scale(1.08);
+  }
+  66% {
+    transform: translate(-25px, 25px) scale(0.95);
+  }
+}
 
+@keyframes itvFloatReverse {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(-35px, 30px) scale(1.05);
+  }
+  66% {
+    transform: translate(25px, -30px) scale(0.92);
+  }
+}
 
+@keyframes itvPulseLive {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(227, 30, 36, 0.7);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.08);
+    box-shadow: 0 0 0 8px rgba(227, 30, 36, 0);
+  }
+}
+
+@keyframes itvScanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(1000%);
+  }
+}
+
+@keyframes itvBorderGlow {
+  0%, 100% {
+    border-color: rgba(227, 30, 36, 0.45);
+    box-shadow: 0 0 40px -5px rgba(227, 30, 36, 0.25);
+  }
+  50% {
+    border-color: rgba(99, 102, 241, 0.45);
+    box-shadow: 0 0 45px -5px rgba(99, 102, 241, 0.25);
+  }
+}
+
+.animate-itv-float-1 {
+  animation: itvFloatSlow 14s ease-in-out infinite;
+}
+
+.animate-itv-float-2 {
+  animation: itvFloatReverse 18s ease-in-out infinite;
+}
+
+.animate-itv-pulse-live {
+  animation: itvPulseLive 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-itv-scanline {
+  animation: itvScanline 8s linear infinite;
+}
+
+.animate-itv-border-glow {
+  animation: itvBorderGlow 6s ease-in-out infinite;
+}
