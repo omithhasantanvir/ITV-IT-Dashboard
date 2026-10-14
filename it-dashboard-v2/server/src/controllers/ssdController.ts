@@ -102,23 +102,25 @@ export const createSSD = async (req: AuthRequest, res: Response) => {
       assignedComputerId,
     } = req.body;
 
-    if (!ssdId || !serialNumber) {
-      return res.status(400).json({ success: false, message: 'SSD ID and Serial Number are required.' });
+    const effectiveSsdId = (ssdId && ssdId.trim()) || `SSD-${Date.now().toString().slice(-6)}`;
+
+    if (!serialNumber) {
+      return res.status(400).json({ success: false, message: 'Serial Number is required.' });
     }
 
     const existing = await prisma.sSD.findFirst({
       where: {
-        OR: [{ ssdId }, { serialNumber }],
+        OR: [{ ssdId: effectiveSsdId }, { serialNumber }],
       },
     });
 
     if (existing) {
-      return res.status(409).json({ success: false, message: 'SSD with this ID or Serial Number already exists.' });
+      return res.status(409).json({ success: false, message: 'SSD with this Serial Number or ID already exists.' });
     }
 
     const ssd = await prisma.sSD.create({
       data: {
-        ssdId,
+        ssdId: effectiveSsdId,
         serialNumber,
         brand,
         model,

@@ -450,18 +450,22 @@ export default function ComputersPage() {
   // Submit SSD Form
   const handleSubmitSSD = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!ssdForm.ssdId.trim() || !ssdForm.serialNumber.trim()) {
-      showErrorAlert('SSD ID and Serial Number are required');
+    if (!ssdForm.serialNumber.trim()) {
+      showErrorAlert('Serial Number is required');
       return;
     }
 
     setSubmitting(true);
     try {
+      const payload = {
+        ...ssdForm,
+        ssdId: ssdForm.ssdId || `SSD-${Date.now().toString().slice(-6)}`,
+      };
       if (editingSsd) {
-        await api.put(`/api/ssds/${editingSsd.id}`, ssdForm);
+        await api.put(`/api/ssds/${editingSsd.id}`, payload);
         showSuccessAlert('SSD storage drive updated successfully!');
       } else {
-        await api.post('/api/ssds', ssdForm);
+        await api.post('/api/ssds', payload);
         showSuccessAlert('New SSD added to storage inventory!');
       }
       setIsSsdModalOpen(false);
@@ -1350,34 +1354,18 @@ export default function ComputersPage() {
 
               {/* Modal Form Body */}
               <form onSubmit={handleSubmitSSD} className="flex-1 overflow-y-auto p-6 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[11px] font-semibold text-foreground block mb-1">
-                      SSD ID / Asset Code <span className="text-rose-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={ssdForm.ssdId}
-                      onChange={(e) => setSsdForm({ ...ssdForm, ssdId: e.target.value })}
-                      placeholder="e.g. SSD-01"
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-indigo-500/40"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[11px] font-semibold text-foreground block mb-1">
-                      Serial Number <span className="text-rose-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={ssdForm.serialNumber}
-                      onChange={(e) => setSsdForm({ ...ssdForm, serialNumber: e.target.value })}
-                      placeholder="e.g. S4A9NX0M123456"
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-indigo-500/40 font-mono"
-                    />
-                  </div>
+                <div>
+                  <label className="text-[11px] font-semibold text-foreground block mb-1">
+                    Serial Number <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={ssdForm.serialNumber}
+                    onChange={(e) => setSsdForm({ ...ssdForm, serialNumber: e.target.value })}
+                    placeholder="e.g. S4A9NX0M123456"
+                    className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-indigo-500/40 font-mono"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
