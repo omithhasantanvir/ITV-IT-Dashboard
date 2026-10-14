@@ -187,24 +187,25 @@ export default function EmployeesPage() {
       }
     });
     const suggestedId = `EMP-${String(nextNum).padStart(4, '0')}`;
+    const isExInitial = activeTab === 'EX';
 
     setFormData({
-      employeeId: suggestedId,
+      employeeId: isExInitial ? '' : suggestedId,
       name: '',
       username: '',
       email: '',
       password: '',
       profilePhoto: '',
       department: 'Information Technology',
-      designation: 'IT Support Engineer',
+      designation: isExInitial ? '' : 'IT Support Engineer',
       extensionNumber: '',
       phone: '',
       role: 'IT_SUPPORT',
-      itStatus: 'AVAILABLE',
-      officeLocation: 'HQ Floor 4',
-      employmentStatus: activeTab === 'EX' ? 'Former' : 'Active',
-      joiningDate: new Date().toISOString().split('T')[0],
-      leavingDate: activeTab === 'EX' ? new Date().toISOString().split('T')[0] : '',
+      itStatus: isExInitial ? 'OFFLINE' : 'AVAILABLE',
+      officeLocation: isExInitial ? '' : 'HQ Floor 4',
+      employmentStatus: isExInitial ? 'Former' : 'Active',
+      joiningDate: isExInitial ? '' : new Date().toISOString().split('T')[0],
+      leavingDate: '',
       remarks: '',
     });
     setIsModalOpen(true);
@@ -333,24 +334,32 @@ export default function EmployeesPage() {
     e.preventDefault();
     setFormError(null);
 
-    if (!formData.name.trim()) {
-      setFormError('Please enter full name.');
-      return;
-    }
-    if (!formData.employeeId.trim()) {
-      setFormError('Please enter employee ID.');
-      return;
+    const isEx = formData.employmentStatus !== 'Active';
+
+    // Only Active Running IT Employees require Name & Employee ID
+    if (!isEx) {
+      if (!formData.name.trim()) {
+        setFormError('Please enter full name.');
+        return;
+      }
+      if (!formData.employeeId.trim()) {
+        setFormError('Please enter employee ID.');
+        return;
+      }
     }
 
     setSubmitting(true);
     try {
-      const isEx = formData.employmentStatus !== 'Active';
+      const cleanName = formData.name.trim() || (isEx ? 'Former IT Member' : '');
+      const cleanEmpId = formData.employeeId.trim() || (isEx ? `EX-${Math.floor(10000 + Math.random() * 90000)}` : '');
 
       if (editingEmployee) {
         // Update existing employee
         const payload: any = {
           ...formData,
-          joiningDate: formData.joiningDate || undefined,
+          name: cleanName || editingEmployee.name,
+          employeeId: cleanEmpId || editingEmployee.employeeId,
+          joiningDate: formData.joiningDate || null,
           leavingDate: isEx && formData.leavingDate ? formData.leavingDate : null,
         };
         if (isEx) {
@@ -367,7 +376,7 @@ export default function EmployeesPage() {
         if (res.data?.success) {
           setIsModalOpen(false);
           setEditingEmployee(null);
-          setSuccessToast(`Employee "${formData.name}" updated successfully!`);
+          setSuccessToast(`Employee "${cleanName}" updated successfully!`);
           setTimeout(() => setSuccessToast(null), 4000);
           fetchEmployees();
         } else {
@@ -377,14 +386,16 @@ export default function EmployeesPage() {
         // Create new employee
         const payload: any = {
           ...formData,
+          name: cleanName,
+          employeeId: cleanEmpId,
           isITTeam: true,
           department: formData.department || 'Information Technology',
-          joiningDate: formData.joiningDate || undefined,
+          joiningDate: formData.joiningDate || null,
           leavingDate: isEx && formData.leavingDate ? formData.leavingDate : null,
         };
 
         if (isEx) {
-          const safeSlug = (payload.name || 'ex.user').toLowerCase().replace(/[^a-z0-9]/g, '.');
+          const safeSlug = (cleanName || 'ex.user').toLowerCase().replace(/[^a-z0-9]/g, '.');
           const randomSuffix = Math.floor(1000 + Math.random() * 9000);
           if (!payload.username || payload.username.trim() === '') {
             payload.username = `${safeSlug}.${randomSuffix}`;
@@ -406,8 +417,8 @@ export default function EmployeesPage() {
           setIsModalOpen(false);
           setSuccessToast(
             formData.employmentStatus === 'Active'
-              ? `Running IT Employee "${formData.name}" added successfully!`
-              : `EX IT Employee record for "${formData.name}" recorded successfully!`
+              ? `Running IT Employee "${cleanName}" added successfully!`
+              : `EX IT Employee record for "${cleanName}" recorded successfully!`
           );
           setTimeout(() => setSuccessToast(null), 4000);
           fetchEmployees();
@@ -1041,7 +1052,7 @@ export default function EmployeesPage() {
               {/* Status Selector: IT Running Employee vs EX IT Employee */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-foreground">
-                  Employee Classification <span className="text-rose-500">*</span>
+                  Employee Classification
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
@@ -1083,7 +1094,7 @@ export default function EmployeesPage() {
                         ...p,
                         employmentStatus: 'Former',
                         itStatus: 'OFFLINE',
-                        leavingDate: p.leavingDate || new Date().toISOString().split('T')[0],
+                        leavingDate: p.leavingDate || '',
                       }))
                     }
                     className={cn(
@@ -1109,6 +1120,15 @@ export default function EmployeesPage() {
                     </div>
                   </button>
                 </div>
+
+                {formData.employmentStatus !== 'Active' && (
+                  <div className="mt-2 p-3 rounded-2xl border border-amber-500/25 bg-amber-500/5 text-amber-500 text-xs flex items-center gap-2 animate-in fade-in">
+                    <Sparkles className="h-4 w-4 shrink-0 text-amber-500" />
+                    <span className="font-medium text-[11px]">
+                      EX IT Employee: No fields are mandatory. You can submit with whatever information you have available.
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Profile Photo Section (Guaranteed Uniform Square Size) */}
@@ -1187,12 +1207,12 @@ export default function EmployeesPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-foreground">
-                    Employee ID <span className="text-rose-500">*</span>
+                    Employee ID {formData.employmentStatus === 'Active' ? <span className="text-rose-500">*</span> : <span className="text-[11px] text-muted-foreground font-normal">(Optional)</span>}
                   </label>
                   <input
                     type="text"
-                    required
-                    placeholder="e.g. EMP-0004"
+                    required={formData.employmentStatus === 'Active'}
+                    placeholder={formData.employmentStatus === 'Active' ? 'e.g. EMP-0004' : 'Optional (auto-generated if empty)'}
                     value={formData.employeeId}
                     onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 font-mono"
@@ -1201,12 +1221,12 @@ export default function EmployeesPage() {
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-foreground">
-                    Full Name <span className="text-rose-500">*</span>
+                    Full Name {formData.employmentStatus === 'Active' ? <span className="text-rose-500">*</span> : <span className="text-[11px] text-muted-foreground font-normal">(Optional)</span>}
                   </label>
                   <input
                     type="text"
-                    required
-                    placeholder="e.g. Tanvir Ahmed"
+                    required={formData.employmentStatus === 'Active'}
+                    placeholder={formData.employmentStatus === 'Active' ? 'e.g. Tanvir Ahmed' : 'Optional (e.g. Tanvir Ahmed)'}
                     value={formData.name}
                     onChange={handleNameChange}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
@@ -1359,11 +1379,10 @@ export default function EmployeesPage() {
                 {formData.employmentStatus !== 'Active' ? (
                   <div className="space-y-1.5 animate-in fade-in">
                     <label className="text-xs font-semibold text-amber-500">
-                      Leaving / Resignation Date <span className="text-rose-500">*</span>
+                      Leaving / Resignation Date <span className="text-[11px] text-muted-foreground font-normal">(Optional)</span>
                     </label>
                     <input
                       type="date"
-                      required={formData.employmentStatus !== 'Active'}
                       value={formData.leavingDate}
                       onChange={(e) => setFormData({ ...formData, leavingDate: e.target.value })}
                       className="w-full px-3.5 py-2.5 rounded-xl border border-amber-500/40 bg-amber-500/5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-amber-500/40"

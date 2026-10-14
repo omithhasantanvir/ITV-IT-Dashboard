@@ -305,15 +305,29 @@ export const createUser = async (req: AuthRequest, res: Response) => {
       remarks,
     } = req.body;
 
-    if (!name || !employeeId) {
-      return res.status(400).json({ success: false, message: 'Employee ID and Name are required.' });
+    const isEx = employmentStatus && employmentStatus !== 'Active';
+
+    if (!name || !name.trim()) {
+      if (isEx) {
+        name = 'Former IT Member';
+      } else {
+        return res.status(400).json({ success: false, message: 'Employee ID and Name are required.' });
+      }
+    }
+
+    if (!employeeId || !employeeId.trim()) {
+      if (isEx) {
+        employeeId = `EX-${Math.floor(10000 + Math.random() * 90000)}`;
+      } else {
+        return res.status(400).json({ success: false, message: 'Employee ID and Name are required.' });
+      }
     }
 
     if (!username) {
-      username = name.toLowerCase().replace(/[^a-z0-9]/g, '.') + Math.floor(100 + Math.random() * 900);
+      username = (name.toLowerCase().replace(/[^a-z0-9]/g, '.') || 'ex.user') + Math.floor(100 + Math.random() * 900);
     }
     if (!email) {
-      email = `${username}@company.local`;
+      email = `${username}@${isEx ? 'ex.independent24.tv' : 'company.local'}`;
     }
     if (!password) {
       password = 'Welcome@123';
@@ -328,18 +342,18 @@ export const createUser = async (req: AuthRequest, res: Response) => {
       username: username.toLowerCase().trim(),
       email: email.toLowerCase().trim(),
       department: department || 'Information Technology',
-      designation: designation || (isITTeam ? 'IT Support Engineer' : 'Staff'),
-      extensionNumber: extensionNumber || null,
+      designation: designation || (isEx ? 'Former IT Staff' : (isITTeam ? 'IT Support Engineer' : 'Staff')),
+      extensionNumber: isEx ? null : (extensionNumber || null),
       phone: phone || null,
       profilePhoto: profilePhoto || '',
-      role: role as Role,
+      role: (isEx ? Role.VIEWER : (role as Role)),
       isITTeam: Boolean(isITTeam),
-      itStatus: (itStatus as ITStatus) || ITStatus.AVAILABLE,
-      officeLocation: officeLocation || null,
+      itStatus: isEx ? ITStatus.OFFLINE : ((itStatus as ITStatus) || ITStatus.AVAILABLE),
+      officeLocation: isEx ? null : (officeLocation || null),
       employmentStatus: employmentStatus || 'Active',
-      joiningDate: joiningDate ? new Date(joiningDate) : new Date(),
-      leavingDate: leavingDate ? new Date(leavingDate) : null,
-      remarks: remarks || null,
+      joiningDate: joiningDate ? new Date(joiningDate) : (isEx ? null : new Date()),
+      leavingDate: (isEx && leavingDate) ? new Date(leavingDate) : null,
+      remarks: remarks || (isEx ? 'Former IT Employee' : null),
       computers: [],
       extensions: extensionNumber ? [{ id: `ext-${Date.now()}`, extensionNumber, status: 'ASSIGNED' }] : [],
       createdAt: new Date(),
@@ -480,9 +494,13 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
     }
     if (dataToUpdate.joiningDate) {
       dataToUpdate.joiningDate = new Date(dataToUpdate.joiningDate);
+    } else if (dataToUpdate.joiningDate === '' || dataToUpdate.joiningDate === null) {
+      dataToUpdate.joiningDate = null;
     }
     if (dataToUpdate.leavingDate) {
       dataToUpdate.leavingDate = new Date(dataToUpdate.leavingDate);
+    } else if (dataToUpdate.leavingDate === '' || dataToUpdate.leavingDate === null) {
+      dataToUpdate.leavingDate = null;
     }
 
     try {
