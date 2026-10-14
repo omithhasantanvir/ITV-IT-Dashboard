@@ -189,7 +189,7 @@ export default function ComputersPage() {
   // SSD computer search state
   const [allComputers, setAllComputers] = useState<ComputerItem[]>([]);
   const [pcSearchQuery, setPcSearchQuery] = useState('');
-  const [isSearchingPc, setIsSearchingPc] = useState(false);
+  const [isPcDropdownOpen, setIsPcDropdownOpen] = useState(false);
 
   const computersPool = allComputers.length > 0 ? allComputers : computers;
 
@@ -398,7 +398,7 @@ export default function ComputersPage() {
   // Handle open SSD Modal
   const handleOpenSsdModal = (ssd?: SSDItem, preselectedCompId?: string) => {
     setPcSearchQuery('');
-    setIsSearchingPc(!ssd?.assignedComputerId && !preselectedCompId);
+    setIsPcDropdownOpen(false);
     api.get('/api/computers')
       .then((res) => {
         if (res.data?.data) setAllComputers(res.data.data);
@@ -1461,9 +1461,9 @@ export default function ComputersPage() {
                 </div>
 
                 {/* PC Linking */}
-                <div className="p-3.5 rounded-2xl bg-indigo-50/40 dark:bg-indigo-950/20 border border-indigo-200/60 dark:border-indigo-900/50 space-y-3">
+                <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/80 space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <label className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5 uppercase tracking-wider">
+                    <label className="text-[11px] font-bold text-indigo-500 flex items-center gap-1.5 uppercase tracking-wider">
                       <ComputerIcon className="h-3.5 w-3.5" />
                       <span>Install In Computer / Link to PC</span>
                     </label>
@@ -1478,172 +1478,190 @@ export default function ComputersPage() {
                     )}
                   </div>
 
-                  {/* Selected Computer Display Card */}
-                  {selectedComputerForSsd && !isSearchingPc ? (
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-card border border-indigo-500/30 shadow-xs">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-9 w-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
-                          <ComputerIcon className="h-4.5 w-4.5 text-indigo-500" />
-                        </div>
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-bold text-xs text-foreground truncate">
-                              {selectedComputerForSsd.assetId}
+                  {/* Searchable Dropdown Selector */}
+                  <div className="relative">
+                    {/* Dropdown Trigger Box */}
+                    <div
+                      onClick={() => setIsPcDropdownOpen(!isPcDropdownOpen)}
+                      role="button"
+                      tabIndex={0}
+                      className={cn(
+                        "w-full px-3 py-2.5 rounded-xl border bg-card text-xs text-foreground flex items-center justify-between cursor-pointer transition-all select-none shadow-2xs",
+                        isPcDropdownOpen
+                          ? "border-indigo-500 ring-2 ring-indigo-500/30"
+                          : "border-border hover:border-border/80"
+                      )}
+                    >
+                      <div className="flex items-center gap-2 min-w-0 mr-2">
+                        <ComputerIcon className="h-4 w-4 text-indigo-500 shrink-0" />
+                        {selectedComputerForSsd ? (
+                          <div className="flex items-center gap-1.5 truncate">
+                            <span className="font-bold text-foreground truncate">{selectedComputerForSsd.assetId}</span>
+                            <span className="text-muted-foreground truncate">
+                              ({selectedComputerForSsd.brand} {selectedComputerForSsd.model})
                             </span>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground font-medium">
-                              {selectedComputerForSsd.brand} {selectedComputerForSsd.model}
+                            <span className="text-[11px] text-muted-foreground/80 truncate">
+                              - 👤 {selectedComputerForSsd.assignedUser?.name || selectedComputerForSsd.assignedTo || 'Unassigned'}
                             </span>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-indigo-500/10 text-indigo-500 font-semibold">
-                              {selectedComputerForSsd.computerType || 'PC'}
-                            </span>
-                          </div>
-                          <div className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5 truncate">
-                            <span>👤 {selectedComputerForSsd.assignedUser?.name || selectedComputerForSsd.assignedTo || 'Unassigned'}</span>
-                            {(selectedComputerForSsd.department || selectedComputerForSsd.assignedUser?.department) && (
-                              <span>• {selectedComputerForSsd.department || selectedComputerForSsd.assignedUser?.department}</span>
-                            )}
-                            {selectedComputerForSsd.location && <span>• 📍 {selectedComputerForSsd.location}</span>}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsSearchingPc(true);
-                            setPcSearchQuery('');
-                          }}
-                          className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/70 transition-colors"
-                        >
-                          Change PC
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSsdForm({
-                              ...ssdForm,
-                              assignedComputerId: '',
-                              status: 'AVAILABLE',
-                            });
-                            setIsSearchingPc(false);
-                            setPcSearchQuery('');
-                          }}
-                          title="Unlink PC and mark as Spare"
-                          className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    /* Search and Selection Box (Clean, Inline, Zero Overlap) */
-                    <div className="space-y-2">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-                        <input
-                          type="text"
-                          value={pcSearchQuery}
-                          onChange={(e) => setPcSearchQuery(e.target.value)}
-                          placeholder="Search PC by Host Name, Brand, Model, Employee..."
-                          autoFocus={isSearchingPc}
-                          className="w-full pl-9 pr-8 py-2 rounded-xl border border-border bg-card text-xs text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-indigo-500/40"
-                        />
-                        {pcSearchQuery ? (
-                          <button
-                            type="button"
-                            onClick={() => setPcSearchQuery('')}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground hover:text-foreground"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </button>
-                        ) : selectedComputerForSsd ? (
-                          <button
-                            type="button"
-                            onClick={() => setIsSearchingPc(false)}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-muted-foreground hover:text-foreground px-1"
-                          >
-                            Cancel
-                          </button>
-                        ) : null}
-                      </div>
-
-                      {/* Clean Inline Computer List */}
-                      <div className="max-h-40 overflow-y-auto rounded-xl border border-border/80 bg-card shadow-xs p-1 space-y-1">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSsdForm({
-                              ...ssdForm,
-                              assignedComputerId: '',
-                              status: 'AVAILABLE',
-                            });
-                            setIsSearchingPc(false);
-                            setPcSearchQuery('');
-                          }}
-                          className={cn(
-                            "w-full text-left px-3 py-2 text-xs rounded-lg flex items-center justify-between transition-colors",
-                            !ssdForm.assignedComputerId
-                              ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-semibold"
-                              : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                          )}
-                        >
-                          <span className="italic">-- Spare / Not Installed in any PC --</span>
-                          {!ssdForm.assignedComputerId && <CheckCircle2 className="h-3.5 w-3.5 text-indigo-500" />}
-                        </button>
-
-                        {filteredComputersForSsd.length === 0 ? (
-                          <div className="px-3 py-3 text-center text-xs text-muted-foreground">
-                            No computers match "{pcSearchQuery}"
                           </div>
                         ) : (
-                          filteredComputersForSsd.map((c) => {
-                            const isSelected = ssdForm.assignedComputerId === c.id;
-                            const assignedName = c.assignedUser?.name || c.assignedTo || 'Unassigned';
-                            return (
-                              <button
-                                key={c.id}
-                                type="button"
-                                onClick={() => {
-                                  setSsdForm({
-                                    ...ssdForm,
-                                    assignedComputerId: c.id,
-                                    status: 'INSTALLED',
-                                    installedDate: ssdForm.installedDate || new Date().toISOString().split('T')[0],
-                                  });
-                                  setIsSearchingPc(false);
-                                  setPcSearchQuery('');
-                                }}
-                                className={cn(
-                                  "w-full text-left px-3 py-2 text-xs rounded-lg flex items-center justify-between transition-colors",
-                                  isSelected
-                                    ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-semibold"
-                                    : "hover:bg-muted text-foreground"
-                                )}
-                              >
-                                <div className="min-w-0 pr-2">
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="font-semibold text-foreground">{c.assetId}</span>
-                                    <span className="text-[10px] text-muted-foreground">({c.brand} {c.model})</span>
-                                  </div>
-                                  <div className="text-[10px] text-muted-foreground flex items-center gap-2 mt-0.5">
-                                    <span>👤 {assignedName}</span>
-                                    {(c.department || c.assignedUser?.department) && (
-                                      <span>• {c.department || c.assignedUser?.department}</span>
-                                    )}
-                                    {c.location && <span>• 📍 {c.location}</span>}
-                                  </div>
-                                </div>
-                                {isSelected && <CheckCircle2 className="h-4 w-4 text-indigo-500 shrink-0" />}
-                              </button>
-                            );
-                          })
+                          <span className="text-muted-foreground italic truncate">
+                            -- Spare / Not Installed in any PC (Click to select PC) --
+                          </span>
                         )}
                       </div>
-                    </div>
-                  )}
 
-                  {/* Installed Date & Installed By Fields */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-indigo-200/40 dark:border-indigo-900/40">
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {selectedComputerForSsd && (
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSsdForm({
+                                ...ssdForm,
+                                assignedComputerId: '',
+                                status: 'AVAILABLE',
+                              });
+                              setPcSearchQuery('');
+                            }}
+                            title="Unlink and mark as Spare"
+                            className="p-1 rounded-md text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </span>
+                        )}
+                        <ChevronDown
+                          className={cn(
+                            "h-4 w-4 text-muted-foreground transition-transform duration-200",
+                            isPcDropdownOpen && "rotate-180"
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Floating Dropdown Menu with Search */}
+                    {isPcDropdownOpen && (
+                      <>
+                        {/* Backdrop to close on click outside */}
+                        <div
+                          className="fixed inset-0 z-[70]"
+                          onClick={() => setIsPcDropdownOpen(false)}
+                        />
+
+                        {/* Dropdown Panel */}
+                        <div className="absolute left-0 right-0 top-full mt-1.5 z-[80] rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl p-2 space-y-2 animate-in fade-in zoom-in-95 duration-150">
+                          {/* Search Input inside Dropdown */}
+                          <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                            <input
+                              type="text"
+                              autoFocus
+                              value={pcSearchQuery}
+                              onChange={(e) => setPcSearchQuery(e.target.value)}
+                              placeholder="Type to search PC by Host Name, Brand, Employee..."
+                              className="w-full pl-9 pr-8 py-2 rounded-xl border border-border bg-muted/40 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                            />
+                            {pcSearchQuery && (
+                              <button
+                                type="button"
+                                onClick={() => setPcSearchQuery('')}
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground hover:text-foreground"
+                              >
+                                <X className="h-3.5 w-3.5" />
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Options List */}
+                          <div className="max-h-56 overflow-y-auto space-y-1 pr-1 divide-y divide-border/30">
+                            {/* Spare Option */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSsdForm({
+                                  ...ssdForm,
+                                  assignedComputerId: '',
+                                  status: 'AVAILABLE',
+                                });
+                                setIsPcDropdownOpen(false);
+                                setPcSearchQuery('');
+                              }}
+                              className={cn(
+                                "w-full text-left px-3 py-2 text-xs rounded-xl flex items-center justify-between transition-colors",
+                                !ssdForm.assignedComputerId
+                                  ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-semibold"
+                                  : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                              )}
+                            >
+                              <span className="italic">-- Spare / Not Installed in any PC --</span>
+                              {!ssdForm.assignedComputerId && <CheckCircle2 className="h-4 w-4 text-indigo-500 shrink-0" />}
+                            </button>
+
+                            {/* Filtered Computers List */}
+                            {filteredComputersForSsd.length === 0 ? (
+                              <div className="py-6 text-center text-xs text-muted-foreground">
+                                No computers found matching "{pcSearchQuery}"
+                              </div>
+                            ) : (
+                              filteredComputersForSsd.map((c) => {
+                                const isSelected = ssdForm.assignedComputerId === c.id;
+                                const assignedName = c.assignedUser?.name || c.assignedTo || 'Unassigned';
+                                return (
+                                  <button
+                                    key={c.id}
+                                    type="button"
+                                    onClick={() => {
+                                      setSsdForm({
+                                        ...ssdForm,
+                                        assignedComputerId: c.id,
+                                        status: 'INSTALLED',
+                                        installedDate: ssdForm.installedDate || new Date().toISOString().split('T')[0],
+                                      });
+                                      setIsPcDropdownOpen(false);
+                                      setPcSearchQuery('');
+                                    }}
+                                    className={cn(
+                                      "w-full text-left px-3 py-2.5 text-xs rounded-xl flex items-center justify-between transition-colors",
+                                      isSelected
+                                        ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-semibold"
+                                        : "hover:bg-muted text-foreground"
+                                    )}
+                                  >
+                                    <div className="min-w-0 pr-2">
+                                      <div className="flex items-center gap-1.5 flex-wrap">
+                                        <span className="font-bold text-foreground">{c.assetId}</span>
+                                        <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-muted text-muted-foreground">
+                                          {c.brand} {c.model}
+                                        </span>
+                                        <span className="text-[10px] px-1 py-0.2 rounded bg-indigo-500/10 text-indigo-500 font-medium">
+                                          {c.computerType || 'PC'}
+                                        </span>
+                                      </div>
+                                      <div className="text-[10px] text-muted-foreground flex items-center gap-2 mt-0.5 truncate">
+                                        <span>👤 {assignedName}</span>
+                                        {(c.department || c.assignedUser?.department) && (
+                                          <span>• {c.department || c.assignedUser?.department}</span>
+                                        )}
+                                        {c.location && <span>• 📍 {c.location}</span>}
+                                      </div>
+                                    </div>
+                                    {isSelected && <CheckCircle2 className="h-4 w-4 text-indigo-500 shrink-0" />}
+                                  </button>
+                                );
+                              })
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  <p className="text-[10px] text-muted-foreground">
+                    Selecting a computer will automatically bind this SSD to the PC and mark it as "INSTALLED".
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <div>
                       <label className="text-[11px] font-semibold text-foreground block mb-1">Installed Date</label>
                       <input
