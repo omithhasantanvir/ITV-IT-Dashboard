@@ -82,6 +82,8 @@ interface SSDItem {
   warranty?: string | null;
   location?: string | null;
   status: string;
+  installedDate?: string | null;
+  installedBy?: string | null;
   remarks?: string | null;
   assignedComputerId?: string | null;
   assignedComputer?: {
@@ -173,6 +175,8 @@ export default function ComputersPage() {
     health: '100% Healthy',
     purchaseDate: '',
     warranty: '3 Years',
+    installedDate: '',
+    installedBy: '',
     location: '',
     status: 'AVAILABLE',
     remarks: '',
@@ -366,6 +370,8 @@ export default function ComputersPage() {
         interface: ssd.interface || 'M.2 NVMe PCIe 4.0',
         health: ssd.health || '100% Healthy',
         purchaseDate: ssd.purchaseDate ? ssd.purchaseDate.split('T')[0] : '',
+        installedDate: ssd.installedDate ? ssd.installedDate.split('T')[0] : '',
+        installedBy: ssd.installedBy || '',
         warranty: ssd.warranty || '3 Years',
         location: ssd.location || '',
         status: ssd.status || 'AVAILABLE',
@@ -383,6 +389,8 @@ export default function ComputersPage() {
         interface: 'M.2 NVMe PCIe 4.0',
         health: '100% Healthy',
         purchaseDate: new Date().toISOString().split('T')[0],
+        installedDate: preselectedCompId ? new Date().toISOString().split('T')[0] : '',
+        installedBy: '',
         warranty: '3 Years',
         location: 'IT Store',
         status: preselectedCompId ? 'INSTALLED' : 'AVAILABLE',
@@ -869,13 +877,28 @@ export default function ComputersPage() {
                                 </p>
                                 <p className="text-[10px] text-muted-foreground">
                                   {ssd.assignedComputer.brand} {ssd.assignedComputer.model}
-                                  {ssd.assignedComputer.assignedUser && ` • ${ssd.assignedComputer.assignedUser.name}`}
+                                  {(ssd.assignedComputer.assignedUser || ssd.assignedComputer.assignedTo) &&
+                                    ` • ${ssd.assignedComputer.assignedTo || ssd.assignedComputer.assignedUser?.name}`}
                                 </p>
+                                {(ssd.installedDate || ssd.installedBy) && (
+                                  <p className="text-[9px] text-indigo-400 mt-0.5 font-medium">
+                                    {ssd.installedDate && `Installed: ${ssd.installedDate.split('T')[0]}`}
+                                    {ssd.installedBy && ` (${ssd.installedBy})`}
+                                  </p>
+                                )}
                               </div>
                             ) : (
-                              <span className="text-[10px] font-semibold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                                Spare / Storage Box
-                              </span>
+                              <div>
+                                <span className="text-[10px] font-semibold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 inline-block">
+                                  Spare / Storage Box
+                                </span>
+                                {(ssd.installedDate || ssd.installedBy) && (
+                                  <p className="text-[9px] text-muted-foreground mt-0.5">
+                                    {ssd.installedDate && `Prev: ${ssd.installedDate.split('T')[0]}`}
+                                    {ssd.installedBy && ` by ${ssd.installedBy}`}
+                                  </p>
+                                )}
+                              </div>
                             )}
                           </td>
 
@@ -1419,6 +1442,29 @@ export default function ComputersPage() {
                   <p className="text-[10px] text-muted-foreground">
                     Selecting a computer will automatically bind this SSD to the PC and mark it as "INSTALLED".
                   </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div>
+                      <label className="text-[11px] font-semibold text-foreground block mb-1">Installed Date</label>
+                      <input
+                        type="date"
+                        value={ssdForm.installedDate}
+                        onChange={(e) => setSsdForm({ ...ssdForm, installedDate: e.target.value })}
+                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-indigo-500/40"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-semibold text-foreground block mb-1">Installed By</label>
+                      <input
+                        type="text"
+                        value={ssdForm.installedBy}
+                        onChange={(e) => setSsdForm({ ...ssdForm, installedBy: e.target.value })}
+                        placeholder="e.g. Omith Hasan / IT Engineer"
+                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-indigo-500/40"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

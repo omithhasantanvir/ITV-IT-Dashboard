@@ -196,6 +196,8 @@ model SSD {
   interface          String?
   health             String?
   purchaseDate       DateTime?
+  installedDate      DateTime?
+  installedBy        String?
   warranty           String?
   location           String?
   status             SSDStatus  @default(AVAILABLE)

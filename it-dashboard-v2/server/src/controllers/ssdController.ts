@@ -25,6 +25,7 @@ export const getSSDs = async (req: Request, res: Response) => {
         { model: { contains: search, mode: 'insensitive' } },
         { capacity: { contains: search, mode: 'insensitive' } },
         { location: { contains: search, mode: 'insensitive' } },
+        { installedBy: { contains: search, mode: 'insensitive' } },
       ];
     }
 
@@ -92,6 +93,8 @@ export const createSSD = async (req: AuthRequest, res: Response) => {
       interface: ssdInterface,
       health = '100%',
       purchaseDate,
+      installedDate,
+      installedBy,
       warranty,
       location,
       status = SSDStatus.AVAILABLE,
@@ -123,6 +126,8 @@ export const createSSD = async (req: AuthRequest, res: Response) => {
         interface: ssdInterface,
         health,
         purchaseDate: purchaseDate ? new Date(purchaseDate) : null,
+        installedDate: installedDate ? new Date(installedDate) : null,
+        installedBy: installedBy && installedBy.trim() ? installedBy.trim() : null,
         warranty,
         location,
         status: assignedComputerId ? SSDStatus.INSTALLED : (status as SSDStatus),
@@ -158,6 +163,13 @@ export const updateSSD = async (req: AuthRequest, res: Response) => {
 
     if (updateData.purchaseDate) {
       updateData.purchaseDate = new Date(updateData.purchaseDate);
+    } else if (updateData.purchaseDate === '' || updateData.purchaseDate === null) {
+      updateData.purchaseDate = null;
+    }
+    if (updateData.installedDate) {
+      updateData.installedDate = new Date(updateData.installedDate);
+    } else if (updateData.installedDate === '' || updateData.installedDate === null) {
+      updateData.installedDate = null;
     }
     if (updateData.assignedComputerId === '') {
       updateData.assignedComputerId = null;
