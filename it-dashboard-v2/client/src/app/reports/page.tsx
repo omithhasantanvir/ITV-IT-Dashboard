@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { BarChart3, PieChart, Layers, Users, Computer } from 'lucide-react';
 import api from '@/lib/api';
 import { AccessGuard } from '@/components/AccessGuard';
+import { BrandLoading } from '@/components/BrandLoading';
 
 export default function ReportsPage() {
   const [invData, setInvData] = useState<any>(null);
@@ -30,6 +31,11 @@ export default function ReportsPage() {
 
   return (
     <AccessGuard module="reports">
+      {loading ? (
+        <div className="min-h-[40vh] flex items-center justify-center">
+          <BrandLoading size="inline" text="Generating Analytics & Reports..." />
+        </div>
+      ) : (
       <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">Analytics & Inventory Reports</h1>
@@ -99,7 +105,7 @@ export default function ReportsPage() {
           </div>
         </div>
       </div>
-    </div>
-  </AccessGuard>
-);
+      )}
+    </AccessGuard>
+  );
 }

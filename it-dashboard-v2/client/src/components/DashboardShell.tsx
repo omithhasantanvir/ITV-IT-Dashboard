@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Sidebar } from '@/components/Sidebar';
 import { Header } from '@/components/Header';
+import { BrandLoading } from '@/components/BrandLoading';
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -26,12 +27,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   if (isAuthPage) {
     if (loading) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-background">
-          <div className="flex flex-col items-center gap-3">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-            <p className="text-xs text-muted-foreground font-mono">Loading authentication...</p>
-          </div>
-        </div>
+        <BrandLoading
+          size="fullscreen"
+          text="Verifying ITV Secure Session..."
+          subtext="Independent Television • Portal Access"
+        />
       );
     }
     // Prevent flash of login page if already authenticated and redirecting to /
@@ -44,12 +44,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   // Protected pages: Loading state
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-9 w-9 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-xs font-semibold text-muted-foreground font-mono">Verifying authorization...</p>
-        </div>
-      </div>
+      <BrandLoading
+        size="fullscreen"
+        text="Authorizing Operations Access..."
+        subtext="Independent Television • IT Platform"
+      />
     );
   }
 

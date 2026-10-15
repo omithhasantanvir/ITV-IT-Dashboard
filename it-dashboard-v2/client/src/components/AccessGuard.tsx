@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ShieldAlert, ArrowLeft, Lock } from 'lucide-react';
 import { useAuth, AppModule } from '@/context/AuthContext';
+import { BrandLoading } from '@/components/BrandLoading';
 
 interface AccessGuardProps {
   module: AppModule;
@@ -22,9 +23,11 @@ export function AccessGuard({
 
   if (loading) {
     return (
-      <div className="min-h-[50vh] flex items-center justify-center">
-        <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-      </div>
+      <BrandLoading
+        size="md"
+        text="Checking Permission Matrix..."
+        subtext="Access Governance Engine"
+      />
     );
   }
 

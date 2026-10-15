@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import api from '@/lib/api';
 import { AccessGuard } from '@/components/AccessGuard';
+import { BrandLoading } from '@/components/BrandLoading';
 import { confirmDelete, showSuccessAlert, showErrorAlert } from '@/lib/sweetalert';
 
 interface EmployeeUser {
@@ -380,10 +381,10 @@ export default function ExtensionsPage() {
                 {loading ? (
                   <tr>
                     <td colSpan={7} className="p-8 text-center text-muted-foreground">
-                      <div className="inline-flex items-center gap-2">
-                        <span className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                        Loading extension directory...
-                      </div>
+                      <BrandLoading
+                        size="inline"
+                        text="Loading extension directory..."
+                      />
                     </td>
                   </tr>
                 ) : extensions.length === 0 ? (

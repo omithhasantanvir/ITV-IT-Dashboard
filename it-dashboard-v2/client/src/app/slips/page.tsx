@@ -41,6 +41,7 @@ import api, { getErrorMessage } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import { AccessGuard } from '@/components/AccessGuard';
 import { useAuth } from '@/context/AuthContext';
+import { BrandLoading } from '@/components/BrandLoading';
 import Swal from 'sweetalert2';
 import QRCode from 'qrcode';
 
@@ -1356,7 +1357,10 @@ IT Support: Ext. 30555 or 01730701335
                     {loading ? (
                       <tr>
                         <td colSpan={7} className="p-8 text-center text-muted-foreground">
-                          Loading credential slips...
+                          <BrandLoading
+                            size="inline"
+                            text="Loading credential slips..."
+                          />
                         </td>
                       </tr>
                     ) : filteredSlips.length === 0 ? (

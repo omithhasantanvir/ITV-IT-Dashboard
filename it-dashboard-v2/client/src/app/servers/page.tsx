@@ -42,6 +42,7 @@ import {
 import api from '@/lib/api';
 import { AccessGuard } from '@/components/AccessGuard';
 import { useAuth } from '@/context/AuthContext';
+import { BrandLoading } from '@/components/BrandLoading';
 import { showErrorAlert, showSuccessAlert } from '@/lib/sweetalert';
 import Swal from 'sweetalert2';
 import { StructuredCablingBay } from '@/components/servers/StructuredCablingBay';
@@ -1152,9 +1153,11 @@ function UniformServerRack({
             {/* 4. STANDARDIZED 2U SERVERS STACK */}
             <div className="p-1.5 sm:p-2 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#12131a] via-[#090a0d] to-black space-y-1 relative">
               {loading ? (
-                <div className="flex flex-col items-center justify-center h-48 space-y-2 text-zinc-500">
-                  <RefreshCw className="h-5 w-5 animate-spin text-primary" />
-                  <span className="text-xs font-mono">Syncing rack nodes...</span>
+                <div className="flex flex-col items-center justify-center h-48 space-y-2">
+                  <BrandLoading
+                    size="inline"
+                    text="Syncing rack telemetry..."
+                  />
                 </div>
               ) : servers.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-48 text-zinc-500 text-xs font-mono">

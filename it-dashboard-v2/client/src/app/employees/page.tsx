@@ -39,6 +39,7 @@ import api, { getErrorMessage } from '@/lib/api';
 import { formatDate, cn } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import { AccessGuard } from '@/components/AccessGuard';
+import { BrandLoading } from '@/components/BrandLoading';
 import { confirmDelete, showWarningAlert, showErrorAlert, showSuccessAlert } from '@/lib/sweetalert';
 
 interface Employee {
@@ -745,11 +746,11 @@ export default function EmployeesPage() {
             <tbody className="divide-y divide-border/60">
               {loading ? (
                 <tr>
-                  <td colSpan={activeTab === 'EX' ? 6 : 7} className="p-12 text-center text-muted-foreground">
-                    <div className="inline-flex items-center gap-2 text-xs">
-                      <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      <span>Loading IT employee records...</span>
-                    </div>
+                  <td colSpan={activeTab === 'EX' ? 6 : 7} className="p-8 text-center text-muted-foreground">
+                    <BrandLoading
+                      size="inline"
+                      text="Loading IT employee records..."
+                    />
                   </td>
                 </tr>
               ) : displayedEmployees.length === 0 ? (

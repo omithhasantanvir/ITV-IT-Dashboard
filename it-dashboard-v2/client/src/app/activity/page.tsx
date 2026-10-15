@@ -5,6 +5,7 @@ import { History, Activity, ShieldCheck, User } from 'lucide-react';
 import api from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import { AccessGuard } from '@/components/AccessGuard';
+import { BrandLoading } from '@/components/BrandLoading';
 
 export default function ActivityPage() {
   const [logs, setLogs] = useState<any[]>([]);
@@ -50,7 +51,10 @@ export default function ActivityPage() {
               {loading ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-muted-foreground">
-                    Loading activity timeline...
+                    <BrandLoading
+                      size="inline"
+                      text="Loading activity timeline..."
+                    />
                   </td>
                 </tr>
               ) : logs.length === 0 ? (

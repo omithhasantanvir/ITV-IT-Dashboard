@@ -28,6 +28,7 @@ import api, { getErrorMessage } from '@/lib/api';
 import { AccessGuard } from '@/components/AccessGuard';
 import { confirmDelete, showSuccessAlert, showErrorAlert } from '@/lib/sweetalert';
 import { cn } from '@/lib/utils';
+import { BrandLoading } from '@/components/BrandLoading';
 
 type ActiveTab = 'computers' | 'ssds';
 
@@ -684,7 +685,10 @@ export default function ComputersPage() {
                     {loadingComputers ? (
                       <tr>
                         <td colSpan={7} className="p-8 text-center text-muted-foreground">
-                          Loading computer inventory...
+                          <BrandLoading
+                            size="inline"
+                            text="Loading computer inventory..."
+                          />
                         </td>
                       </tr>
                     ) : computers.length === 0 ? (
@@ -875,7 +879,10 @@ export default function ComputersPage() {
                     {loadingSSDs ? (
                       <tr>
                         <td colSpan={8} className="p-8 text-center text-muted-foreground">
-                          Loading SSD storage inventory...
+                          <BrandLoading
+                            size="inline"
+                            text="Loading SSD storage inventory..."
+                          />
                         </td>
                       </tr>
                     ) : ssds.length === 0 ? (
