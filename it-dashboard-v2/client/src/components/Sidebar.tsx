@@ -22,7 +22,6 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth, AppModule } from '@/context/AuthContext';
-import { SidebarLiveTV } from '@/components/SidebarLiveTV';
 
 export interface NavItem {
   name: string;
@@ -219,9 +218,6 @@ export function Sidebar() {
         })}
         </nav>
       </div>
-
-      {/* Sidebar Live TV Player Widget */}
-      <SidebarLiveTV />
 
       {/* Network Badge */}
       <div className="p-3.5 border-t border-border shrink-0 bg-card/40">
