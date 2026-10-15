@@ -886,7 +886,7 @@ function UniformServerRack({
               {/* Cable Pass-Through Chimney / Center Badge */}
               <div className="px-2 py-0.2 rounded-full bg-zinc-950/90 border border-zinc-800 text-[6.5px] font-mono text-zinc-400 font-bold tracking-wider flex items-center gap-1 shadow-inner">
                 <span className="h-1 w-1 rounded-full bg-emerald-400 shadow-[0_0_4px_#34d399]" />
-                <span>42U • {isRack1 ? 'MCR-A' : 'MCR-B'}</span>
+                <span>42U • {isRack1 ? 'RACK-A' : 'RACK-B'}</span>
               </div>
 
               {/* Dual Exhaust Fan 2 (Right) */}
@@ -1408,7 +1408,7 @@ function UniformServerRack({
                         <div className="relative -mt-1 mb-1.5 p-2 bg-[#090a0f] rounded-b-lg border-x border-b border-cyan-500/30 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-200">
                           <div className="flex items-center justify-between text-[8px] font-mono text-zinc-400 mb-1.5 pb-1 border-b border-zinc-800">
                             <span className="flex items-center gap-1 font-bold text-cyan-300">
-                              <Cable className="h-2.5 w-2.5 text-cyan-400" /> REAR CABLE MANAGEMENT ARM (CMA) • ITV MCR
+                              <Cable className="h-2.5 w-2.5 text-cyan-400" /> REAR CABLE MANAGEMENT ARM (CMA) • ITV CENTRAL
                             </span>
                             <span className="text-[7.5px] font-mono text-emerald-400 font-bold">
                               ● TELESCOPING CARRIER EXTENDED
@@ -1651,7 +1651,7 @@ function UniformServerRack({
                 <span>•</span>
                 <span>BS EN 12150</span>
                 <span>•</span>
-                <span>R.F. MOTE MCR-42U</span>
+                <span>R.F. MOTE 42U</span>
               </div>
             </div>
           </div>
@@ -1736,7 +1736,7 @@ function UniformServerRack({
               <span className="h-1 w-1 rounded-full bg-emerald-500 inline-block" />
               EARTH BONDED
             </span>
-            <span>INDEPENDENT TELEVISION MCR • ITV RACK {rackNumber}</span>
+            <span>INDEPENDENT TELEVISION • ITV RACK {rackNumber}</span>
             <span className="text-[6.5px] text-zinc-600 font-mono">EIA-310-D STD</span>
           </div>
 

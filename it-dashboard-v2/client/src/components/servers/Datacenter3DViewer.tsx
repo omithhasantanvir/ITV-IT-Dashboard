@@ -486,7 +486,7 @@ export function Datacenter3DViewer({
         hCtx.fillText(`ITV RACK ${rackNumber}`, 40, 78);
         hCtx.fillStyle = '#06b6d4';
         hCtx.font = 'bold 24px monospace';
-        hCtx.fillText(rackNumber === '01' ? 'MCR CORE NEWSROOM' : 'GRASS VALLEY BROADCAST', 40, 110);
+        hCtx.fillText(rackNumber === '01' ? 'CORE NEWSROOM' : 'GRASS VALLEY BROADCAST', 40, 110);
       }
       const headerTex = new THREE.CanvasTexture(headerCanvas);
       const headerGeo = new THREE.PlaneGeometry(rackWidth - 0.1, 0.22);
@@ -914,7 +914,7 @@ export function Datacenter3DViewer({
             <div className="p-2 rounded-xl bg-zinc-900/80 border border-zinc-800/80">
               <span className="text-zinc-500 block text-[9.5px]">LOCATION</span>
               <span className="text-zinc-200 font-semibold truncate block">
-                {selectedServer.location || 'MCR ITV Rack'}
+                {selectedServer.location || 'ITV Server Rack'}
               </span>
             </div>
           </div>

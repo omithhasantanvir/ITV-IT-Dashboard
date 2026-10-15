@@ -168,7 +168,7 @@ export default function LiveTVPage() {
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                   <Signal className="h-4 w-4 text-primary" />
-                  <span>MCR Transmission Telemetry</span>
+                  <span>Broadcast Transmission Telemetry</span>
                 </h3>
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               </div>

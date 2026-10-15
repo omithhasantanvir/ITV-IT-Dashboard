@@ -436,7 +436,7 @@ export function Header() {
             <div className="px-5 py-3 bg-zinc-950 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
               <div className="flex items-center gap-2 truncate">
                 <Radio className="h-3.5 w-3.5 text-red-500 animate-pulse shrink-0" />
-                <span className="truncate">Central MCR Satellite Uplink: Bangabandhu-1 (93.5°E) Lock</span>
+                <span className="truncate">Central Broadcast Satellite Uplink: Bangabandhu-1 (93.5°E) Lock</span>
               </div>
               <Link
                 href="/live"

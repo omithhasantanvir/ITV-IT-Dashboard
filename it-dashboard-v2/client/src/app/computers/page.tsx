@@ -1225,7 +1225,7 @@ export default function ComputersPage() {
                         type="text"
                         value={compForm.location}
                         onChange={(e) => setCompForm({ ...compForm, location: e.target.value })}
-                        placeholder="e.g. Floor 2 Desk 12, MCR"
+                        placeholder="e.g. Floor 2 Desk 12, Broadcast IT"
                         className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-blue-500/40"
                       />
                     </div>

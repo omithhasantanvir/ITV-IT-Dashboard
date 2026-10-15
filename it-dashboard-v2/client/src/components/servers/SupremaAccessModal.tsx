@@ -135,7 +135,7 @@ export function SupremaAccessModal({
         { employeeId: '100204', name: 'Mohammed Abul Hossain', role: 'VIEWER', department: 'Broadcast', designation: 'Operations' },
         { employeeId: '101503', name: 'Pronojit Mallick Jit', role: 'VIEWER', department: 'Engineering', designation: 'Broadcast Engineer' },
         { employeeId: '101745', name: 'Md. Yeamin Islam Sakib', role: 'VIEWER', department: 'IT Support', designation: 'Assistant Engineer' },
-        { employeeId: '101535', name: 'Md. Shofiqui Islam', role: 'VIEWER', department: 'MCR Operations', designation: 'MCR Lead' },
+        { employeeId: '101535', name: 'Md. Shofiqui Islam', role: 'VIEWER', department: 'Broadcast Operations', designation: 'Operations Lead' },
         { employeeId: '101803', name: 'Tareq Ahmed', role: 'VIEWER', department: 'Broadcast Engineering', designation: 'Specialist' },
         { employeeId: '101737', name: 'Nadit Rabab Shah Pranzol', role: 'VIEWER', department: 'Engineering', designation: 'SysAdmin' },
         { employeeId: '101554', name: 'Ashraful Islam', role: 'VIEWER', department: 'Information Technology', designation: 'IT Executive' },
@@ -283,7 +283,7 @@ export function SupremaAccessModal({
                 </span>
               </div>
               <p className="text-[8px] text-zinc-400 font-semibold mt-0.5">
-                ITV MCR ACCESS CONTROLLER • RACK {rackNumber}
+                ITV DATACENTER ACCESS CONTROLLER • RACK {rackNumber}
               </p>
             </div>
           </div>

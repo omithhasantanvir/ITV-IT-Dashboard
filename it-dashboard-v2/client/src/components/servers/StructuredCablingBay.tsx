@@ -28,7 +28,7 @@ const CABLING_TIERS: CablingTierConfig[] = [
     tier: 2,
     label: 'PATCH PANEL 02 • DISTRIBUTION CAT6A',
     category: 'Cat6A U/FTP 10G',
-    vlan: 'VLAN 20 • BROADCAST MCR & NEWS PRODUCTION',
+    vlan: 'VLAN 20 • BROADCAST IT & NEWS PRODUCTION',
     cableColor: '#2563eb', // Royal Blue (photo tier 2)
     highlightColor: '#93c5fd',
     bootColor: '#1d4ed8',

@@ -31,7 +31,6 @@ export interface NightTaskReport {
   date: string;
   submittedAt: string;
   engineerName: string;
-  engineerExt: string;
   // 10 broadcast maintenance fields in exact requested sequence:
   // (1 -> 3 -> 4 -> 6 -> 2 -> 5 -> 8 -> 9 -> 10 -> 11, item 7 removed)
   gvStratusRules: string;     // 1
@@ -63,7 +62,6 @@ export default function DailyNightTaskPage() {
 
   // Form Fields in exact sequence: 1, 3, 4, 6, 2, 5, 8, 9, 10, 11
   const [engineerName, setEngineerName] = useState(user?.name || 'IT Night Engineer');
-  const [engineerExt, setEngineerExt] = useState('');
   const [gvStratusRules, setGvStratusRules] = useState('');     // 1
   const [octopusBackup, setOctopusBackup] = useState('');       // 3
   const [coreServerBackup, setCoreServerBackup] = useState(''); // 4
@@ -142,7 +140,6 @@ export default function DailyNightTaskPage() {
           date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
           submittedAt: new Date(Date.now() - 86400000).toISOString(),
           engineerName: 'Tanvir Hossain',
-          engineerExt: '2401',
           gvStratusRules: 'STRATUS rules verified. Ingest & Playout rules active with zero queue backlog.',
           octopusBackup: 'Octopus NRCS Database backup taken successfully to Central NAS.',
           coreServerBackup: 'Core Active Directory & DB Server system snapshot completed.',
@@ -227,7 +224,6 @@ export default function DailyNightTaskPage() {
       date: new Date().toISOString().split('T')[0],
       submittedAt: new Date().toISOString(),
       engineerName: engineerName || user?.name || 'Night Duty Engineer',
-      engineerExt: engineerExt || 'IT Desk',
       gvStratusRules,
       octopusBackup,
       coreServerBackup,
@@ -459,7 +455,7 @@ export default function DailyNightTaskPage() {
                     Daily Night-Time Maintenance Report Submission
                   </h2>
                   <p className="text-xs text-blue-100 font-medium">
-                    Independent Television Ltd. &bull; Broadcast MCR &amp; Central Operations Log
+                    Independent Television Ltd. &bull; Broadcast IT &amp; Central Operations Log
                   </p>
                 </div>
 
@@ -488,7 +484,7 @@ export default function DailyNightTaskPage() {
               {/* Form Body */}
               <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6 bg-card/60">
                 {/* Engineer Metadata Sub-Bar */}
-                <div className="p-4 rounded-xl border border-border/80 bg-muted/30 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div className="p-4 rounded-xl border border-border/80 bg-muted/30 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div>
                     <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
                       Reporting Engineer
@@ -504,19 +500,6 @@ export default function DailyNightTaskPage() {
                         className="w-full pl-8 pr-3 py-2 rounded-lg border border-border bg-background text-xs font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                      Extension / Desk
-                    </label>
-                    <input
-                      type="text"
-                      value={engineerExt}
-                      onChange={(e) => setEngineerExt(e.target.value)}
-                      placeholder="e.g. 2401 (MCR Central)"
-                      className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-                    />
                   </div>
 
                   <div>
@@ -928,9 +911,6 @@ export default function DailyNightTaskPage() {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2.5">
                           <span className="font-bold text-sm text-foreground">{rep.engineerName}</span>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-background border border-border text-muted-foreground">
-                            Ext: {rep.engineerExt}
-                          </span>
                           <span className="text-[10px] font-mono text-muted-foreground">
                             {formatDate(rep.date)}
                           </span>
@@ -980,7 +960,7 @@ export default function DailyNightTaskPage() {
                       Daily Night Maintenance Report &bull; {formatDate(activeReport.date)}
                     </h3>
                     <p className="text-[11px] text-muted-foreground font-mono">
-                      Logged by {activeReport.engineerName} (Ext: {activeReport.engineerExt})
+                      Logged by {activeReport.engineerName}
                     </p>
                   </div>
                 </div>
