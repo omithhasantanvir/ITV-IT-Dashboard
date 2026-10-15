@@ -16,17 +16,17 @@ import {
   AlertTriangle,
   Radio,
   Tv,
+  Maximize2,
+  ExternalLink,
 } from 'lucide-react';
 import api from '@/lib/api';
 import { formatNumber, formatDate } from '@/lib/utils';
-import { ITVLivePlayer } from '@/components/ITVLivePlayer';
 
 export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isFloating, setIsFloating] = useState(false);
 
   const fetchSummary = async (isSilent = false) => {
     if (!isSilent) setLoading(true);
@@ -152,137 +152,102 @@ export default function DashboardPage() {
       </div>
 
       {/* ======================================================== */}
-      {/* ITV 24/7 LIVE BROADCAST TRANSMISSION MONITOR            */}
+      {/* ITV LIVE BROADCAST MONITOR (Compact Widget)               */}
       {/* ======================================================== */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-xl bg-red-600/10 border border-red-500/20 text-red-500 flex items-center justify-center shadow-xs">
-              <Tv className="h-4 w-4" />
-            </div>
-            <div>
-              <h2 className="text-base font-bold text-foreground flex items-center gap-2">
-                <span>Independent TV &bull; Live Broadcast Feed</span>
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-600 text-white text-[9px] font-black font-mono tracking-wider shadow-xs animate-pulse">
-                  LIVE
-                </span>
-              </h2>
-              <p className="text-xs text-muted-foreground">
-                Continuous 24/7 master transmission monitoring feed from Tejgaon broadcast center.
-              </p>
-            </div>
-          </div>
-
-          <div className="hidden sm:flex items-center gap-2">
-            <button
-              onClick={() => setIsFloating(!isFloating)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold text-muted-foreground hover:text-foreground transition shadow-xs"
-            >
-              <span>{isFloating ? 'Dock to Grid' : 'Pop-out Mini Player'}</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
-          {/* Main 16:9 Live Video Player Card */}
-          <div className="xl:col-span-8">
-            <ITVLivePlayer
-              isFloating={isFloating}
-              onToggleFloating={() => setIsFloating(!isFloating)}
-            />
-            {isFloating && (
-              <div className="p-8 rounded-3xl border border-dashed border-border bg-muted/20 text-center space-y-2 select-none">
-                <Tv className="h-8 w-8 mx-auto text-primary animate-pulse" />
-                <p className="text-xs font-bold text-foreground">
-                  Live Stream is playing in floating Picture-in-Picture mode
-                </p>
-                <button
-                  onClick={() => setIsFloating(false)}
-                  className="px-3.5 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold transition shadow-xs"
-                >
-                  Dock Player Back to Dashboard
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Broadcast Studio Transmission & On-Air Roster */}
-          <div className="xl:col-span-4 p-5 sm:p-6 rounded-3xl border border-border bg-card/75 backdrop-blur-md shadow-lg flex flex-col justify-between space-y-4">
-            <div>
-              <div className="flex items-center justify-between pb-3 border-b border-border/60 mb-3.5">
+      <div className="p-4 sm:p-5 rounded-3xl border border-border bg-card/65 backdrop-blur-md shadow-xs">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
+          {/* Left: Compact Video Player (Small & Neat, ~340px) */}
+          <div className="w-full sm:w-[340px] shrink-0">
+            <div className="rounded-2xl border border-primary/25 bg-slate-950 shadow-md overflow-hidden">
+              {/* Mini Studio Monitor Bar */}
+              <div className="px-3 py-2 bg-gradient-to-r from-slate-950 via-zinc-900 to-slate-950 border-b border-white/10 flex items-center justify-between text-xs text-white select-none">
                 <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <h3 className="text-xs font-black tracking-wider uppercase text-foreground">
-                    On-Air Broadcast Telemetry
-                  </h3>
+                  <img src="/itv-logo.png" alt="ITV" className="h-4.5 w-auto object-contain drop-shadow-[0_1px_4px_rgba(239,68,68,0.7)]" />
+                  <span className="font-bold text-[11px] tracking-wide text-foreground">ITV LIVE</span>
+                  <span className="flex items-center gap-1 px-1.5 py-0.2 rounded bg-red-600 text-[9px] font-mono font-black text-white uppercase shadow-xs">
+                    <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                    LIVE
+                  </span>
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-bold">
-                  SIGNAL LOCK
-                </span>
+                <div className="flex items-center gap-1">
+                  <Link
+                    href="/live"
+                    className="h-6 w-6 rounded-md hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition"
+                    title="Open Theater / Dedicated Full Studio Mode"
+                  >
+                    <Maximize2 className="h-3 w-3" />
+                  </Link>
+                  <a
+                    href="https://www.youtube.com/watch?v=iWq2kH0iq2Q"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="h-6 w-6 rounded-md hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition"
+                    title="Watch on YouTube"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </div>
               </div>
 
-              <div className="space-y-3">
-                <div className="p-3 rounded-2xl bg-muted/30 border border-border/60 space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-muted-foreground">Channel:</span>
-                    <span className="font-bold text-foreground">Independent Television (ITV)</span>
-                  </div>
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-muted-foreground">Digital Origin:</span>
-                    <span className="font-mono text-foreground">YouTube 1080p Stream</span>
-                  </div>
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-muted-foreground">MCR Downlink:</span>
-                    <span className="font-mono text-emerald-500 font-bold">Encrypted Clean Feed</span>
-                  </div>
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-muted-foreground">Playback State:</span>
-                    <span className="font-bold text-primary flex items-center gap-1">
-                      <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
-                      Continuous 24/7 Autoplay
-                    </span>
-                  </div>
-                </div>
+              {/* Compact 16:9 Video Container */}
+              <div className="relative aspect-video w-full bg-black">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/iWq2kH0iq2Q?autoplay=1&mute=1&playsinline=1&controls=1&rel=0&modestbranding=1"
+                  title="Independent Television YouTube Live"
+                  className="w-full h-full border-0 absolute inset-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
 
-                <div className="pt-2">
-                  <div className="flex items-center justify-between text-xs mb-2">
-                    <span className="font-bold text-foreground">IT Engineers On Duty</span>
-                    <Link href="/roster" className="text-[11px] text-primary hover:underline">
-                      View Roster
-                    </Link>
-                  </div>
-                  <div className="space-y-2">
-                    {summary.itTeam?.length > 0 ? (
-                      summary.itTeam.slice(0, 3).map((mem: any) => (
-                        <div
-                          key={mem.id}
-                          className="p-2 rounded-xl border border-border/70 bg-muted/20 flex items-center justify-between text-xs"
-                        >
-                          <div className="flex items-center gap-2 truncate">
-                            <div className="h-6 w-6 rounded-lg bg-primary/10 text-primary font-bold text-[10px] flex items-center justify-center shrink-0">
-                              {mem.name.charAt(0)}
-                            </div>
-                            <p className="font-medium text-foreground truncate">{mem.name}</p>
-                          </div>
-                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-background border border-border text-muted-foreground shrink-0">
-                            Ext: {mem.extensionNumber || '—'}
-                          </span>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-[11px] text-muted-foreground">No duty team logged.</p>
-                    )}
-                  </div>
-                </div>
+              {/* Mini Bottom Strip */}
+              <div className="px-3 py-1.5 bg-zinc-950 border-t border-white/5 flex items-center justify-between text-[10px] text-slate-400 select-none">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>1080p Feed &bull; 24/7 Autoplay</span>
+                </span>
+                <Link href="/live" className="text-primary hover:underline font-semibold">
+                  Full Studio &rarr;
+                </Link>
               </div>
             </div>
+          </div>
 
-            <div className="pt-3 border-t border-border/50 flex items-center justify-between text-[11px] text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <Radio className="h-3.5 w-3.5 text-primary animate-pulse" />
-                <span>Tejgaon Master Hub</span>
+          {/* Right: Operations & Broadcast Telemetry Information Strip */}
+          <div className="flex-1 w-full space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <Radio className="h-4 w-4 text-primary animate-pulse" />
+                  <span>Broadcast Operations &bull; Live Master Control Feed</span>
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Continuous 24/7 transmission monitoring feed from Tejgaon broadcast center.
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-[10px] font-bold font-mono w-fit">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                UPLINK HEALTHY
               </span>
-              <span className="font-mono text-[10px] text-emerald-500 font-bold">OPERATIONAL</span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+              <div className="p-2.5 rounded-xl bg-muted/30 border border-border/60">
+                <p className="text-[10px] text-muted-foreground">Digital Feed</p>
+                <p className="text-xs font-bold font-mono text-foreground mt-0.5">YouTube 1080p</p>
+              </div>
+              <div className="p-2.5 rounded-xl bg-muted/30 border border-border/60">
+                <p className="text-[10px] text-muted-foreground">Satellite Link</p>
+                <p className="text-xs font-bold font-mono text-emerald-500 mt-0.5">BS-1 Locked</p>
+              </div>
+              <div className="p-2.5 rounded-xl bg-muted/30 border border-border/60">
+                <p className="text-[10px] text-muted-foreground">Broadcast Engine</p>
+                <p className="text-xs font-bold font-mono text-foreground mt-0.5">Harmonic Clean</p>
+              </div>
+              <div className="p-2.5 rounded-xl bg-muted/30 border border-border/60">
+                <p className="text-[10px] text-muted-foreground">Engineers on Duty</p>
+                <p className="text-xs font-bold font-mono text-foreground mt-0.5">{stats.itTeamMembers || '4'} Active</p>
+              </div>
             </div>
           </div>
         </div>
