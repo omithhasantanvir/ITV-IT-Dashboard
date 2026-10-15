@@ -59,7 +59,7 @@ const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
   {
     title: 'MANAGEMENT',
     items: [
-      { name: 'Asset Slips', href: '/slips', icon: FileSpreadsheet, module: 'slips' },
+      { name: 'New Employee Slip', href: '/slips', icon: FileSpreadsheet, module: 'slips' },
       { name: 'Analytics & Reports', href: '/reports', icon: BarChart3, module: 'reports' },
       { name: 'Activity Log', href: '/activity', icon: History, module: 'activity' },
       { name: 'System Settings', href: '/settings', icon: Settings, module: 'settings' },

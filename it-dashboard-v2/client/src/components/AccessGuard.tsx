@@ -43,7 +43,7 @@ export function AccessGuard({
     computers: 'Computers & Assets',
     extensions: 'PABX & Extensions',
     servers: 'Server Health Monitoring',
-    slips: 'Asset Slips',
+    slips: 'New Employee Slip',
     reports: 'Analytics & Reports',
     activity: 'Activity Log',
     settings: 'System Settings & Access Governance',

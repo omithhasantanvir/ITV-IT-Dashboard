@@ -73,7 +73,7 @@ const MODULE_META: Record<AppModule, { label: string; icon: any; description: st
   computers: { label: 'Computers & Assets', icon: Computer, description: 'Workstations, hardware specs & user allocations' },
   extensions: { label: 'PABX & Extensions', icon: PhoneCall, description: 'Internal telephony directory & floor assignments' },
   servers: { label: 'Server Health Monitoring', icon: Server, description: 'Infrastructure nodes & live latency telemetry' },
-  slips: { label: 'Asset Slips', icon: FileSpreadsheet, description: 'Hardware handovers, gate passes & return slips' },
+  slips: { label: 'New Employee Slip', icon: FileSpreadsheet, description: 'New staff credential slips, portal access & printable forms' },
   reports: { label: 'Analytics & Reports', icon: BarChart3, description: 'Asset distribution charts & departmental audits' },
   activity: { label: 'Activity & Audit Log', icon: History, description: 'System security trails & operational history' },
   settings: { label: 'System Settings & RBAC', icon: Settings, description: 'Global parameters & access permissions matrix' },
