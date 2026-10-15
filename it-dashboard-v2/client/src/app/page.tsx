@@ -152,62 +152,16 @@ export default function DashboardPage() {
       </div>
 
       {/* ======================================================== */}
-      {/* ITV LIVE STREAM MONITOR (Only Marked Video Player)       */}
+      {/* ITV LIVE STREAM (Pure Video Player)                      */}
       {/* ======================================================== */}
-      <div className="w-full sm:w-[340px] md:w-[360px]">
-        <div className="rounded-2xl border border-primary/25 bg-slate-950 shadow-md overflow-hidden">
-          {/* Mini Studio Monitor Bar */}
-          <div className="px-3 py-2 bg-gradient-to-r from-slate-950 via-zinc-900 to-slate-950 border-b border-white/10 flex items-center justify-between text-xs text-white select-none">
-            <div className="flex items-center gap-2">
-              <img src="/itv-logo.png" alt="ITV" className="h-4.5 w-auto object-contain drop-shadow-[0_1px_4px_rgba(239,68,68,0.7)]" />
-              <span className="font-bold text-[11px] tracking-wide text-foreground">ITV LIVE</span>
-              <span className="flex items-center gap-1 px-1.5 py-0.2 rounded bg-red-600 text-[9px] font-mono font-black text-white uppercase shadow-xs">
-                <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-                LIVE
-              </span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Link
-                href="/live"
-                className="h-6 w-6 rounded-md hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition"
-                title="Open Theater / Dedicated Full Studio Mode"
-              >
-                <Maximize2 className="h-3 w-3" />
-              </Link>
-              <a
-                href="https://www.youtube.com/watch?v=iWq2kH0iq2Q"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="h-6 w-6 rounded-md hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition"
-                title="Watch on YouTube"
-              >
-                <ExternalLink className="h-3 w-3" />
-              </a>
-            </div>
-          </div>
-
-          {/* Compact 16:9 Video Container */}
-          <div className="relative aspect-video w-full bg-black">
-            <iframe
-              src="https://www.youtube-nocookie.com/embed/iWq2kH0iq2Q?autoplay=1&mute=1&playsinline=1&controls=1&rel=0&modestbranding=1"
-              title="Independent Television YouTube Live"
-              className="w-full h-full border-0 absolute inset-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
-          </div>
-
-          {/* Mini Bottom Strip */}
-          <div className="px-3 py-1.5 bg-zinc-950 border-t border-white/5 flex items-center justify-between text-[10px] text-slate-400 select-none">
-            <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>1080p Feed &bull; 24/7 Autoplay</span>
-            </span>
-            <Link href="/live" className="text-primary hover:underline font-semibold">
-              Full Studio &rarr;
-            </Link>
-          </div>
-        </div>
+      <div className="w-full sm:w-[340px] md:w-[360px] rounded-2xl overflow-hidden border border-border shadow-md aspect-video bg-black relative">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/iWq2kH0iq2Q?autoplay=1&mute=1&playsinline=1&controls=1&rel=0&modestbranding=1"
+          title="Independent Television YouTube Live"
+          className="w-full h-full border-0 absolute inset-0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        />
       </div>
 
       {/* Grid: Server Health & IT Members Duty Status */}
