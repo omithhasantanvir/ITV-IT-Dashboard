@@ -1024,133 +1024,136 @@ IT Support: Ext. 30555 or 01730701335
                 {/* THE OFFICIAL PRINTABLE A4 SLIP CONTAINER             */}
                 {/* (Matches the user's uploaded official image exactly) */}
                 {/* ---------------------------------------------------- */}
+                {/* ---------------------------------------------------- */}
+                {/* THE OFFICIAL PRINTABLE A4 SLIP CONTAINER             */}
+                {/* (Calibrated for strict 1-page A4 print & PDF export) */}
+                {/* ---------------------------------------------------- */}
                 <div
                   ref={slipPrintRef}
-                  className="print-area w-full max-w-[700px] bg-white text-slate-900 border border-slate-300 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4 font-sans select-text text-left"
-                  style={{ minHeight: '840px' }}
+                  className="print-area w-full max-w-[680px] bg-white text-slate-900 border border-slate-300 rounded-2xl p-4 sm:p-6 shadow-sm space-y-2.5 font-sans select-text text-left"
                 >
                   
                   {/* Top Mini Header */}
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono border-b border-slate-100 pb-1">
+                  <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono border-b border-slate-200 pb-1">
                     <span>{new Date().toLocaleDateString('en-GB')}, {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     <span className="font-sans font-semibold text-slate-700">Employee Info Slip</span>
                   </div>
 
                   {/* Main Letterhead Header */}
-                  <div className="flex items-start justify-between pt-1">
+                  <div className="flex items-start justify-between pt-0.5">
                     {/* Left: ITV Logo */}
-                    <div className="flex flex-col items-center select-none shrink-0 w-24">
+                    <div className="flex flex-col items-center select-none shrink-0 w-20">
                       <img
                         src="/itv-logo.png"
                         alt="Independent Television Logo"
-                        className="h-16 w-auto object-contain"
+                        className="h-12 w-auto object-contain"
                       />
-                      <span className="text-[10px] font-black tracking-widest text-slate-800 uppercase mt-0.5">
+                      <span className="text-[9px] font-black tracking-widest text-slate-800 uppercase mt-0.5">
                         INDEPENDENT
                       </span>
                     </div>
 
                     {/* Center: Company Name & Address */}
                     <div className="text-center flex-1 px-2">
-                      <h1 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight leading-tight">
+                      <h1 className="text-lg sm:text-xl font-black text-slate-950 tracking-tight leading-tight">
                         Independent Television Limited
                       </h1>
-                      <p className="text-xs text-slate-600 font-medium mt-0.5">
+                      <p className="text-[10.5px] text-slate-600 font-medium mt-0.5">
                         149-150, Tejgaon Industrial Area, Dhaka-1208
                       </p>
                     </div>
 
                     {/* Right: Date */}
                     <div className="text-right shrink-0">
-                      <p className="text-xs font-bold text-slate-900">
+                      <p className="text-[11px] font-bold text-slate-900">
                         Date: <span className="font-semibold">{formatOfficialDate(activeSlip.issueDate || activeSlip.createdAt)}</span>
                       </p>
                     </div>
                   </div>
 
                   {/* Document Title: Login Information */}
-                  <div className="text-center pt-2 pb-1">
-                    <h2 className="text-lg font-black text-slate-950 tracking-tight">
+                  <div className="text-center py-0.5">
+                    <h2 className="text-base font-black text-slate-950 tracking-tight">
                       Login Information
                     </h2>
                   </div>
 
                   {/* -------------------------------------------------- */}
-                  {/* MAIN 12-ROW CREDENTIALS TABLE (EXACT MATCH)       */}
+                  {/* MAIN 12-ROW CREDENTIALS TABLE (COMPACT 1-PAGE)     */}
                   {/* -------------------------------------------------- */}
                   <div className="border border-slate-300 rounded-lg overflow-hidden">
-                    <table className="w-full text-xs text-left border-collapse">
+                    <table className="w-full text-[10.5px] text-left border-collapse">
                       <tbody className="divide-y divide-slate-300">
                         {/* Row 1: PIN */}
                         <tr className="hover:bg-slate-50">
-                          <th className="p-2.5 font-bold text-slate-900 w-1/3 bg-slate-50/70 border-r border-slate-300">PIN</th>
-                          <td className="p-2.5 font-bold text-slate-950 font-mono">{activeSlip.pin || 'N/A'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 w-2/5 bg-slate-50/80 border-r border-slate-300">PIN</th>
+                          <td className="py-1 px-2.5 font-bold text-slate-950 font-mono">{activeSlip.pin || 'N/A'}</td>
                         </tr>
 
                         {/* Row 2: Name */}
                         <tr className="hover:bg-slate-50">
-                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Name</th>
-                          <td className="p-2.5 font-bold text-slate-950">{activeSlip.name || 'N/A'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Name</th>
+                          <td className="py-1 px-2.5 font-bold text-slate-950">{activeSlip.name || 'N/A'}</td>
                         </tr>
 
                         {/* Row 3: Designation */}
                         <tr className="hover:bg-slate-50">
-                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Designation</th>
-                          <td className="p-2.5 text-slate-800">{activeSlip.designation || 'Staff'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Designation</th>
+                          <td className="py-1 px-2.5 text-slate-800">{activeSlip.designation || 'Staff'}</td>
                         </tr>
 
                         {/* Row 4: Department */}
                         <tr className="hover:bg-slate-50">
-                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Department</th>
-                          <td className="p-2.5 text-slate-800">{activeSlip.department || 'N/A'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Department</th>
+                          <td className="py-1 px-2.5 text-slate-800">{activeSlip.department || 'N/A'}</td>
                         </tr>
 
                         {/* Row 5: E-mail ID */}
                         <tr className="hover:bg-slate-50">
-                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">E-mail ID</th>
-                          <td className="p-2.5 text-slate-900 font-mono">{activeSlip.emailId || 'N/A'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">E-mail ID</th>
+                          <td className="py-1 px-2.5 text-slate-900 font-mono">{activeSlip.emailId || 'N/A'}</td>
                         </tr>
 
                         {/* Row 6: E-mail Password */}
                         <tr className="hover:bg-slate-50">
-                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">E-mail Password</th>
-                          <td className="p-2.5 font-mono font-bold text-slate-900">{activeSlip.emailPassword || 'Itv4312'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">E-mail Password</th>
+                          <td className="py-1 px-2.5 font-mono font-bold text-slate-900">{activeSlip.emailPassword || 'Itv4312'}</td>
                         </tr>
 
                         {/* Row 7: Domain ID */}
                         <tr className="hover:bg-slate-50">
-                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Domain ID</th>
-                          <td className="p-2.5 text-slate-900 font-mono">{activeSlip.domainId || 'N/A'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Domain ID</th>
+                          <td className="py-1 px-2.5 text-slate-900 font-mono">{activeSlip.domainId || 'N/A'}</td>
                         </tr>
 
                         {/* Row 8: Domain Password */}
                         <tr className="hover:bg-slate-50">
-                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Domain Password</th>
-                          <td className="p-2.5 font-mono font-bold text-slate-900">{activeSlip.domainPassword || 'Itv4312'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Domain Password</th>
+                          <td className="py-1 px-2.5 font-mono font-bold text-slate-900">{activeSlip.domainPassword || 'Itv4312'}</td>
                         </tr>
 
                         {/* Row 9: X-Factor HRMS Username */}
                         <tr className="hover:bg-slate-50">
-                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">X-Factor HRMS Username</th>
-                          <td className="p-2.5 text-slate-900 font-mono">{activeSlip.hrmsUsername || activeSlip.pin || 'N/A'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">X-Factor HRMS Username</th>
+                          <td className="py-1 px-2.5 text-slate-900 font-mono">{activeSlip.hrmsUsername || activeSlip.pin || 'N/A'}</td>
                         </tr>
 
                         {/* Row 10: X-Factor HRMS Password */}
                         <tr className="hover:bg-slate-50">
-                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">X-Factor HRMS Password</th>
-                          <td className="p-2.5 font-mono font-bold text-slate-900">{activeSlip.hrmsPassword || activeSlip.pin || 'N/A'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">X-Factor HRMS Password</th>
+                          <td className="py-1 px-2.5 font-mono font-bold text-slate-900">{activeSlip.hrmsPassword || activeSlip.pin || 'N/A'}</td>
                         </tr>
 
                         {/* Row 11: Food Requisition Portal Username */}
                         <tr className="hover:bg-slate-50">
-                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Food Requisition Portal Username</th>
-                          <td className="p-2.5 text-slate-900 font-mono">{activeSlip.foodUsername || activeSlip.emailId || 'N/A'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Food Requisition Portal Username</th>
+                          <td className="py-1 px-2.5 text-slate-900 font-mono">{activeSlip.foodUsername || activeSlip.emailId || 'N/A'}</td>
                         </tr>
 
                         {/* Row 12: Food Requisition Portal Password */}
                         <tr className="hover:bg-slate-50">
-                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Food Requisition Portal Password</th>
-                          <td className="p-2.5 font-mono font-bold text-slate-900">{activeSlip.foodPassword || '123456'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Food Requisition Portal Password</th>
+                          <td className="py-1 px-2.5 font-mono font-bold text-slate-900">{activeSlip.foodPassword || '123456'}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -1159,79 +1162,79 @@ IT Support: Ext. 30555 or 01730701335
                   {/* -------------------------------------------------- */}
                   {/* IMPORTANT PASSWORD POLICY INSTRUCTIONS             */}
                   {/* -------------------------------------------------- */}
-                  <div className="text-xs space-y-1.5 pt-1 text-slate-800">
+                  <div className="text-[10px] space-y-1 text-slate-800">
                     <p className="font-bold text-slate-950">Important:</p>
-                    <div className="pl-1 space-y-0.5 leading-relaxed text-[11px]">
+                    <div className="pl-1 space-y-0.5 leading-tight text-[9.5px]">
                       <p className="font-medium">1. Your Domain password must meet the following requirements:</p>
-                      <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
+                      <ul className="list-disc pl-4 space-y-0.5 text-slate-700">
                         <li>At least 8 characters long.</li>
                         <li>Password Can not contain any part of your Domain ID.</li>
                         <li>Include at least one uppercase letter (A-Z), at least one lowercase letter (a-z), at least one number (0-9), and at least one special character (e.g., !, @, #, $, etc.).</li>
                       </ul>
-                      <p className="font-medium pt-1">
+                      <p className="font-medium pt-0.5">
                         2. For E-Mail Password, use any complex password combinations.
                       </p>
                     </div>
                   </div>
 
                   {/* -------------------------------------------------- */}
-                  {/* QUICK ACCESS QR CODES (EXACT 3 QR CODES)           */}
+                  {/* QUICK ACCESS QR CODES (3 QR CODES)                 */}
                   {/* -------------------------------------------------- */}
-                  <div className="pt-2 text-center">
-                    <div className="relative flex items-center justify-center mb-3">
+                  <div className="pt-1 text-center">
+                    <div className="relative flex items-center justify-center mb-2">
                       <div className="border-t border-slate-400 w-full" />
-                      <span className="bg-white px-3 text-xs font-bold text-slate-950 tracking-tight shrink-0">
+                      <span className="bg-white px-3 text-[11px] font-bold text-slate-950 tracking-tight shrink-0">
                         Quick Access QR Codes
                       </span>
                       <div className="border-t border-slate-400 w-full" />
                     </div>
 
                     {/* QR Code Cards Grid */}
-                    <div className="grid grid-cols-3 gap-3 sm:gap-6 justify-items-center max-w-lg mx-auto">
+                    <div className="grid grid-cols-3 gap-2.5 sm:gap-5 justify-items-center max-w-md mx-auto">
                       {/* QR 1: E-Mail Portal */}
-                      <div className="border border-slate-300 rounded-lg p-2.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
-                        <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center overflow-hidden">
+                      <div className="border border-slate-300 rounded-lg p-1.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
+                        <div className="w-18 h-18 sm:w-20 sm:h-20 flex items-center justify-center overflow-hidden">
                           {emailQr ? (
                             <img src={emailQr} alt="E-Mail Portal QR" className="w-full h-full object-contain" />
                           ) : (
-                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[10px] text-slate-400">
+                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400">
                               QR Code
                             </div>
                           )}
                         </div>
-                        <span className="text-[10px] font-bold text-slate-800 mt-1 block">
+                        <span className="text-[9.5px] font-bold text-slate-800 mt-0.5 block">
                           E-Mail Portal
                         </span>
                       </div>
 
                       {/* QR 2: X-Factor HRMS */}
-                      <div className="border border-slate-300 rounded-lg p-2.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
-                        <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center overflow-hidden">
+                      <div className="border border-slate-300 rounded-lg p-1.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
+                        <div className="w-18 h-18 sm:w-20 sm:h-20 flex items-center justify-center overflow-hidden">
                           {hrmsQr ? (
                             <img src={hrmsQr} alt="X-Factor HRMS QR" className="w-full h-full object-contain" />
                           ) : (
-                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[10px] text-slate-400">
+                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400">
                               QR Code
                             </div>
                           )}
                         </div>
-                        <span className="text-[10px] font-bold text-slate-800 mt-1 block">
+                        <span className="text-[9.5px] font-bold text-slate-800 mt-0.5 block">
                           X-Factor HRMS
                         </span>
                       </div>
 
                       {/* QR 3: Food Requisition */}
-                      <div className="border border-slate-300 rounded-lg p-2.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
-                        <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center overflow-hidden">
+                      <div className="border border-slate-300 rounded-lg p-1.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
+                        <div className="w-18 h-18 sm:w-20 sm:h-20 flex items-center justify-center overflow-hidden">
                           {foodQr ? (
                             <img src={foodQr} alt="Food Requisition QR" className="w-full h-full object-contain" />
                           ) : (
-                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[10px] text-slate-400">
+                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400">
                               QR Code
                             </div>
                           )}
                         </div>
-                        <span className="text-[10px] font-bold text-slate-800 mt-1 block">
+                        <span className="text-[9.5px] font-bold text-slate-800 mt-0.5 block">
                           Food Requisition
                         </span>
                       </div>
@@ -1239,16 +1242,16 @@ IT Support: Ext. 30555 or 01730701335
                   </div>
 
                   {/* Portal URLs Instruction */}
-                  <div className="text-[11px] text-slate-800 leading-relaxed pt-2 space-y-0.5">
-                    <p className="font-medium">3. Scan the QR codes above to quickly access portals:</p>
-                    <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
+                  <div className="text-[9.5px] text-slate-800 leading-snug pt-1 space-y-0.5">
+                    <p className="font-semibold">3. Scan the QR codes above to quickly access portals:</p>
+                    <ul className="list-disc pl-4 space-y-0.5 text-slate-700">
                       <li>
                         <strong>E-Mail Portal:</strong> Scan the QR code or visit:{' '}
                         <a
                           href="https://mail.independent24.tv"
                           target="_blank"
                           rel="noreferrer"
-                          className="text-blue-700 underline font-mono text-[10.5px]"
+                          className="text-blue-700 underline font-mono text-[9px]"
                         >
                           https://mail.independent24.tv
                         </a>
@@ -1259,7 +1262,7 @@ IT Support: Ext. 30555 or 01730701335
                           href="http://202.84.45.240:2023/xfactor/"
                           target="_blank"
                           rel="noreferrer"
-                          className="text-blue-700 underline font-mono text-[10.5px]"
+                          className="text-blue-700 underline font-mono text-[9px]"
                         >
                           http://202.84.45.240:2023/xfactor/
                         </a>
@@ -1270,7 +1273,7 @@ IT Support: Ext. 30555 or 01730701335
                           href="http://202.84.45.1:50765"
                           target="_blank"
                           rel="noreferrer"
-                          className="text-blue-700 underline font-mono text-[10.5px]"
+                          className="text-blue-700 underline font-mono text-[9px]"
                         >
                           http://202.84.45.1:50765
                         </a>
@@ -1279,7 +1282,7 @@ IT Support: Ext. 30555 or 01730701335
                   </div>
 
                   {/* IT Support Contact */}
-                  <div className="pt-1 text-[11px] text-slate-800">
+                  <div className="pt-0.5 text-[9.5px] text-slate-800">
                     <p>
                       If you need further assistance with login or if you forget your password, contact IT Support at{' '}
                       <strong>Ext. 30555</strong> or <strong>01730701335</strong>.
@@ -1287,20 +1290,20 @@ IT Support: Ext. 30555 or 01730701335
                   </div>
 
                   {/* Security Warnings & Instructions */}
-                  <div className="text-center pt-3 text-[10.5px] text-slate-700 space-y-0.5 font-medium">
+                  <div className="text-center pt-1.5 text-[9px] text-slate-700 space-y-0.5 font-medium">
                     <p>** Please change all of your given default login passwords after receiving this slip.</p>
                     <p>** Always log off from your E-Mail/domain session before leaving your computer.</p>
                   </div>
 
                   {/* Bottom Computer-Generated Notice */}
-                  <div className="text-center pt-4 pb-2 border-t border-slate-200">
-                    <p className="text-[10px] font-bold text-slate-600 tracking-wider">
+                  <div className="text-center pt-2 pb-1 border-t border-slate-200">
+                    <p className="text-[9.5px] font-bold text-slate-600 tracking-wider">
                       **This is a computer-generated receipt and does not require a signature**
                     </p>
                   </div>
 
                   {/* Bottom Page Numbering / System Stamp */}
-                  <div className="flex items-center justify-between text-[9px] text-slate-400 font-mono pt-1">
+                  <div className="flex items-center justify-between text-[8px] text-slate-400 font-mono pt-0.5">
                     <span>172.19.4.7:2023/slip/view_employee.php?id={activeSlip.pin || activeSlip.id.slice(0, 8)}</span>
                     <span>1/1</span>
                   </div>
