@@ -35,6 +35,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { AccessGuard } from '@/components/AccessGuard';
 import { formatDate } from '@/lib/utils';
+import { confirmAction, showSuccessAlert, showWarningAlert } from '@/lib/sweetalert';
 
 export interface NightTaskReport {
   id: string;
@@ -194,9 +195,18 @@ export default function DailyNightTaskPage() {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Reset form
-  const handleReset = () => {
-    if (confirm('Are you sure you want to clear all form fields?')) {
+  // Reset form with modern SweetAlert confirmation dialog
+  const handleReset = async () => {
+    const isConfirmed = await confirmAction({
+      title: 'Reset Form Fields?',
+      text: 'Are you sure you want to clear all 11 broadcast maintenance entries? Any unsaved text will be lost.',
+      icon: 'warning',
+      confirmButtonText: 'Yes, Reset Form',
+      cancelButtonText: 'Cancel',
+      isDanger: true,
+    });
+
+    if (isConfirmed) {
       setGvStratusRules('');
       setStorageVDrive('');
       setOctopusBackup('');
@@ -209,21 +219,19 @@ export default function DailyNightTaskPage() {
       setVizrtOldData('');
       setCloudDemo('');
       setOverallNotes('');
-      setToast({ message: 'Form fields cleared.', type: 'success' });
-      setTimeout(() => setToast(null), 2500);
+      await showSuccessAlert('Form Cleared', 'All 11 maintenance task fields have been reset.');
     }
   };
 
   // Form Submit
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!isWindowOpen && !adminBypass) {
-      setToast({
-        message: 'Submission locked! Form can only be submitted between 1:30 A.M. and 6:00 A.M.',
-        type: 'error',
-      });
-      setTimeout(() => setToast(null), 4000);
+      await showWarningAlert(
+        'Submission Window Locked',
+        'Night-Time Maintenance Reports can only be submitted between 1:30 A.M. and 6:00 A.M. Please turn on "Admin Test Bypass" above to test submissions anytime.'
+      );
       return;
     }
 
@@ -249,17 +257,16 @@ export default function DailyNightTaskPage() {
       overallNotes: overallNotes || 'Routine night shift report completed.',
     };
 
-    setTimeout(() => {
+    setTimeout(async () => {
       const updated = [newReport, ...submissions];
       setSubmissions(updated);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       setIsSubmitting(false);
 
-      setToast({
-        message: 'Daily Night-Time Maintenance Report Submitted Successfully!',
-        type: 'success',
-      });
-      setTimeout(() => setToast(null), 4000);
+      await showSuccessAlert(
+        'Report Submitted!',
+        'Daily Night-Time Maintenance Report has been successfully saved to central archive.'
+      );
 
       // Reset fields
       setGvStratusRules('');
@@ -274,7 +281,7 @@ export default function DailyNightTaskPage() {
       setVizrtOldData('');
       setCloudDemo('');
       setOverallNotes('');
-    }, 600);
+    }, 400);
   };
 
   // Helper for quick pill insertion
