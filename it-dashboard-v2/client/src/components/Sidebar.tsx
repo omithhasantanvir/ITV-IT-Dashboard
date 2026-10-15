@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
-  Tv,
   Users,
   Computer,
   PhoneCall,
@@ -37,7 +36,6 @@ const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
     title: 'OVERVIEW',
     items: [
       { name: 'Dashboard', href: '/', icon: LayoutDashboard, module: 'dashboard' },
-      { name: 'Live TV', href: '/live', icon: Tv, module: 'dashboard', badge: 'LIVE' },
       { name: 'Employees', href: '/employees', icon: Users, module: 'employees' },
       {
         name: 'Duty Roster',
