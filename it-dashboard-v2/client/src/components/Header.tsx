@@ -18,6 +18,10 @@ import {
   CheckCircle2,
   AlertCircle,
   ShieldCheck,
+  Tv,
+  Radio,
+  ExternalLink,
+  Maximize2,
 } from 'lucide-react';
 import api, { getErrorMessage } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -30,6 +34,9 @@ export function Header() {
   // Dropdown state
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Live TV Modal state
+  const [isLiveTVModalOpen, setIsLiveTVModalOpen] = useState(false);
 
   // Change Password Modal state
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
@@ -103,10 +110,18 @@ export function Header() {
         <div className="flex items-center gap-3">
           <h2 className="text-base font-semibold text-foreground flex items-center gap-2.5">
             <span>Operations Management Platform</span>
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[10px] font-bold tracking-wider">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-              ITV LIVE
-            </span>
+            <button
+              onClick={() => setIsLiveTVModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/25 hover:border-red-600 text-[11px] font-bold tracking-wide transition-all shadow-xs group cursor-pointer active:scale-95"
+              title="Click to Watch Independent Television Live"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 group-hover:bg-white opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600 group-hover:bg-white" />
+              </span>
+              <Tv className="h-3 w-3" />
+              <span>Live TV</span>
+            </button>
           </h2>
         </div>
 
@@ -331,6 +346,106 @@ export function Header() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* Live TV Modal Dialog                                     */}
+      {/* ======================================================== */}
+      {isLiveTVModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+          {/* Backdrop Click to close */}
+          <div
+            className="fixed inset-0"
+            onClick={() => setIsLiveTVModalOpen(false)}
+          />
+
+          <div className="relative w-full max-w-4xl rounded-3xl border border-red-500/30 bg-slate-950 text-white shadow-2xl overflow-hidden z-10 animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="px-5 py-3.5 bg-gradient-to-r from-slate-950 via-zinc-900 to-slate-950 border-b border-white/10 flex items-center justify-between select-none">
+              <div className="flex items-center gap-3">
+                <img
+                  src="/itv-logo.png"
+                  alt="ITV Logo"
+                  className="h-7 w-auto object-contain drop-shadow-[0_2px_8px_rgba(239,68,68,0.8)]"
+                />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600" />
+                    </span>
+                    <h3 className="text-sm font-bold tracking-tight text-white flex items-center gap-2">
+                      <span>Independent Television</span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-600 text-white font-extrabold uppercase">
+                        LIVE ON-AIR
+                      </span>
+                    </h3>
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    24/7 National Broadcast &bull; 1080p Full HD Feed
+                  </p>
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/live"
+                  onClick={() => setIsLiveTVModalOpen(false)}
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white transition"
+                  title="Open Dedicated Studio Page"
+                >
+                  <Maximize2 className="h-3.5 w-3.5" />
+                  <span>Theater Mode</span>
+                </Link>
+
+                <a
+                  href="https://www.youtube.com/watch?v=iWq2kH0iq2Q"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-8 w-8 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white flex items-center justify-center transition"
+                  title="Watch on YouTube"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+
+                <button
+                  onClick={() => setIsLiveTVModalOpen(false)}
+                  className="h-8 w-8 rounded-xl bg-white/10 hover:bg-red-600 text-slate-300 hover:text-white flex items-center justify-center transition"
+                  title="Close (Esc)"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Video container (16:9 Aspect Ratio) */}
+            <div className="relative aspect-video w-full bg-black">
+              <iframe
+                src="https://www.youtube-nocookie.com/embed/iWq2kH0iq2Q?autoplay=1&mute=0&playsinline=1&controls=1&rel=0&modestbranding=1"
+                title="Independent Television YouTube Live Stream"
+                className="w-full h-full border-0 absolute inset-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+
+            {/* Modal Bottom Status Bar */}
+            <div className="px-5 py-3 bg-zinc-950 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
+              <div className="flex items-center gap-2 truncate">
+                <Radio className="h-3.5 w-3.5 text-red-500 animate-pulse shrink-0" />
+                <span className="truncate">Central MCR Satellite Uplink: Bangabandhu-1 (93.5°E) Lock</span>
+              </div>
+              <Link
+                href="/live"
+                onClick={() => setIsLiveTVModalOpen(false)}
+                className="text-red-400 hover:text-red-300 font-semibold transition shrink-0 ml-3"
+              >
+                Go to Dedicated Studio Page &rarr;
+              </Link>
+            </div>
           </div>
         </div>
       )}
