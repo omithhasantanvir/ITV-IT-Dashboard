@@ -105,7 +105,8 @@ export default function ReportsPage() {
           </div>
         </div>
       </div>
-      )}
-    </AccessGuard>
-  );
+    </div>
+    )}
+  </AccessGuard>
+);
 }
