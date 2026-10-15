@@ -586,3 +586,33 @@ body {
   background-size: 200% 200%;
   animation: itvMeshGradient 16s ease infinite;
 }
+
+/* =========================================================================
+   Print Optimization for Official ITV Employee Info Slips
+   ========================================================================= */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  aside, header, nav, .no-print {
+    display: none !important;
+  }
+  .print-area {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm;
+  }
+}
+

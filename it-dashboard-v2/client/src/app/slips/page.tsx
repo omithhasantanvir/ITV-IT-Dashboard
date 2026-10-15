@@ -23,14 +23,21 @@ import {
   Download,
   AlertCircle,
   ExternalLink,
+  QrCode,
+  Layout,
+  FileText,
+  PhoneCall,
+  Sparkles,
 } from 'lucide-react';
 import api, { getErrorMessage } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
 import { AccessGuard } from '@/components/AccessGuard';
 import { useAuth } from '@/context/AuthContext';
 import Swal from 'sweetalert2';
+import QRCode from 'qrcode';
 
 type ViewMode = 'HUB' | 'FORM' | 'LIST';
+type SlipDisplayMode = 'OFFICIAL' | 'STUDIO';
 
 interface EmployeeSlip {
   id: string;
@@ -62,7 +69,14 @@ export default function SlipsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSlip, setActiveSlip] = useState<EmployeeSlip | null>(null);
+  const [displayMode, setDisplayMode] = useState<SlipDisplayMode>('OFFICIAL');
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
+  // QR Code Data URLs (Generated locally and completely offline)
+  const [emailQr, setEmailQr] = useState<string>('');
+  const [hrmsQr, setHrmsQr] = useState<string>('');
+  const [foodQr, setFoodQr] = useState<string>('');
 
   // Form states matching the exact layout of Image 1
   const [formDate, setFormDate] = useState(() => {
@@ -74,7 +88,7 @@ export default function SlipsPage() {
   const [name, setName] = useState('');
   const [designation, setDesignation] = useState('');
   const [department, setDepartment] = useState('');
-  
+
   // Credentials
   const [emailId, setEmailId] = useState('');
   const [emailPassword, setEmailPassword] = useState('Itv4312');
@@ -93,6 +107,21 @@ export default function SlipsPage() {
 
   // Print ref
   const slipPrintRef = useRef<HTMLDivElement>(null);
+
+  // Generate QR codes for portals
+  useEffect(() => {
+    QRCode.toDataURL('https://mail.independent24.tv', { width: 180, margin: 1, errorCorrectionLevel: 'M' })
+      .then(setEmailQr)
+      .catch((err) => console.error(err));
+
+    QRCode.toDataURL('http://202.84.45.240:2023/xfactor/', { width: 180, margin: 1, errorCorrectionLevel: 'M' })
+      .then(setHrmsQr)
+      .catch((err) => console.error(err));
+
+    QRCode.toDataURL('http://202.84.45.1:50765', { width: 180, margin: 1, errorCorrectionLevel: 'M' })
+      .then(setFoodQr)
+      .catch((err) => console.error(err));
+  }, []);
 
   // Prepopulate creator details when user loads
   useEffect(() => {
@@ -118,6 +147,21 @@ export default function SlipsPage() {
   useEffect(() => {
     fetchSlips();
   }, []);
+
+  // Format date helper matching DD/MM/YYYY
+  const formatOfficialDate = (dateStr?: string) => {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
+    } catch {
+      return dateStr;
+    }
+  };
 
   // Intelligent auto-sync handlers as seen in Image 1:
   // 1. PIN auto-syncs to X-Factor HRMS Username & Password
@@ -213,8 +257,8 @@ export default function SlipsPage() {
         const createdSlip = res.data.data;
         Swal.fire({
           icon: 'success',
-          title: 'Slip Generated Successfully!',
-          text: `Credential Slip ${createdSlip.slipNumber} has been created.`,
+          title: 'Employee Slip Created!',
+          text: `Official Credential Slip for ${createdSlip.name} (${createdSlip.slipNumber}) is ready.`,
           confirmButtonText: 'View & Print Slip',
           showCancelButton: true,
           cancelButtonText: 'View All Slips',
@@ -274,9 +318,77 @@ export default function SlipsPage() {
     setTimeout(() => setCopiedField(null), 2000);
   };
 
+  // Copy full credential block to clipboard
+  const handleCopyAllCredentials = () => {
+    if (!activeSlip) return;
+    const block = `INDEPENDENT TELEVISION LIMITED
+Employee Credential Slip
+========================================
+PIN: ${activeSlip.pin || 'N/A'}
+Name: ${activeSlip.name || 'N/A'}
+Designation: ${activeSlip.designation || 'N/A'}
+Department: ${activeSlip.department || 'N/A'}
+
+[LOGIN CREDENTIALS]
+E-Mail ID: ${activeSlip.emailId || 'N/A'}
+E-Mail Password: ${activeSlip.emailPassword || 'Itv4312'}
+
+Domain ID: ${activeSlip.domainId || 'N/A'}
+Domain Password: ${activeSlip.domainPassword || 'Itv4312'}
+
+X-Factor HRMS Username: ${activeSlip.hrmsUsername || activeSlip.pin || 'N/A'}
+X-Factor HRMS Password: ${activeSlip.hrmsPassword || activeSlip.pin || 'N/A'}
+
+Food Requisition Username: ${activeSlip.foodUsername || activeSlip.emailId || 'N/A'}
+Food Requisition Password: ${activeSlip.foodPassword || '123456'}
+
+Portal Links:
+- E-Mail: https://mail.independent24.tv
+- HRMS: http://202.84.45.240:2023/xfactor/
+- Food: http://202.84.45.1:50765
+
+IT Support: Ext. 30555 or 01730701335
+========================================`;
+    navigator.clipboard.writeText(block);
+    setCopiedField('all');
+    setTimeout(() => setCopiedField(null), 2500);
+  };
+
   // Print slip helper
   const handlePrintSlip = () => {
     window.print();
+  };
+
+  // Download PDF helper
+  const handleDownloadPdf = async () => {
+    if (!slipPrintRef.current) return;
+    setIsDownloadingPdf(true);
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const { jsPDF } = await import('jspdf');
+
+      const canvas = await html2canvas(slipPrintRef.current, {
+        scale: 2.5,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const margin = 8;
+      const contentWidth = pageWidth - margin * 2;
+      const contentHeight = (canvas.height * contentWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'PNG', margin, margin, contentWidth, Math.min(contentHeight, pageHeight - margin * 2));
+      pdf.save(`Employee-Info-Slip-${activeSlip?.pin || activeSlip?.slipNumber}.pdf`);
+    } catch (err) {
+      console.error('PDF export error:', err);
+      Swal.fire('PDF Export Error', 'Could not generate PDF. Please use the Print option.', 'error');
+    } finally {
+      setIsDownloadingPdf(false);
+    }
   };
 
   // Filtered slips
@@ -327,7 +439,7 @@ export default function SlipsPage() {
                 Employee Slip Management
               </h2>
               <p className="text-xs text-muted-foreground font-medium mb-8">
-                IT Support Credential & Registration System
+                IT Support Credential &amp; Registration System
               </p>
 
               {/* Action Buttons from Image 2 */}
@@ -724,7 +836,7 @@ export default function SlipsPage() {
                     <tr>
                       <th className="p-4">Slip No.</th>
                       <th className="p-4">Staff Details</th>
-                      <th className="p-4">Department & Designation</th>
+                      <th className="p-4">Department &amp; Designation</th>
                       <th className="p-4">Account Credentials</th>
                       <th className="p-4">Issued By</th>
                       <th className="p-4">Date</th>
@@ -799,7 +911,7 @@ export default function SlipsPage() {
 
                           {/* Issue Date */}
                           <td className="p-4 text-[11px] text-muted-foreground font-mono">
-                            {formatDate(slip.issueDate || slip.createdAt)}
+                            {formatOfficialDate(slip.issueDate || slip.createdAt)}
                           </td>
 
                           {/* Actions */}
@@ -808,10 +920,10 @@ export default function SlipsPage() {
                               <button
                                 onClick={() => setActiveSlip(slip)}
                                 className="px-2.5 py-1.5 rounded-lg bg-[#0070BA]/10 hover:bg-[#0070BA]/20 text-[#0070BA] dark:text-sky-400 font-semibold text-xs flex items-center gap-1.5 transition"
-                                title="View & Print Slip"
+                                title="View & Print Official Slip"
                               >
                                 <Printer className="h-3.5 w-3.5" />
-                                <span>Slip</span>
+                                <span>Official Slip</span>
                               </button>
 
                               <button
@@ -834,28 +946,68 @@ export default function SlipsPage() {
         )}
 
         {/* ======================================================== */}
-        {/* MODAL: OFFICIAL INDEPENDENT TV CREDENTIAL SLIP PREVIEW   */}
+        {/* MODAL: OFFICIAL INDEPENDENT TV EMPLOYEE INFO SLIP        */}
+        {/* EXACT CONTENT MATCH TO USER'S OFFICIAL IMAGE WITH        */}
+        {/* 100% CLEAN PRINT TO A4 & DOWNLOAD PDF CAPABILITY         */}
         {/* ======================================================== */}
         {activeSlip && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-in fade-in">
-            <div className="w-full max-w-2xl max-h-[92vh] flex flex-col rounded-3xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-background/80 backdrop-blur-md animate-in fade-in overflow-y-auto">
+            <div className="w-full max-w-3xl my-auto rounded-3xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95 flex flex-col max-h-[95vh]">
               
-              {/* Modal Top Actions */}
-              <div className="p-4 border-b border-border flex items-center justify-between bg-muted/40 no-print">
-                <div className="flex items-center gap-2">
-                  <FileSpreadsheet className="h-5 w-5 text-primary" />
-                  <span className="font-bold text-sm text-foreground">
-                    Credential Slip: {activeSlip.slipNumber}
-                  </span>
+              {/* Modal Top Control Toolbar (No-Print) */}
+              <div className="p-4 border-b border-border flex flex-wrap items-center justify-between gap-3 bg-muted/40 no-print shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <FileText className="h-5 w-5 text-primary" />
+                  <div>
+                    <h3 className="font-bold text-sm text-foreground">
+                      Employee Info Slip &bull; {activeSlip.name || 'Staff'}
+                    </h3>
+                    <p className="text-[10px] text-muted-foreground font-mono">
+                      Slip Ref: {activeSlip.slipNumber} &bull; PIN: {activeSlip.pin}
+                    </p>
+                  </div>
                 </div>
+
                 <div className="flex items-center gap-2">
+                  {/* Copy All Text */}
+                  <button
+                    onClick={handleCopyAllCredentials}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition"
+                    title="Copy formatted text to clipboard"
+                  >
+                    {copiedField === 'all' ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 text-emerald-500" />
+                        <span className="text-emerald-500">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5" />
+                        <span>Copy All</span>
+                      </>
+                    )}
+                  </button>
+
+                  {/* Download PDF */}
+                  <button
+                    onClick={handleDownloadPdf}
+                    disabled={isDownloadingPdf}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition disabled:opacity-50"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    <span>{isDownloadingPdf ? 'Generating...' : 'PDF'}</span>
+                  </button>
+
+                  {/* Print Slip */}
                   <button
                     onClick={handlePrintSlip}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-md shadow-primary/25 hover:bg-primary/90 transition"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-md shadow-primary/25 hover:bg-primary/90 transition"
                   >
                     <Printer className="h-3.5 w-3.5" />
                     <span>Print Slip</span>
                   </button>
+
+                  {/* Close */}
                   <button
                     onClick={() => setActiveSlip(null)}
                     className="px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-semibold text-muted-foreground hover:bg-muted transition"
@@ -865,178 +1017,293 @@ export default function SlipsPage() {
                 </div>
               </div>
 
-              {/* Printable Document Body */}
-              <div
-                ref={slipPrintRef}
-                className="p-6 sm:p-8 overflow-y-auto space-y-6 bg-white text-slate-900 print:p-0 print:m-0"
-              >
-                {/* Official Slip Header */}
-                <div className="border-b-2 border-red-600 pb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src="/itv-logo.png"
-                      alt="Independent Television Logo"
-                      className="h-14 w-auto object-contain select-none"
-                    />
-                    <div>
-                      <h2 className="text-lg font-black tracking-tight text-slate-950 font-sans leading-tight">
-                        INDEPENDENT TELEVISION
-                      </h2>
-                      <p className="text-[11px] font-bold text-red-600 uppercase tracking-widest font-mono">
-                        IT OPERATIONS &bull; CREDENTIAL AUTHORIZATION
+              {/* Scrollable Document Wrapper */}
+              <div className="p-4 sm:p-6 overflow-y-auto bg-slate-100/70 dark:bg-slate-950/60 flex justify-center">
+                
+                {/* ---------------------------------------------------- */}
+                {/* THE OFFICIAL PRINTABLE A4 SLIP CONTAINER             */}
+                {/* (Matches the user's uploaded official image exactly) */}
+                {/* ---------------------------------------------------- */}
+                <div
+                  ref={slipPrintRef}
+                  className="print-area w-full max-w-[700px] bg-white text-slate-900 border border-slate-300 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4 font-sans select-text text-left"
+                  style={{ minHeight: '840px' }}
+                >
+                  
+                  {/* Top Mini Header */}
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono border-b border-slate-100 pb-1">
+                    <span>{new Date().toLocaleDateString('en-GB')}, {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="font-sans font-semibold text-slate-700">Employee Info Slip</span>
+                  </div>
+
+                  {/* Main Letterhead Header */}
+                  <div className="flex items-start justify-between pt-1">
+                    {/* Left: ITV Logo */}
+                    <div className="flex flex-col items-center select-none shrink-0 w-24">
+                      <img
+                        src="/itv-logo.png"
+                        alt="Independent Television Logo"
+                        className="h-16 w-auto object-contain"
+                      />
+                      <span className="text-[10px] font-black tracking-widest text-slate-800 uppercase mt-0.5">
+                        INDEPENDENT
+                      </span>
+                    </div>
+
+                    {/* Center: Company Name & Address */}
+                    <div className="text-center flex-1 px-2">
+                      <h1 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight leading-tight">
+                        Independent Television Limited
+                      </h1>
+                      <p className="text-xs text-slate-600 font-medium mt-0.5">
+                        149-150, Tejgaon Industrial Area, Dhaka-1208
                       </p>
-                      <p className="text-[10px] text-slate-500">
-                        Tajgaon I/A, Dhaka-1208, Bangladesh &bull; Lan &amp; Domain Sync
+                    </div>
+
+                    {/* Right: Date */}
+                    <div className="text-right shrink-0">
+                      <p className="text-xs font-bold text-slate-900">
+                        Date: <span className="font-semibold">{formatOfficialDate(activeSlip.issueDate || activeSlip.createdAt)}</span>
                       </p>
                     </div>
                   </div>
 
-                  <div className="text-right">
-                    <span className="text-xs font-extrabold px-2.5 py-1 rounded bg-red-100 text-red-700 font-mono inline-block">
-                      {activeSlip.slipNumber}
-                    </span>
-                    <p className="text-[10px] text-slate-500 font-mono mt-1">
-                      Date: {formatDate(activeSlip.issueDate || activeSlip.createdAt)}
+                  {/* Document Title: Login Information */}
+                  <div className="text-center pt-2 pb-1">
+                    <h2 className="text-lg font-black text-slate-950 tracking-tight">
+                      Login Information
+                    </h2>
+                  </div>
+
+                  {/* -------------------------------------------------- */}
+                  {/* MAIN 12-ROW CREDENTIALS TABLE (EXACT MATCH)       */}
+                  {/* -------------------------------------------------- */}
+                  <div className="border border-slate-300 rounded-lg overflow-hidden">
+                    <table className="w-full text-xs text-left border-collapse">
+                      <tbody className="divide-y divide-slate-300">
+                        {/* Row 1: PIN */}
+                        <tr className="hover:bg-slate-50">
+                          <th className="p-2.5 font-bold text-slate-900 w-1/3 bg-slate-50/70 border-r border-slate-300">PIN</th>
+                          <td className="p-2.5 font-bold text-slate-950 font-mono">{activeSlip.pin || 'N/A'}</td>
+                        </tr>
+
+                        {/* Row 2: Name */}
+                        <tr className="hover:bg-slate-50">
+                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Name</th>
+                          <td className="p-2.5 font-bold text-slate-950">{activeSlip.name || 'N/A'}</td>
+                        </tr>
+
+                        {/* Row 3: Designation */}
+                        <tr className="hover:bg-slate-50">
+                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Designation</th>
+                          <td className="p-2.5 text-slate-800">{activeSlip.designation || 'Staff'}</td>
+                        </tr>
+
+                        {/* Row 4: Department */}
+                        <tr className="hover:bg-slate-50">
+                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Department</th>
+                          <td className="p-2.5 text-slate-800">{activeSlip.department || 'N/A'}</td>
+                        </tr>
+
+                        {/* Row 5: E-mail ID */}
+                        <tr className="hover:bg-slate-50">
+                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">E-mail ID</th>
+                          <td className="p-2.5 text-slate-900 font-mono">{activeSlip.emailId || 'N/A'}</td>
+                        </tr>
+
+                        {/* Row 6: E-mail Password */}
+                        <tr className="hover:bg-slate-50">
+                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">E-mail Password</th>
+                          <td className="p-2.5 font-mono font-bold text-slate-900">{activeSlip.emailPassword || 'Itv4312'}</td>
+                        </tr>
+
+                        {/* Row 7: Domain ID */}
+                        <tr className="hover:bg-slate-50">
+                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Domain ID</th>
+                          <td className="p-2.5 text-slate-900 font-mono">{activeSlip.domainId || 'N/A'}</td>
+                        </tr>
+
+                        {/* Row 8: Domain Password */}
+                        <tr className="hover:bg-slate-50">
+                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Domain Password</th>
+                          <td className="p-2.5 font-mono font-bold text-slate-900">{activeSlip.domainPassword || 'Itv4312'}</td>
+                        </tr>
+
+                        {/* Row 9: X-Factor HRMS Username */}
+                        <tr className="hover:bg-slate-50">
+                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">X-Factor HRMS Username</th>
+                          <td className="p-2.5 text-slate-900 font-mono">{activeSlip.hrmsUsername || activeSlip.pin || 'N/A'}</td>
+                        </tr>
+
+                        {/* Row 10: X-Factor HRMS Password */}
+                        <tr className="hover:bg-slate-50">
+                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">X-Factor HRMS Password</th>
+                          <td className="p-2.5 font-mono font-bold text-slate-900">{activeSlip.hrmsPassword || activeSlip.pin || 'N/A'}</td>
+                        </tr>
+
+                        {/* Row 11: Food Requisition Portal Username */}
+                        <tr className="hover:bg-slate-50">
+                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Food Requisition Portal Username</th>
+                          <td className="p-2.5 text-slate-900 font-mono">{activeSlip.foodUsername || activeSlip.emailId || 'N/A'}</td>
+                        </tr>
+
+                        {/* Row 12: Food Requisition Portal Password */}
+                        <tr className="hover:bg-slate-50">
+                          <th className="p-2.5 font-bold text-slate-900 bg-slate-50/70 border-r border-slate-300">Food Requisition Portal Password</th>
+                          <td className="p-2.5 font-mono font-bold text-slate-900">{activeSlip.foodPassword || '123456'}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* -------------------------------------------------- */}
+                  {/* IMPORTANT PASSWORD POLICY INSTRUCTIONS             */}
+                  {/* -------------------------------------------------- */}
+                  <div className="text-xs space-y-1.5 pt-1 text-slate-800">
+                    <p className="font-bold text-slate-950">Important:</p>
+                    <div className="pl-1 space-y-0.5 leading-relaxed text-[11px]">
+                      <p className="font-medium">1. Your Domain password must meet the following requirements:</p>
+                      <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
+                        <li>At least 8 characters long.</li>
+                        <li>Password Can not contain any part of your Domain ID.</li>
+                        <li>Include at least one uppercase letter (A-Z), at least one lowercase letter (a-z), at least one number (0-9), and at least one special character (e.g., !, @, #, $, etc.).</li>
+                      </ul>
+                      <p className="font-medium pt-1">
+                        2. For E-Mail Password, use any complex password combinations.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* -------------------------------------------------- */}
+                  {/* QUICK ACCESS QR CODES (EXACT 3 QR CODES)           */}
+                  {/* -------------------------------------------------- */}
+                  <div className="pt-2 text-center">
+                    <div className="relative flex items-center justify-center mb-3">
+                      <div className="border-t border-slate-400 w-full" />
+                      <span className="bg-white px-3 text-xs font-bold text-slate-950 tracking-tight shrink-0">
+                        Quick Access QR Codes
+                      </span>
+                      <div className="border-t border-slate-400 w-full" />
+                    </div>
+
+                    {/* QR Code Cards Grid */}
+                    <div className="grid grid-cols-3 gap-3 sm:gap-6 justify-items-center max-w-lg mx-auto">
+                      {/* QR 1: E-Mail Portal */}
+                      <div className="border border-slate-300 rounded-lg p-2.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center overflow-hidden">
+                          {emailQr ? (
+                            <img src={emailQr} alt="E-Mail Portal QR" className="w-full h-full object-contain" />
+                          ) : (
+                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[10px] text-slate-400">
+                              QR Code
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-800 mt-1 block">
+                          E-Mail Portal
+                        </span>
+                      </div>
+
+                      {/* QR 2: X-Factor HRMS */}
+                      <div className="border border-slate-300 rounded-lg p-2.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center overflow-hidden">
+                          {hrmsQr ? (
+                            <img src={hrmsQr} alt="X-Factor HRMS QR" className="w-full h-full object-contain" />
+                          ) : (
+                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[10px] text-slate-400">
+                              QR Code
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-800 mt-1 block">
+                          X-Factor HRMS
+                        </span>
+                      </div>
+
+                      {/* QR 3: Food Requisition */}
+                      <div className="border border-slate-300 rounded-lg p-2.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center overflow-hidden">
+                          {foodQr ? (
+                            <img src={foodQr} alt="Food Requisition QR" className="w-full h-full object-contain" />
+                          ) : (
+                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[10px] text-slate-400">
+                              QR Code
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-800 mt-1 block">
+                          Food Requisition
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Portal URLs Instruction */}
+                  <div className="text-[11px] text-slate-800 leading-relaxed pt-2 space-y-0.5">
+                    <p className="font-medium">3. Scan the QR codes above to quickly access portals:</p>
+                    <ul className="list-disc pl-5 space-y-0.5 text-slate-700">
+                      <li>
+                        <strong>E-Mail Portal:</strong> Scan the QR code or visit:{' '}
+                        <a
+                          href="https://mail.independent24.tv"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-700 underline font-mono text-[10.5px]"
+                        >
+                          https://mail.independent24.tv
+                        </a>
+                      </li>
+                      <li>
+                        <strong>X-Factor HRMS Portal:</strong> Scan the QR code or visit:{' '}
+                        <a
+                          href="http://202.84.45.240:2023/xfactor/"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-700 underline font-mono text-[10.5px]"
+                        >
+                          http://202.84.45.240:2023/xfactor/
+                        </a>
+                      </li>
+                      <li>
+                        <strong>Food Requisition Portal:</strong> Scan the QR code or visit:{' '}
+                        <a
+                          href="http://202.84.45.1:50765"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-700 underline font-mono text-[10.5px]"
+                        >
+                          http://202.84.45.1:50765
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* IT Support Contact */}
+                  <div className="pt-1 text-[11px] text-slate-800">
+                    <p>
+                      If you need further assistance with login or if you forget your password, contact IT Support at{' '}
+                      <strong>Ext. 30555</strong> or <strong>01730701335</strong>.
                     </p>
                   </div>
-                </div>
 
-                {/* Section: Employee Information */}
-                <div>
-                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1 mb-2">
-                    1. Employee Information
-                  </h4>
-                  <table className="w-full text-xs text-left border border-slate-200 rounded-lg overflow-hidden">
-                    <tbody className="divide-y divide-slate-200">
-                      <tr>
-                        <th className="p-2.5 bg-slate-100 font-bold text-slate-700 w-1/4">Full Name</th>
-                        <td className="p-2.5 font-bold text-slate-950">{activeSlip.name || 'N/A'}</td>
-                        <th className="p-2.5 bg-slate-100 font-bold text-slate-700 w-1/4">Employee PIN</th>
-                        <td className="p-2.5 font-mono font-bold text-red-700">{activeSlip.pin || 'N/A'}</td>
-                      </tr>
-                      <tr>
-                        <th className="p-2.5 bg-slate-100 font-bold text-slate-700">Designation</th>
-                        <td className="p-2.5 text-slate-800">{activeSlip.designation || 'Staff'}</td>
-                        <th className="p-2.5 bg-slate-100 font-bold text-slate-700">Department</th>
-                        <td className="p-2.5 text-slate-800">{activeSlip.department || 'N/A'}</td>
-                      </tr>
-                      <tr>
-                        <th className="p-2.5 bg-slate-100 font-bold text-slate-700">Employee Type</th>
-                        <td className="p-2.5 text-slate-800">{activeSlip.employeeType || 'Permanent'}</td>
-                        <th className="p-2.5 bg-slate-100 font-bold text-slate-700">Issued On</th>
-                        <td className="p-2.5 font-mono text-slate-800">{formatDate(activeSlip.issueDate || activeSlip.createdAt)}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Section: System Credentials */}
-                <div>
-                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1 mb-2">
-                    2. Assigned System &amp; Portal Credentials
-                  </h4>
-                  <table className="w-full text-xs text-left border border-slate-200 rounded-lg overflow-hidden">
-                    <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                      <tr>
-                        <th className="p-2.5">System / Service</th>
-                        <th className="p-2.5">Username / Identifier</th>
-                        <th className="p-2.5">Default Password</th>
-                        <th className="p-2.5 text-right no-print">Quick Copy</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200 font-mono">
-                      {/* Email Account */}
-                      <tr>
-                        <td className="p-2.5 font-sans font-bold text-slate-900">Official E-Mail</td>
-                        <td className="p-2.5 font-bold text-blue-700">{activeSlip.emailId || 'N/A'}</td>
-                        <td className="p-2.5 font-bold text-slate-800">{activeSlip.emailPassword || 'Itv4312'}</td>
-                        <td className="p-2.5 text-right no-print">
-                          <button
-                            onClick={() => copyToClipboard(activeSlip.emailId || '', 'email')}
-                            className="p-1 text-slate-400 hover:text-slate-800 transition"
-                            title="Copy Email"
-                          >
-                            {copiedField === 'email' ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
-                          </button>
-                        </td>
-                      </tr>
-
-                      {/* Domain / Active Directory */}
-                      <tr>
-                        <td className="p-2.5 font-sans font-bold text-slate-900">Domain / Windows PC</td>
-                        <td className="p-2.5 font-bold text-slate-900">{activeSlip.domainId || 'N/A'}</td>
-                        <td className="p-2.5 font-bold text-slate-800">{activeSlip.domainPassword || 'Itv4312'}</td>
-                        <td className="p-2.5 text-right no-print">
-                          <button
-                            onClick={() => copyToClipboard(activeSlip.domainId || '', 'domain')}
-                            className="p-1 text-slate-400 hover:text-slate-800 transition"
-                            title="Copy Domain ID"
-                          >
-                            {copiedField === 'domain' ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
-                          </button>
-                        </td>
-                      </tr>
-
-                      {/* X-Factor HRMS */}
-                      <tr>
-                        <td className="p-2.5 font-sans font-bold text-slate-900">X-Factor HRMS Portal</td>
-                        <td className="p-2.5 font-bold text-slate-900">{activeSlip.hrmsUsername || activeSlip.pin || 'N/A'}</td>
-                        <td className="p-2.5 font-bold text-slate-800">{activeSlip.hrmsPassword || activeSlip.pin || 'N/A'}</td>
-                        <td className="p-2.5 text-right no-print">
-                          <button
-                            onClick={() => copyToClipboard(activeSlip.hrmsUsername || activeSlip.pin || '', 'hrms')}
-                            className="p-1 text-slate-400 hover:text-slate-800 transition"
-                            title="Copy HRMS"
-                          >
-                            {copiedField === 'hrms' ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
-                          </button>
-                        </td>
-                      </tr>
-
-                      {/* Food Requisition */}
-                      <tr>
-                        <td className="p-2.5 font-sans font-bold text-slate-900">Food Requisition System</td>
-                        <td className="p-2.5 font-bold text-slate-900">{activeSlip.foodUsername || activeSlip.emailId || 'N/A'}</td>
-                        <td className="p-2.5 font-bold text-slate-800">{activeSlip.foodPassword || '123456'}</td>
-                        <td className="p-2.5 text-right no-print">
-                          <button
-                            onClick={() => copyToClipboard(activeSlip.foodUsername || activeSlip.emailId || '', 'food')}
-                            className="p-1 text-slate-400 hover:text-slate-800 transition"
-                            title="Copy Food Username"
-                          >
-                            {copiedField === 'food' ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <p className="text-[10px] text-slate-500 italic mt-1.5">
-                    * Please change your default passwords upon first login into your respective portals and workstation.
-                  </p>
-                </div>
-
-                {/* Section: Signatures & Authorization */}
-                <div className="pt-8 grid grid-cols-2 gap-8 border-t border-slate-300">
-                  <div className="text-left space-y-1">
-                    <div className="h-10 border-b border-dashed border-slate-400" />
-                    <p className="text-xs font-bold text-slate-900">{activeSlip.createdBy || 'IT Engineer'}</p>
-                    <p className="text-[10px] text-slate-600">{activeSlip.creatorDesignation || 'IT Support Engineer'}</p>
-                    <p className="text-[9px] text-slate-400">IT Department Authorization</p>
+                  {/* Security Warnings & Instructions */}
+                  <div className="text-center pt-3 text-[10.5px] text-slate-700 space-y-0.5 font-medium">
+                    <p>** Please change all of your given default login passwords after receiving this slip.</p>
+                    <p>** Always log off from your E-Mail/domain session before leaving your computer.</p>
                   </div>
 
-                  <div className="text-right space-y-1">
-                    <div className="h-10 border-b border-dashed border-slate-400" />
-                    <p className="text-xs font-bold text-slate-900">{activeSlip.name || 'Employee'}</p>
-                    <p className="text-[10px] text-slate-600">Employee Signature &amp; Date</p>
-                    <p className="text-[9px] text-slate-400">Received Credentials in Good Order</p>
+                  {/* Bottom Computer-Generated Notice */}
+                  <div className="text-center pt-4 pb-2 border-t border-slate-200">
+                    <p className="text-[10px] font-bold text-slate-600 tracking-wider">
+                      **This is a computer-generated receipt and does not require a signature**
+                    </p>
                   </div>
-                </div>
 
-                {/* Confidentiality Notice */}
-                <div className="p-2.5 rounded bg-slate-50 border border-slate-200 text-center">
-                  <p className="text-[9px] text-slate-500 uppercase tracking-widest font-mono">
-                    Strictly Confidential &bull; Independent Television IT Security &amp; Compliance Policy
-                  </p>
+                  {/* Bottom Page Numbering / System Stamp */}
+                  <div className="flex items-center justify-between text-[9px] text-slate-400 font-mono pt-1">
+                    <span>172.19.4.7:2023/slip/view_employee.php?id={activeSlip.pin || activeSlip.id.slice(0, 8)}</span>
+                    <span>1/1</span>
+                  </div>
                 </div>
               </div>
             </div>
