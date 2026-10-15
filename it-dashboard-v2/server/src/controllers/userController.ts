@@ -703,7 +703,7 @@ export const resetUserPassword = async (req: AuthRequest, res: Response) => {
           newData: { targetUser: targetUser.name, employeeId: targetUser.employeeId },
         },
       });
-    } catch {}
+    } catch { }
 
     return res.json({
       success: true,

@@ -101,8 +101,12 @@ export function Header() {
 
       <header className="h-16 border-b border-border bg-card/40 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-20">
         <div className="flex items-center gap-3">
-          <h2 className="text-base font-semibold text-foreground">
-            Operations Management Platform
+          <h2 className="text-base font-semibold text-foreground flex items-center gap-2.5">
+            <span>Operations Management Platform</span>
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[10px] font-bold tracking-wider">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              ITV LIVE
+            </span>
           </h2>
         </div>
 

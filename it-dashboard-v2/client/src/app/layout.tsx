@@ -5,8 +5,12 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { DashboardShell } from '@/components/DashboardShell';
 
 export const metadata: Metadata = {
-  title: 'IT Operations Dashboard v2',
-  description: 'IT Management & Asset Control System built with Next.js, Express, TypeScript, and Prisma (PostgreSQL)',
+  title: 'Independent Television - IT Operations Platform',
+  description: 'Independent Television (ITV) Central IT Management, Broadcast Infrastructure & Operations Platform',
+  icons: {
+    icon: '/itv-logo.png',
+    apple: '/itv-logo.png',
+  },
 };
 
 export default function RootLayout({

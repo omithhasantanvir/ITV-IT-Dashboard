@@ -238,26 +238,40 @@ model Server {
 }
 
 model UserSlip {
-  id              String     @id @default(uuid())
-  slipNumber      String     @unique
-  department      String?
-  designation     String?
-  extensionNumber String?
-  joiningDate     DateTime?
-  accessories     String[]   @default([])
-  issuedBy        String?
-  receivedBy      String?
-  issueDate       DateTime   @default(now())
-  status          SlipStatus @default(ISSUED)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  id                 String     @id @default(uuid())
+  slipNumber         String     @unique
+  employeeType       String?    @default("Permanent")
+  pin                String?
+  name               String?
+  department         String?
+  designation        String?
+  emailId            String?
+  emailPassword      String?
+  domainId           String?
+  domainPassword     String?
+  hrmsUsername       String?
+  hrmsPassword       String?
+  foodUsername       String?
+  foodPassword       String?
+  createdBy          String?
+  creatorDesignation String?
+  extensionNumber    String?
+  joiningDate        DateTime?
+  accessories        String[]   @default([])
+  issuedBy           String?
+  receivedBy         String?
+  issueDate          DateTime   @default(now())
+  status             SlipStatus @default(ISSUED)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 
-  employeeId      String?
-  employee        User?      @relation(fields: [employeeId], references: [id], onDelete: SetNull)
-  computerId      String?
-  computer        Computer?  @relation(fields: [computerId], references: [id], onDelete: SetNull)
+  employeeId         String?
+  employee           User?      @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  computerId         String?
+  computer           Computer?  @relation(fields: [computerId], references: [id], onDelete: SetNull)
 
   @@index([slipNumber])
+  @@index([pin])
 }
 
 model ActivityLog {

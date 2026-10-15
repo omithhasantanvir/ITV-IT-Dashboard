@@ -4,44 +4,47 @@
 
 @layer base {
   :root {
-    --background: 220 20% 98%;
-    --foreground: 222 47% 11%;
+    --background: 0 0% 98%;
+    --foreground: 220 20% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --primary: 221 83% 53%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 215 25% 93%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 215 20% 94%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 215 25% 90%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    --card-foreground: 220 20% 12%;
+    /* Independent Television Signature Red (#E31E24) */
+    --primary: 358 84% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 94%;
+    --secondary-foreground: 220 20% 15%;
+    --muted: 220 14% 95%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 358 85% 96%;
+    --accent-foreground: 358 84% 45%;
+    --destructive: 358 84% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 90%;
+    --input: 220 13% 90%;
+    --ring: 358 84% 48%;
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
-    --card: 224 71% 7%;
-    --card-foreground: 213 31% 91%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 222 47% 14%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 223 47% 11%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 216 34% 17%;
-    --input: 216 34% 17%;
-    --ring: 224 76% 48%;
+    /* Sleek Deep Newsroom/Studio Dark Mode */
+    --background: 225 20% 6%;
+    --foreground: 215 20% 94%;
+    --card: 225 18% 9%;
+    --card-foreground: 215 20% 94%;
+    /* Vibrant ITV Brand Red with high pop and glow */
+    --primary: 358 86% 54%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 225 15% 15%;
+    --secondary-foreground: 215 20% 94%;
+    --muted: 225 15% 12%;
+    --muted-foreground: 220 10% 65%;
+    --accent: 358 40% 14%;
+    --accent-foreground: 358 100% 92%;
+    --destructive: 358 86% 54%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 225 14% 17%;
+    --input: 225 14% 17%;
+    --ring: 358 86% 54%;
   }
 }
 

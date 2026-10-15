@@ -52,7 +52,12 @@ export default function DashboardPage() {
       {/* Page Title & Refresh */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">IT Operations Control</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
+            <span>IT Operations Control</span>
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-bold">
+              ITV Central
+            </span>
+          </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Real-time infrastructure monitoring, asset tracking, and staff allocations.
           </p>
@@ -80,7 +85,7 @@ export default function DashboardPage() {
         <div className="p-5 rounded-2xl border border-border bg-card/70 backdrop-blur-sm relative overflow-hidden group hover:border-primary/50 transition">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Staff</span>
-            <div className="h-9 w-9 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+            <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
               <Users className="h-4 w-4" />
             </div>
           </div>
@@ -96,7 +101,7 @@ export default function DashboardPage() {
         <div className="p-5 rounded-2xl border border-border bg-card/70 backdrop-blur-sm relative overflow-hidden group hover:border-primary/50 transition">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">IT Operations Team</span>
-            <div className="h-9 w-9 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+            <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
               <ShieldCheck className="h-4 w-4" />
             </div>
           </div>

@@ -584,7 +584,7 @@ export default function EmployeesPage() {
             <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Total IT Staff
             </span>
-            <div className="h-8 w-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
               <Users className="h-4 w-4" />
             </div>
           </div>
@@ -811,7 +811,7 @@ export default function EmployeesPage() {
                                 'initial-fallback w-full h-full font-bold flex items-center justify-center text-xs uppercase',
                                 emp.profilePhoto ? 'hidden' : 'flex',
                                 isRunning
-                                  ? 'bg-gradient-to-tr from-blue-600/20 to-indigo-500/20 text-primary'
+                                  ? 'bg-gradient-to-tr from-primary/25 to-rose-500/15 text-primary'
                                   : 'bg-muted text-muted-foreground'
                               )}
                             >
@@ -1505,7 +1505,7 @@ export default function EmployeesPage() {
                       className="w-full h-full object-cover object-top aspect-square"
                     />
                   ) : (
-                    <div className="w-full h-full font-black text-xl flex items-center justify-center uppercase bg-gradient-to-tr from-blue-600/20 to-indigo-500/20 text-primary">
+                    <div className="w-full h-full font-black text-xl flex items-center justify-center uppercase bg-gradient-to-tr from-primary/25 to-rose-500/15 text-primary">
                       {viewingEmployee.name.charAt(0).toUpperCase()}
                     </div>
                   )}

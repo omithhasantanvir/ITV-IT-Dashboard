@@ -75,17 +75,29 @@ export function Sidebar() {
     <aside className="w-64 border-r border-border bg-card/60 backdrop-blur-xl flex flex-col justify-between h-screen sticky top-0">
       <div>
         {/* Brand header */}
-        <div className="h-16 px-6 flex items-center gap-3 border-b border-border">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-            <ShieldCheck className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-1.5">
-              IT Ops Control
-              <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-500">v2</span>
-            </h1>
-            <p className="text-[11px] text-muted-foreground font-medium">Next.js &bull; Express &bull; Prisma</p>
-          </div>
+        <div className="h-16 px-4 flex items-center gap-3 border-b border-border">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="h-10 w-8 flex items-center justify-center shrink-0">
+              <img
+                src="/itv-logo.png"
+                alt="Independent Television Logo"
+                className="h-9 w-auto object-contain drop-shadow-[0_2px_8px_rgba(227,30,36,0.45)] transition-transform duration-200 group-hover:scale-105 select-none"
+              />
+            </div>
+            <div className="flex flex-col leading-tight">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-black tracking-tight text-foreground font-sans">
+                  INDEPENDENT
+                </span>
+                <span className="text-[9px] px-1 py-0.2 rounded bg-primary text-primary-foreground font-mono font-extrabold shadow-xs">
+                  24
+                </span>
+              </div>
+              <span className="text-[9px] tracking-[0.16em] text-primary font-bold uppercase font-mono mt-0.5">
+                TELEVISION &bull; IT
+              </span>
+            </div>
+          </Link>
         </div>
 
         {/* Navigation list */}
@@ -186,10 +198,10 @@ export function Sidebar() {
       {/* Network Badge */}
       <div className="p-4 border-t border-border">
         <div className="p-3 rounded-xl bg-muted/40 border border-border/60 flex items-center gap-3">
-          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(227,30,36,0.6)]" />
           <div className="text-xs">
-            <p className="font-semibold text-foreground">PostgreSQL Active</p>
-            <p className="text-[10px] text-muted-foreground">Local LAN Sync</p>
+            <p className="font-semibold text-foreground">ITV Operations LAN</p>
+            <p className="text-[10px] text-muted-foreground font-mono">Central DB Connected</p>
           </div>
         </div>
       </div>

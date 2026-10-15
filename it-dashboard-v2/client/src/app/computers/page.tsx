@@ -520,7 +520,7 @@ export default function ComputersPage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
               <span>Computers & Hardware Inventory</span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-500 font-bold border border-blue-500/20">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold border border-primary/20">
                 Asset Ops
               </span>
             </h1>
@@ -533,7 +533,7 @@ export default function ComputersPage() {
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => handleOpenCompModal()}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-md shadow-blue-500/20 transition active:scale-95"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow-md shadow-primary/20 transition active:scale-95"
             >
               <Plus className="h-4 w-4" />
               <span>Add Computer</span>
@@ -598,7 +598,7 @@ export default function ComputersPage() {
             className={cn(
               'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all',
               activeTab === 'computers'
-                ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
                 : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
             )}
           >
@@ -1312,7 +1312,7 @@ export default function ComputersPage() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition active:scale-95 disabled:opacity-60"
+                    className="px-5 py-2 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold shadow-md shadow-primary/20 transition active:scale-95 disabled:opacity-60"
                   >
                     {submitting ? 'Saving...' : editingComp ? 'Update Computer' : 'Save Computer'}
                   </button>
