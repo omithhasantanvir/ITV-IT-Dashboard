@@ -18,6 +18,8 @@ import {
   Calendar,
   Sparkles,
   ChevronDown,
+  Moon,
+  Wrench,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth, AppModule } from '@/context/AuthContext';
@@ -55,6 +57,23 @@ const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
       { name: 'Computers & Assets', href: '/computers', icon: Computer, module: 'computers' },
       { name: 'PABX & Extensions', href: '/extensions', icon: PhoneCall, module: 'extensions' },
       { name: 'Server Health', href: '/servers', icon: Server, module: 'servers' },
+    ],
+  },
+  {
+    title: 'MAINTENANCE TASK',
+    items: [
+      {
+        name: 'Daily Night Task Submission',
+        href: '/maintenance/night-task',
+        icon: Moon,
+        module: 'dashboard',
+      },
+      {
+        name: 'Maintenance Task Submission',
+        href: '/maintenance/task-submission',
+        icon: Wrench,
+        module: 'dashboard',
+      },
     ],
   },
   {
