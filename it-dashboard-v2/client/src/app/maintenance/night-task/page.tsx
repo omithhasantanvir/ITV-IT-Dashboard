@@ -8,29 +8,18 @@ import {
   AlertTriangle,
   Clock,
   User,
-  Server,
-  HardDrive,
-  ShieldCheck,
-  Send,
-  Calendar,
-  FileText,
   Printer,
   Sparkles,
   ArrowLeft,
   Lock,
   Unlock,
   Radio,
-  Database,
-  Cloud,
-  Tv,
-  Trash2,
-  Cpu,
-  Info,
+  FileText,
   RotateCcw,
   History,
-  Check,
   Eye,
-  Sliders,
+  Info,
+  Send,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { AccessGuard } from '@/components/AccessGuard';
@@ -43,18 +32,18 @@ export interface NightTaskReport {
   submittedAt: string;
   engineerName: string;
   engineerExt: string;
-  // 11 exact broadcast maintenance fields from the user's form
-  gvStratusRules: string;
-  storageVDrive: string;
-  octopusBackup: string;
-  coreServerBackup: string;
-  altoStorageSpace: string;
-  fsmServerServices: string;
-  tickerStockData: string;
-  hrErpBackup: string;
-  kDriveBackup: string;
-  vizrtOldData: string;
-  cloudDemo: string;
+  // 10 broadcast maintenance fields in exact requested sequence:
+  // (1 -> 3 -> 4 -> 6 -> 2 -> 5 -> 8 -> 9 -> 10 -> 11, item 7 removed)
+  gvStratusRules: string;     // 1
+  octopusBackup: string;      // 3
+  coreServerBackup: string;   // 4
+  fsmServerServices: string;  // 6
+  storageVDrive: string;      // 2
+  altoStorageSpace: string;   // 5
+  hrErpBackup: string;        // 8
+  kDriveBackup: string;       // 9
+  vizrtOldData: string;       // 10
+  cloudDemo: string;          // 11
   overallNotes?: string;
 }
 
@@ -72,20 +61,19 @@ export default function DailyNightTaskPage() {
   const [countdownStr, setCountdownStr] = useState('');
   const [adminBypass, setAdminBypass] = useState(true); // Enabled by default for testing/preview
 
-  // Form Fields (in exact sequence 1 to 11)
+  // Form Fields in exact sequence: 1, 3, 4, 6, 2, 5, 8, 9, 10, 11
   const [engineerName, setEngineerName] = useState(user?.name || 'IT Night Engineer');
   const [engineerExt, setEngineerExt] = useState('');
-  const [gvStratusRules, setGvStratusRules] = useState('');
-  const [storageVDrive, setStorageVDrive] = useState('');
-  const [octopusBackup, setOctopusBackup] = useState('');
-  const [coreServerBackup, setCoreServerBackup] = useState('');
-  const [altoStorageSpace, setAltoStorageSpace] = useState('');
-  const [fsmServerServices, setFsmServerServices] = useState('');
-  const [tickerStockData, setTickerStockData] = useState('');
-  const [hrErpBackup, setHrErpBackup] = useState('');
-  const [kDriveBackup, setKDriveBackup] = useState('');
-  const [vizrtOldData, setVizrtOldData] = useState('');
-  const [cloudDemo, setCloudDemo] = useState('');
+  const [gvStratusRules, setGvStratusRules] = useState('');     // 1
+  const [octopusBackup, setOctopusBackup] = useState('');       // 3
+  const [coreServerBackup, setCoreServerBackup] = useState(''); // 4
+  const [fsmServerServices, setFsmServerServices] = useState(''); // 6
+  const [storageVDrive, setStorageVDrive] = useState('');       // 2
+  const [altoStorageSpace, setAltoStorageSpace] = useState(''); // 5
+  const [hrErpBackup, setHrErpBackup] = useState('');         // 8
+  const [kDriveBackup, setKDriveBackup] = useState('');       // 9
+  const [vizrtOldData, setVizrtOldData] = useState('');       // 10
+  const [cloudDemo, setCloudDemo] = useState('');             // 11
   const [overallNotes, setOverallNotes] = useState('');
 
   // Submissions state
@@ -156,17 +144,16 @@ export default function DailyNightTaskPage() {
           engineerName: 'Tanvir Hossain',
           engineerExt: '2401',
           gvStratusRules: 'STRATUS rules verified. Ingest & Playout rules active with zero queue backlog.',
-          storageVDrive: 'Checked V: Drive storage. Total 40 TB, Free 14.8 TB (37% free headroom).',
           octopusBackup: 'Octopus NRCS Database backup taken successfully to Central NAS.',
           coreServerBackup: 'Core Active Directory & DB Server system snapshot completed.',
-          altoStorageSpace: 'ALTO cold archive verified. Space: 82 TB used, 38 TB available.',
           fsmServerServices: 'FSM Server Control Panel services running normal. All background daemon active.',
-          tickerStockData: 'Old stock ticker cache and market closing feed purged successfully from Ticker Engine.',
+          storageVDrive: 'Checked V: Drive storage. Total 40 TB, Free 14.8 TB (37% free headroom).',
+          altoStorageSpace: 'ALTO cold archive verified. Space: 82 TB used, 38 TB available.',
           hrErpBackup: 'Daily HR ERP SQL incremental backup completed to secondary backup cluster.',
           kDriveBackup: 'K: Shared Drive mirror backup verified and synchronized.',
           vizrtOldData: 'VCP LOWER 3RD 2014 data sorted. Deleted from 2015-04-12 to 2015-04-14 (2 days purged).',
           cloudDemo: 'Cloud demo stream and ingest endpoints tested and responsive.',
-          overallNotes: 'All 11 routine maintenance checks completed smoothly without anomalies.',
+          overallNotes: 'All 10 routine maintenance checks completed smoothly without anomalies.',
         };
         setSubmissions([sample]);
         localStorage.setItem(STORAGE_KEY, JSON.stringify([sample]));
@@ -179,19 +166,18 @@ export default function DailyNightTaskPage() {
   // Auto fill routine text
   const handleQuickFillAll = () => {
     setGvStratusRules('GV STRATUS Engines rules verified. Playout & Ingest rules active with zero errors.');
-    setStorageVDrive('V: Drive storage capacity verified. Adequate free space available for production.');
     setOctopusBackup('Octopus NRCS Server automated & manual night backup completed successfully.');
     setCoreServerBackup('Core Server backup completed and verified on local backup volume.');
-    setAltoStorageSpace('ALTO Archive storage checked. Total space and free space within normal thresholds.');
     setFsmServerServices('FSM Server Control Panel all services active and responding normally.');
-    setTickerStockData('Previous market stock session data deleted from Ticker Engine.');
+    setStorageVDrive('V: Drive storage capacity verified. Adequate free space available for production.');
+    setAltoStorageSpace('ALTO Archive storage checked. Total space and free space within normal thresholds.');
     setHrErpBackup('HR ERP database nightly incremental backup completed without error.');
     setKDriveBackup('K: Drive user and department files backup completed.');
     setVizrtOldData('In VCP: LOWER 3RD 2014 template data deleted for 2 days. Start: 2015-05-01, End: 2015-05-02.');
     setCloudDemo('Cloud Demo system tested and running normal.');
     setOverallNotes('Routine night-shift maintenance completed successfully.');
 
-    setToast({ message: 'All 11 fields auto-filled with verified routine data!', type: 'success' });
+    setToast({ message: 'All 10 fields auto-filled with verified routine data!', type: 'success' });
     setTimeout(() => setToast(null), 3000);
   };
 
@@ -199,7 +185,7 @@ export default function DailyNightTaskPage() {
   const handleReset = async () => {
     const isConfirmed = await confirmAction({
       title: 'Reset Form Fields?',
-      text: 'Are you sure you want to clear all 11 broadcast maintenance entries? Any unsaved text will be lost.',
+      text: 'Are you sure you want to clear all 10 broadcast maintenance entries? Any unsaved text will be lost.',
       icon: 'warning',
       confirmButtonText: 'Yes, Reset Form',
       cancelButtonText: 'Cancel',
@@ -208,18 +194,17 @@ export default function DailyNightTaskPage() {
 
     if (isConfirmed) {
       setGvStratusRules('');
-      setStorageVDrive('');
       setOctopusBackup('');
       setCoreServerBackup('');
-      setAltoStorageSpace('');
       setFsmServerServices('');
-      setTickerStockData('');
+      setStorageVDrive('');
+      setAltoStorageSpace('');
       setHrErpBackup('');
       setKDriveBackup('');
       setVizrtOldData('');
       setCloudDemo('');
       setOverallNotes('');
-      await showSuccessAlert('Form Cleared', 'All 11 maintenance task fields have been reset.');
+      await showSuccessAlert('Form Cleared', 'All 10 maintenance task fields have been reset.');
     }
   };
 
@@ -244,12 +229,11 @@ export default function DailyNightTaskPage() {
       engineerName: engineerName || user?.name || 'Night Duty Engineer',
       engineerExt: engineerExt || 'IT Desk',
       gvStratusRules,
-      storageVDrive,
       octopusBackup,
       coreServerBackup,
-      altoStorageSpace,
       fsmServerServices,
-      tickerStockData,
+      storageVDrive,
+      altoStorageSpace,
       hrErpBackup,
       kDriveBackup,
       vizrtOldData,
@@ -270,12 +254,11 @@ export default function DailyNightTaskPage() {
 
       // Reset fields
       setGvStratusRules('');
-      setStorageVDrive('');
       setOctopusBackup('');
       setCoreServerBackup('');
-      setAltoStorageSpace('');
       setFsmServerServices('');
-      setTickerStockData('');
+      setStorageVDrive('');
+      setAltoStorageSpace('');
       setHrErpBackup('');
       setKDriveBackup('');
       setVizrtOldData('');
@@ -547,11 +530,11 @@ export default function DailyNightTaskPage() {
                   </div>
                 </div>
 
-                {/* ------------------------------------------------------------- */}
-                {/* THE 11 FIELDS IN EXACT SEQUENTIAL ORDER WITH MODERN STYLING  */}
-                {/* ------------------------------------------------------------- */}
+                {/* --------------------------------------------------------------------------------- */}
+                {/* THE 10 FIELDS IN EXACT REQUESTED SEQUENCE: 1, 3, 4, 6, 2, 5, 8, 9, 10, 11 (7 removed) */}
+                {/* --------------------------------------------------------------------------------- */}
                 <div className="space-y-5">
-                  {/* Item 1 */}
+                  {/* #1 (Original 1): Check GV STRATUS Engines STRATUS Rules */}
                   <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
@@ -580,41 +563,12 @@ export default function DailyNightTaskPage() {
                     />
                   </div>
 
-                  {/* Item 2 */}
+                  {/* #2 (Original 3): Take Octopus Server Backup */}
                   <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
                         <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
                           2
-                        </span>
-                        <span>Check Storage of V drive</span>
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuickValue(setStorageVDrive, 'V: Drive storage capacity checked. Adequate free headroom.')}
-                          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
-                        >
-                          + Healthy
-                        </button>
-                      </div>
-                    </div>
-                    <textarea
-                      rows={2}
-                      required
-                      value={storageVDrive}
-                      onChange={(e) => setStorageVDrive(e.target.value)}
-                      placeholder="Enter V: drive total capacity, available free space, and volume health..."
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
-                    />
-                  </div>
-
-                  {/* Item 3 */}
-                  <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                        <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          3
                         </span>
                         <span>Take Octopus Server Backup</span>
                       </label>
@@ -638,12 +592,12 @@ export default function DailyNightTaskPage() {
                     />
                   </div>
 
-                  {/* Item 4 */}
+                  {/* #3 (Original 4): Take Core Server Backup */}
                   <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
                         <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          4
+                          3
                         </span>
                         <span>Take Core Server Backup</span>
                       </label>
@@ -667,41 +621,12 @@ export default function DailyNightTaskPage() {
                     />
                   </div>
 
-                  {/* Item 5 */}
+                  {/* #4 (Original 6): Check FSM Server Control Panel services */}
                   <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
                         <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          5
-                        </span>
-                        <span>Check Total Space and Free Space on ALTO</span>
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuickValue(setAltoStorageSpace, 'ALTO Archive storage checked: Space normal, free headroom sufficient.')}
-                          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
-                        >
-                          + Normal
-                        </button>
-                      </div>
-                    </div>
-                    <textarea
-                      rows={2}
-                      required
-                      value={altoStorageSpace}
-                      onChange={(e) => setAltoStorageSpace(e.target.value)}
-                      placeholder="Enter ALTO archive total capacity and available free space in TB/GB..."
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
-                    />
-                  </div>
-
-                  {/* Item 6 */}
-                  <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                        <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          6
+                          4
                         </span>
                         <span>Check FSM Server Control Panel services</span>
                       </label>
@@ -725,41 +650,70 @@ export default function DailyNightTaskPage() {
                     />
                   </div>
 
-                  {/* Item 7 */}
+                  {/* #5 (Original 2): Check Storage of V drive */}
                   <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
                         <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          7
+                          5
                         </span>
-                        <span>Delete Stock Data From Ticker Engine</span>
+                        <span>Check Storage of V drive</span>
                       </label>
                       <div className="flex items-center gap-1.5">
                         <button
                           type="button"
-                          onClick={() => setQuickValue(setTickerStockData, 'Stock market closing data deleted and ticker cache refreshed.')}
+                          onClick={() => setQuickValue(setStorageVDrive, 'V: Drive storage capacity checked. Adequate free headroom.')}
                           className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
                         >
-                          + Purged
+                          + Healthy
                         </button>
                       </div>
                     </div>
                     <textarea
                       rows={2}
                       required
-                      value={tickerStockData}
-                      onChange={(e) => setTickerStockData(e.target.value)}
-                      placeholder="Confirm stock data deletion, market cache clearing, and ticker restart..."
+                      value={storageVDrive}
+                      onChange={(e) => setStorageVDrive(e.target.value)}
+                      placeholder="Enter V: drive total capacity, available free space, and volume health..."
                       className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
                     />
                   </div>
 
-                  {/* Item 8 */}
+                  {/* #6 (Original 5): Check Total Space and Free Space on ALTO */}
                   <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
                         <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          8
+                          6
+                        </span>
+                        <span>Check Total Space and Free Space on ALTO</span>
+                      </label>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setQuickValue(setAltoStorageSpace, 'ALTO Archive storage checked: Space normal, free headroom sufficient.')}
+                          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
+                        >
+                          + Normal
+                        </button>
+                      </div>
+                    </div>
+                    <textarea
+                      rows={2}
+                      required
+                      value={altoStorageSpace}
+                      onChange={(e) => setAltoStorageSpace(e.target.value)}
+                      placeholder="Enter ALTO archive total capacity and available free space in TB/GB..."
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
+                    />
+                  </div>
+
+                  {/* #7 (Original 8): Take HR ERP Data Backup */}
+                  <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
+                        <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
+                          7
                         </span>
                         <span>Take HR ERP Data Backup</span>
                       </label>
@@ -783,12 +737,12 @@ export default function DailyNightTaskPage() {
                     />
                   </div>
 
-                  {/* Item 9 */}
+                  {/* #8 (Original 9): Take K Drive Backup */}
                   <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
                         <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          9
+                          8
                         </span>
                         <span>Take K Drive Backup</span>
                       </label>
@@ -812,12 +766,12 @@ export default function DailyNightTaskPage() {
                     />
                   </div>
 
-                  {/* Item 10: Special SOP Note Callout */}
+                  {/* #9 (Original 10): Delete Vizrt Old Data (with Special SOP Note Callout) */}
                   <div className="space-y-2 p-4 sm:p-5 rounded-xl border-2 border-indigo-500/30 bg-indigo-500/5 hover:border-indigo-500/50 transition">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
                         <span className="h-5 w-5 rounded-md bg-indigo-600 text-white flex items-center justify-center text-[11px] font-mono font-black">
-                          10
+                          9
                         </span>
                         <span>Delete Vizrt Old Data</span>
                       </label>
@@ -860,12 +814,12 @@ export default function DailyNightTaskPage() {
                     />
                   </div>
 
-                  {/* Item 11 */}
+                  {/* #10 (Original 11): Check Cloud Demo */}
                   <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
                         <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          11
+                          10
                         </span>
                         <span>Check Cloud Demo</span>
                       </label>
@@ -904,7 +858,7 @@ export default function DailyNightTaskPage() {
                   />
                 </div>
 
-                {/* Submit Button (Matching the screenshot's primary action button with elevated styling) */}
+                {/* Submit Button */}
                 <div className="pt-4 border-t border-border">
                   <button
                     type="submit"
@@ -952,7 +906,7 @@ export default function DailyNightTaskPage() {
                     <span>Submitted Daily Night Reports</span>
                   </h3>
                   <p className="text-xs text-muted-foreground">
-                    Historical archive of 11-point broadcast maintenance checks
+                    Historical archive of 10-point broadcast maintenance checks
                   </p>
                 </div>
                 <button
@@ -1038,50 +992,46 @@ export default function DailyNightTaskPage() {
                 </button>
               </div>
 
-              {/* 11 Tasks Detailed List */}
+              {/* 10 Tasks Detailed List in Requested Sequence */}
               <div className="space-y-3 text-xs divide-y divide-border/60">
                 <div className="pt-2">
                   <p className="font-bold text-foreground">1. Check GV STRATUS Engines STRATUS Rules</p>
                   <p className="text-muted-foreground mt-0.5">{activeReport.gvStratusRules || 'N/A'}</p>
                 </div>
                 <div className="pt-2">
-                  <p className="font-bold text-foreground">2. Check Storage of V drive</p>
-                  <p className="text-muted-foreground mt-0.5">{activeReport.storageVDrive || 'N/A'}</p>
-                </div>
-                <div className="pt-2">
-                  <p className="font-bold text-foreground">3. Take Octopus Server Backup</p>
+                  <p className="font-bold text-foreground">2. Take Octopus Server Backup</p>
                   <p className="text-muted-foreground mt-0.5">{activeReport.octopusBackup || 'N/A'}</p>
                 </div>
                 <div className="pt-2">
-                  <p className="font-bold text-foreground">4. Take Core Server Backup</p>
+                  <p className="font-bold text-foreground">3. Take Core Server Backup</p>
                   <p className="text-muted-foreground mt-0.5">{activeReport.coreServerBackup || 'N/A'}</p>
                 </div>
                 <div className="pt-2">
-                  <p className="font-bold text-foreground">5. Check Total Space and Free Space on ALTO</p>
-                  <p className="text-muted-foreground mt-0.5">{activeReport.altoStorageSpace || 'N/A'}</p>
-                </div>
-                <div className="pt-2">
-                  <p className="font-bold text-foreground">6. Check FSM Server Control Panel services</p>
+                  <p className="font-bold text-foreground">4. Check FSM Server Control Panel services</p>
                   <p className="text-muted-foreground mt-0.5">{activeReport.fsmServerServices || 'N/A'}</p>
                 </div>
                 <div className="pt-2">
-                  <p className="font-bold text-foreground">7. Delete Stock Data From Ticker Engine</p>
-                  <p className="text-muted-foreground mt-0.5">{activeReport.tickerStockData || 'N/A'}</p>
+                  <p className="font-bold text-foreground">5. Check Storage of V drive</p>
+                  <p className="text-muted-foreground mt-0.5">{activeReport.storageVDrive || 'N/A'}</p>
                 </div>
                 <div className="pt-2">
-                  <p className="font-bold text-foreground">8. Take HR ERP Data Backup</p>
+                  <p className="font-bold text-foreground">6. Check Total Space and Free Space on ALTO</p>
+                  <p className="text-muted-foreground mt-0.5">{activeReport.altoStorageSpace || 'N/A'}</p>
+                </div>
+                <div className="pt-2">
+                  <p className="font-bold text-foreground">7. Take HR ERP Data Backup</p>
                   <p className="text-muted-foreground mt-0.5">{activeReport.hrErpBackup || 'N/A'}</p>
                 </div>
                 <div className="pt-2">
-                  <p className="font-bold text-foreground">9. Take K Drive Backup</p>
+                  <p className="font-bold text-foreground">8. Take K Drive Backup</p>
                   <p className="text-muted-foreground mt-0.5">{activeReport.kDriveBackup || 'N/A'}</p>
                 </div>
                 <div className="pt-2">
-                  <p className="font-bold text-foreground">10. Delete Vizrt Old Data</p>
+                  <p className="font-bold text-foreground">9. Delete Vizrt Old Data</p>
                   <p className="text-muted-foreground mt-0.5 font-mono">{activeReport.vizrtOldData || 'N/A'}</p>
                 </div>
                 <div className="pt-2">
-                  <p className="font-bold text-foreground">11. Check Cloud Demo</p>
+                  <p className="font-bold text-foreground">10. Check Cloud Demo</p>
                   <p className="text-muted-foreground mt-0.5">{activeReport.cloudDemo || 'N/A'}</p>
                 </div>
                 {activeReport.overallNotes && (
