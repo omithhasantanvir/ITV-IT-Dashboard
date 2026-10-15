@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Sidebar } from '@/components/Sidebar';
 import { Header } from '@/components/Header';
+import { NewsTicker } from '@/components/NewsTicker';
 import { BrandLoading } from '@/components/BrandLoading';
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
@@ -62,6 +63,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <Header />
+        <NewsTicker />
         <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full">{children}</main>
       </div>
     </div>
