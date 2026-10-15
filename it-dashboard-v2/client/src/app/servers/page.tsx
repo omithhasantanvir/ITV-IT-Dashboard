@@ -1048,16 +1048,18 @@ function UniformServerRack({
 
         {/* =========================================================
             INSIDE EQUIPMENT (SWITCHED BETWEEN CABLING BAY & SERVER BLADES)
+            - Height & Width 100% matched between Front (Blades) & Cabling views
             ========================================================= */}
-        {rackView === 'cabling' ? (
-          <StructuredCablingBay
-            rackNumber={rackNumber}
-            soundEnabled={soundEnabled}
-            onPlaySound={onPlaySound}
-          />
-        ) : (
-          <div>
-            {/* 2. CISCO 48G SWITCH WITH DRAPED FIBER OPTIC PATCH CABLES */}
+        <div className="w-full h-[396px] min-h-[396px] max-h-[396px] overflow-hidden relative">
+          {rackView === 'cabling' ? (
+            <StructuredCablingBay
+              rackNumber={rackNumber}
+              soundEnabled={soundEnabled}
+              onPlaySound={onPlaySound}
+            />
+          ) : (
+            <div className="h-full flex flex-col justify-between">
+              {/* 2. CISCO 48G SWITCH WITH DRAPED FIBER OPTIC PATCH CABLES */}
             <div className="p-1.5 sm:p-2 bg-[#0a0b0e] border-b border-zinc-800/90 relative">
               <div className="relative h-6 sm:h-6.5 bg-[#111218] rounded border border-zinc-800 px-1.5 py-0.5 flex items-center justify-between overflow-hidden">
                 {/* Left Switch Ports */}
@@ -1565,6 +1567,7 @@ function UniformServerRack({
             </div>
           </div>
         )}
+      </div>
 
         {/* =========================================================
             FRONT TEMPERED GLASS DOOR WITH INTEGRATED SUPREMA LOCK
