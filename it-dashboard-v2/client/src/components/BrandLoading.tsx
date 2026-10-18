@@ -75,31 +75,32 @@ export function BrandLoading({
     );
   }
 
-  // 3. FULLSCREEN MODE (Clean logo-only with skeleton shimmer wave)
+  // 3. FULLSCREEN MODE (Clean logo-only with skeleton shimmer wave matching Light & Dark themes)
   return (
     <div
       className={cn(
-        'fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 backdrop-blur-xl p-6 min-h-screen select-none animate-in fade-in duration-200',
+        'fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-50/95 dark:bg-background/95 backdrop-blur-xl p-6 min-h-screen select-none animate-in fade-in duration-200 transition-colors',
         className
       )}
     >
       {/* Background Ambient Glow */}
-      <div className="absolute w-52 h-52 rounded-full bg-primary/20 blur-3xl pointer-events-none -z-10 animate-pulse [animation-duration:3s]" />
+      <div className="absolute w-56 h-56 rounded-full bg-rose-500/15 dark:bg-primary/20 blur-3xl pointer-events-none -z-10 animate-pulse [animation-duration:3s]" />
 
       {/* Animated Logo Container with Skeleton Shimmer Sweep (No spinner) */}
       <div className="relative flex items-center justify-center">
-        {/* Center ITV Logo Card with Skeleton Effect */}
-        <div className="relative h-20 w-20 rounded-2xl bg-card border border-border shadow-2xl flex items-center justify-center p-3.5 overflow-hidden select-none">
+        {/* Center ITV Logo Card with Skeleton Effect matching Light & Dark themes */}
+        <div className="relative h-20 w-20 sm:h-22 sm:w-22 rounded-2xl bg-white dark:bg-card border border-slate-200/90 dark:border-border shadow-[0_10px_35px_rgba(0,0,0,0.08)] dark:shadow-[0_12px_45px_rgba(0,0,0,0.7)] flex items-center justify-center p-3.5 sm:p-4 overflow-hidden select-none transition-colors">
           {/* ITV Logo */}
           <img
             src="/itv-logo.png"
             alt="ITV Logo"
-            className="h-11 w-auto object-contain select-none drop-shadow-[0_2px_10px_rgba(227,30,36,0.55)] relative z-10"
+            className="h-11 w-auto object-contain select-none drop-shadow-[0_2px_8px_rgba(227,30,36,0.35)] dark:drop-shadow-[0_2px_12px_rgba(227,30,36,0.55)] relative z-10"
           />
 
           {/* Skeleton Shimmer Wave Passing Over the Logo */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-20">
-            <div className="absolute -inset-full animate-skeleton-sweep bg-gradient-to-r from-transparent via-white/40 dark:via-white/30 to-transparent" />
+            {/* Silvery sweep for light mode, radiant glow for dark mode */}
+            <div className="absolute -inset-full animate-skeleton-sweep bg-gradient-to-r from-transparent via-slate-400/35 dark:via-white/30 to-transparent" />
           </div>
         </div>
       </div>
