@@ -95,6 +95,7 @@ interface SSDItem {
     model?: string | null;
     computerType?: string | null;
     location?: string | null;
+    assignedTo?: string | null;
     assignedUser?: {
       name: string;
       employeeId: string;

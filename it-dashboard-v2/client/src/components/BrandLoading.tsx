@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 export interface BrandLoadingProps {
   size?: 'inline' | 'sm' | 'md' | 'fullscreen';
   text?: string;
+  subtext?: string;
   className?: string;
 }
 
@@ -59,6 +60,7 @@ export function ITVLogoSpinner({
 export function BrandLoading({
   size = 'inline',
   text,
+  subtext,
   className,
 }: BrandLoadingProps) {
   // 1. INLINE MODE (Exact replacement for marked table row spinners)
@@ -121,6 +123,11 @@ export function BrandLoading({
       {text && (
         <p className="text-xs text-muted-foreground font-medium mt-3 tracking-wide text-center">
           {text}
+        </p>
+      )}
+      {subtext && (
+        <p className="text-[10px] text-muted-foreground/75 font-mono mt-1 tracking-wide text-center">
+          {subtext}
         </p>
       )}
     </div>

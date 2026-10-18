@@ -97,9 +97,18 @@ interface EmployeeSlip {
   foodPassword: string | null;
   createdBy: string | null;
   creatorDesignation: string | null;
+  issuedBy?: string | null;
+  receivedBy?: string | null;
+  accessories?: string[];
   issueDate: string;
   status: string;
   createdAt: string;
+  employee?: {
+    id: string;
+    name: string;
+    employeeId: string;
+    designation?: string | null;
+  } | null;
 }
 
 export default function SlipsPage() {
