@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import {
   Moon,
@@ -13,17 +13,22 @@ import {
   ArrowLeft,
   Lock,
   Unlock,
-  Radio,
   FileText,
   RotateCcw,
   History,
   Eye,
   Info,
   Send,
+  Check,
+  Server,
+  HardDrive,
+  Database,
+  X,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { AccessGuard } from '@/components/AccessGuard';
-import { formatDate } from '@/lib/utils';
+import { formatDate, cn } from '@/lib/utils';
 import { confirmAction, showSuccessAlert, showWarningAlert } from '@/lib/sweetalert';
 
 export interface NightTaskReport {
@@ -34,19 +39,31 @@ export interface NightTaskReport {
   // 10 broadcast maintenance fields in exact requested sequence:
   // (1 -> 3 -> 4 -> 6 -> 2 -> 5 -> 8 -> 9 -> 10 -> 11, item 7 removed)
   gvStratusRules: string;     // 1
-  octopusBackup: string;      // 3
-  coreServerBackup: string;   // 4
-  fsmServerServices: string;  // 6
-  storageVDrive: string;      // 2
-  altoStorageSpace: string;   // 5
-  hrErpBackup: string;        // 8
-  kDriveBackup: string;       // 9
-  vizrtOldData: string;       // 10
-  cloudDemo: string;          // 11
+  octopusBackup: string;      // 2 (orig 3)
+  coreServerBackup: string;   // 3 (orig 4)
+  fsmServerServices: string;  // 4 (orig 6)
+  storageVDrive: string;      // 5 (orig 2)
+  altoStorageSpace: string;   // 6 (orig 5)
+  hrErpBackup: string;        // 7 (orig 8)
+  kDriveBackup: string;       // 8 (orig 9)
+  vizrtOldData: string;       // 9 (orig 10)
+  cloudDemo: string;          // 10 (orig 11)
   overallNotes?: string;
 }
 
 const STORAGE_KEY = 'itv_night_maintenance_reports';
+
+interface TaskFieldDef {
+  key: keyof NightTaskReport;
+  num: number;
+  label: string;
+  category: 'Broadcast & Core Systems' | 'Production Storage & Archiving' | 'Enterprise Backups & Routine Purge';
+  value: string;
+  setter: (v: string) => void;
+  placeholder: string;
+  sopHint?: string;
+  suggestions: string[];
+}
 
 export default function DailyNightTaskPage() {
   const { user } = useAuth();
@@ -63,15 +80,15 @@ export default function DailyNightTaskPage() {
   // Form Fields in exact sequence: 1, 3, 4, 6, 2, 5, 8, 9, 10, 11
   const [engineerName, setEngineerName] = useState(user?.name || 'IT Night Engineer');
   const [gvStratusRules, setGvStratusRules] = useState('');     // 1
-  const [octopusBackup, setOctopusBackup] = useState('');       // 3
-  const [coreServerBackup, setCoreServerBackup] = useState(''); // 4
-  const [fsmServerServices, setFsmServerServices] = useState(''); // 6
-  const [storageVDrive, setStorageVDrive] = useState('');       // 2
-  const [altoStorageSpace, setAltoStorageSpace] = useState(''); // 5
-  const [hrErpBackup, setHrErpBackup] = useState('');         // 8
-  const [kDriveBackup, setKDriveBackup] = useState('');       // 9
-  const [vizrtOldData, setVizrtOldData] = useState('');       // 10
-  const [cloudDemo, setCloudDemo] = useState('');             // 11
+  const [octopusBackup, setOctopusBackup] = useState('');       // 2 (orig 3)
+  const [coreServerBackup, setCoreServerBackup] = useState(''); // 3 (orig 4)
+  const [fsmServerServices, setFsmServerServices] = useState(''); // 4 (orig 6)
+  const [storageVDrive, setStorageVDrive] = useState('');       // 5 (orig 2)
+  const [altoStorageSpace, setAltoStorageSpace] = useState(''); // 6 (orig 5)
+  const [hrErpBackup, setHrErpBackup] = useState('');         // 7 (orig 8)
+  const [kDriveBackup, setKDriveBackup] = useState('');       // 8 (orig 9)
+  const [vizrtOldData, setVizrtOldData] = useState('');       // 9 (orig 10)
+  const [cloudDemo, setCloudDemo] = useState('');             // 10 (orig 11)
   const [overallNotes, setOverallNotes] = useState('');
 
   // Submissions state
@@ -79,6 +96,7 @@ export default function DailyNightTaskPage() {
   const [activeReport, setActiveReport] = useState<NightTaskReport | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSopInfo, setShowSopInfo] = useState(true);
 
   useEffect(() => {
     if (user?.name) setEngineerName(user.name);
@@ -139,18 +157,18 @@ export default function DailyNightTaskPage() {
           id: 'report-sample-01',
           date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
           submittedAt: new Date(Date.now() - 86400000).toISOString(),
-          engineerName: 'Tanvir Hossain',
-          gvStratusRules: 'STRATUS rules verified. Ingest & Playout rules active with zero queue backlog.',
-          octopusBackup: 'Octopus NRCS Database backup taken successfully to Central NAS.',
-          coreServerBackup: 'Core Active Directory & DB Server system snapshot completed.',
-          fsmServerServices: 'FSM Server Control Panel services running normal. All background daemon active.',
-          storageVDrive: 'Checked V: Drive storage. Total 40 TB, Free 14.8 TB (37% free headroom).',
-          altoStorageSpace: 'ALTO cold archive verified. Space: 82 TB used, 38 TB available.',
-          hrErpBackup: 'Daily HR ERP SQL incremental backup completed to secondary backup cluster.',
-          kDriveBackup: 'K: Shared Drive mirror backup verified and synchronized.',
-          vizrtOldData: 'VCP LOWER 3RD 2014 data sorted. Deleted from 2015-04-12 to 2015-04-14 (2 days purged).',
+          engineerName: 'Omith Hasan',
+          gvStratusRules: 'All STRATUS rules active & normal. Zero queue backlog.',
+          octopusBackup: 'Octopus NRCS Database & rundown backup taken successfully to NAS.',
+          coreServerBackup: 'Core Server DB & Active Directory system snapshot completed.',
+          fsmServerServices: 'All FSM Server Control Panel services active & responding normal.',
+          storageVDrive: 'Checked V: Drive storage. Total 40 TB, Free 14.8 TB (37% headroom).',
+          altoStorageSpace: 'ALTO cold archive verified: 82 TB used, 38 TB available (Healthy).',
+          hrErpBackup: 'Daily HR ERP SQL incremental backup completed to secondary NAS.',
+          kDriveBackup: 'K: Shared Drive user & department files backup verified.',
+          vizrtOldData: 'VCP LOWER 3RD 2014 data deleted for 2 days (2015-05-01 to 2015-05-02).',
           cloudDemo: 'Cloud demo stream and ingest endpoints tested and responsive.',
-          overallNotes: 'All 10 routine maintenance checks completed smoothly without anomalies.',
+          overallNotes: 'Routine night shift maintenance checks completed smoothly without anomalies.',
         };
         setSubmissions([sample]);
         localStorage.setItem(STORAGE_KEY, JSON.stringify([sample]));
@@ -160,31 +178,219 @@ export default function DailyNightTaskPage() {
     }
   }, []);
 
-  // Auto fill routine text
-  const handleQuickFillAll = () => {
-    setGvStratusRules('GV STRATUS Engines rules verified. Playout & Ingest rules active with zero errors.');
-    setOctopusBackup('Octopus NRCS Server automated & manual night backup completed successfully.');
-    setCoreServerBackup('Core Server backup completed and verified on local backup volume.');
-    setFsmServerServices('FSM Server Control Panel all services active and responding normally.');
-    setStorageVDrive('V: Drive storage capacity verified. Adequate free space available for production.');
-    setAltoStorageSpace('ALTO Archive storage checked. Total space and free space within normal thresholds.');
-    setHrErpBackup('HR ERP database nightly incremental backup completed without error.');
-    setKDriveBackup('K: Drive user and department files backup completed.');
-    setVizrtOldData('In VCP: LOWER 3RD 2014 template data deleted for 2 days. Start: 2015-05-01, End: 2015-05-02.');
-    setCloudDemo('Cloud Demo system tested and running normal.');
-    setOverallNotes('Routine night-shift maintenance completed successfully.');
+  // 10 Fields Configuration with High-Quality Smart Suggestions
+  const taskFields: TaskFieldDef[] = useMemo(() => [
+    // Category 1: Broadcast & Core Systems
+    {
+      key: 'gvStratusRules',
+      num: 1,
+      label: 'Check GV STRATUS Engines STRATUS Rules',
+      category: 'Broadcast & Core Systems',
+      value: gvStratusRules,
+      setter: setGvStratusRules,
+      placeholder: 'Describe GV STRATUS engine status, workflow rules, playout & ingest queues...',
+      suggestions: [
+        'All STRATUS rules active & normal. Zero queue backlog.',
+        'Playout & Ingest rules verified. Workflow engines responsive.',
+        'STRATUS rules verified; PCR rundowns in sync.',
+      ],
+    },
+    {
+      key: 'octopusBackup',
+      num: 2,
+      label: 'Take Octopus Server Backup',
+      category: 'Broadcast & Core Systems',
+      value: octopusBackup,
+      setter: setOctopusBackup,
+      placeholder: 'Enter Octopus server backup destination, timestamp, and verification status...',
+      suggestions: [
+        'Octopus NRCS Database & rundown backup taken successfully to NAS.',
+        'Automated & manual night database dump completed without errors.',
+        'NRCS backup volume verified on secondary backup storage.',
+      ],
+    },
+    {
+      key: 'coreServerBackup',
+      num: 3,
+      label: 'Take Core Server Backup',
+      category: 'Broadcast & Core Systems',
+      value: coreServerBackup,
+      setter: setCoreServerBackup,
+      placeholder: 'Enter Core server backup status, drive location, and file integrity check...',
+      suggestions: [
+        'Core Server DB & Active Directory system snapshot completed.',
+        'System state & registry image backup verified on backup volume.',
+        'Nightly core server incremental snapshot verified without warnings.',
+      ],
+    },
+    {
+      key: 'fsmServerServices',
+      num: 4,
+      label: 'Check FSM Server Control Panel services',
+      category: 'Broadcast & Core Systems',
+      value: fsmServerServices,
+      setter: setFsmServerServices,
+      placeholder: 'Check services in FSM Control Panel (daemons, services status, sync listeners)...',
+      suggestions: [
+        'All FSM Server Control Panel services active & responding normal.',
+        'Background file sync daemons running healthy, zero service faults.',
+        'FSM service health verified; all listener daemons active.',
+      ],
+    },
 
-    setToast({ message: 'All 10 fields auto-filled with verified routine data!', type: 'success' });
+    // Category 2: Production Storage & Archiving
+    {
+      key: 'storageVDrive',
+      num: 5,
+      label: 'Check Storage of V: drive',
+      category: 'Production Storage & Archiving',
+      value: storageVDrive,
+      setter: setStorageVDrive,
+      placeholder: 'Enter V: drive total capacity, available free space, and volume health...',
+      suggestions: [
+        'Checked V: Drive storage. Total 40 TB, Free 14.8 TB (37% headroom).',
+        'V: Drive storage capacity verified healthy. Free headroom > 35%.',
+        'Production storage inspected; adequate free headroom for ingest.',
+      ],
+    },
+    {
+      key: 'altoStorageSpace',
+      num: 6,
+      label: 'Check Total Space and Free Space on ALTO',
+      category: 'Production Storage & Archiving',
+      value: altoStorageSpace,
+      setter: setAltoStorageSpace,
+      placeholder: 'Enter ALTO archive total capacity and available free space in TB/GB...',
+      suggestions: [
+        'ALTO cold archive verified: 82 TB used, 38 TB available (Healthy).',
+        'ALTO Archive storage checked: Space normal, free headroom sufficient.',
+        'Optical disc & deep archive space verified within safe thresholds.',
+      ],
+    },
+
+    // Category 3: Enterprise Backups & Routine Purge
+    {
+      key: 'hrErpBackup',
+      num: 7,
+      label: 'Take HR ERP Data Backup',
+      category: 'Enterprise Backups & Routine Purge',
+      value: hrErpBackup,
+      setter: setHrErpBackup,
+      placeholder: 'Confirm HR ERP database export, destination directory, and file size...',
+      suggestions: [
+        'Daily HR ERP SQL incremental backup completed to secondary NAS.',
+        'HR ERP database automated export verified (Size: 12.4 GB).',
+        'Full ERP database backup completed without error.',
+      ],
+    },
+    {
+      key: 'kDriveBackup',
+      num: 8,
+      label: 'Take K: Drive Backup',
+      category: 'Enterprise Backups & Routine Purge',
+      value: kDriveBackup,
+      setter: setKDriveBackup,
+      placeholder: 'Enter K: drive backup destination, file sync verification, and time of completion...',
+      suggestions: [
+        'K: Shared Drive user & department files backup verified.',
+        'K: Drive nightly mirror backup to central NAS completed.',
+        'Incremental sync finished with zero file lock conflicts.',
+      ],
+    },
+    {
+      key: 'vizrtOldData',
+      num: 9,
+      label: 'Delete Vizrt Old Data',
+      category: 'Enterprise Backups & Routine Purge',
+      value: vizrtOldData,
+      setter: setVizrtOldData,
+      placeholder: 'State deletion range: e.g. Deleted 2 days data from 2015-05-10 to 2015-05-11...',
+      sopHint: 'SOP Guideline: In VCP => Data tab => Concept: LOWER 3RD 2014 => Template: ALL => Sort by Date from 2015. Delete minimum 2 days Daily.',
+      suggestions: [
+        'VCP LOWER 3RD 2014 data deleted for 2 days (2015-05-01 to 2015-05-02).',
+        'VCP LOWER 3RD 2014 data sorted by date and 2 days purged per SOP.',
+        'Legacy template data deleted for 2 days (2015-05-03 to 2015-05-04).',
+      ],
+    },
+    {
+      key: 'cloudDemo',
+      num: 10,
+      label: 'Check Cloud Demo',
+      category: 'Enterprise Backups & Routine Purge',
+      value: cloudDemo,
+      setter: setCloudDemo,
+      placeholder: 'Enter Cloud Demo streaming & cloud playout engine status...',
+      suggestions: [
+        'Cloud demo stream and ingest endpoints tested and responsive.',
+        'Cloud demo instances active; playback and latency normal.',
+        'Cloud ingest tested; zero packet drops or buffering.',
+      ],
+    },
+  ], [
+    gvStratusRules,
+    octopusBackup,
+    coreServerBackup,
+    fsmServerServices,
+    storageVDrive,
+    altoStorageSpace,
+    hrErpBackup,
+    kDriveBackup,
+    vizrtOldData,
+    cloudDemo,
+  ]);
+
+  // Count filled fields out of 10
+  const filledCount = useMemo(() => {
+    let count = 0;
+    if (gvStratusRules.trim()) count++;
+    if (octopusBackup.trim()) count++;
+    if (coreServerBackup.trim()) count++;
+    if (fsmServerServices.trim()) count++;
+    if (storageVDrive.trim()) count++;
+    if (altoStorageSpace.trim()) count++;
+    if (hrErpBackup.trim()) count++;
+    if (kDriveBackup.trim()) count++;
+    if (vizrtOldData.trim()) count++;
+    if (cloudDemo.trim()) count++;
+    return count;
+  }, [
+    gvStratusRules,
+    octopusBackup,
+    coreServerBackup,
+    fsmServerServices,
+    storageVDrive,
+    altoStorageSpace,
+    hrErpBackup,
+    kDriveBackup,
+    vizrtOldData,
+    cloudDemo,
+  ]);
+
+  // Auto fill all 10 with primary routine verification suggestions
+  const handleQuickFillAll = () => {
+    setGvStratusRules('All STRATUS rules active & normal. Zero queue backlog.');
+    setOctopusBackup('Octopus NRCS Database & rundown backup taken successfully to NAS.');
+    setCoreServerBackup('Core Server DB & Active Directory system snapshot completed.');
+    setFsmServerServices('All FSM Server Control Panel services active & responding normal.');
+    setStorageVDrive('Checked V: Drive storage. Total 40 TB, Free 14.8 TB (37% headroom).');
+    setAltoStorageSpace('ALTO cold archive verified: 82 TB used, 38 TB available (Healthy).');
+    setHrErpBackup('Daily HR ERP SQL incremental backup completed to secondary NAS.');
+    setKDriveBackup('K: Shared Drive user & department files backup verified.');
+    setVizrtOldData('VCP LOWER 3RD 2014 data deleted for 2 days (2015-05-01 to 2015-05-02).');
+    setCloudDemo('Cloud demo stream and ingest endpoints tested and responsive.');
+    setOverallNotes('All 10 routine night maintenance checks verified normal.');
+
+    setToast({ message: 'All 10 fields filled with standard routine verification suggestions!', type: 'success' });
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Reset form with modern SweetAlert confirmation dialog
+  // Reset form with confirmation
   const handleReset = async () => {
     const isConfirmed = await confirmAction({
-      title: 'Reset Form Fields?',
-      text: 'Are you sure you want to clear all 10 broadcast maintenance entries? Any unsaved text will be lost.',
+      title: 'Reset All Form Entries?',
+      text: 'Are you sure you want to clear all 10 maintenance entries? Any unsaved text will be lost.',
       icon: 'warning',
-      confirmButtonText: 'Yes, Reset Form',
+      confirmButtonText: 'Yes, Clear Form',
       cancelButtonText: 'Cancel',
       isDanger: true,
     });
@@ -248,34 +454,42 @@ export default function DailyNightTaskPage() {
         'Daily Night-Time Maintenance Report has been successfully saved to central archive.'
       );
 
-      // Reset fields
-      setGvStratusRules('');
-      setOctopusBackup('');
-      setCoreServerBackup('');
-      setFsmServerServices('');
-      setStorageVDrive('');
-      setAltoStorageSpace('');
-      setHrErpBackup('');
-      setKDriveBackup('');
-      setVizrtOldData('');
-      setCloudDemo('');
-      setOverallNotes('');
-    }, 400);
+      // Auto switch to history
+      setActiveTab('history');
+    }, 450);
   };
 
-  // Helper for quick pill insertion
-  const setQuickValue = (setter: React.Dispatch<React.SetStateAction<string>>, text: string) => {
-    setter(text);
-  };
+  // Group fields into 3 structured categories
+  const categories = [
+    {
+      title: '1. Broadcast & Core Systems',
+      desc: 'Grass Valley Stratus workflow rules, Octopus NRCS and Core infrastructure',
+      icon: Server,
+      fields: taskFields.filter((f) => f.category === 'Broadcast & Core Systems'),
+    },
+    {
+      title: '2. Production Storage & Archiving',
+      desc: 'Central V: Drive live production storage and ALTO optical cold archive',
+      icon: HardDrive,
+      fields: taskFields.filter((f) => f.category === 'Production Storage & Archiving'),
+    },
+    {
+      title: '3. Enterprise Backups & Maintenance',
+      desc: 'HR ERP database, K: Shared drive mirror, Vizrt VCP purge and Cloud demo',
+      icon: Database,
+      fields: taskFields.filter((f) => f.category === 'Enterprise Backups & Routine Purge'),
+    },
+  ];
 
   return (
-    <AccessGuard module="dashboard">
-      <div className="space-y-6 pb-16 animate-in fade-in duration-200">
-        {/* Floating Toast Notification */}
+    <div className="space-y-6 max-w-4xl mx-auto pb-12">
+        {/* Toast Alert */}
         {toast && (
           <div
-            className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-5 py-3 rounded-xl text-white font-semibold text-xs shadow-2xl animate-in slide-in-from-bottom-3 ${
-              toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'
+            className={`p-3.5 rounded-xl border text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-top-2 ${
+              toast.type === 'success'
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+                : 'bg-rose-500/10 border-rose-500/30 text-rose-500'
             }`}
           >
             {toast.type === 'success' ? (
@@ -287,12 +501,12 @@ export default function DailyNightTaskPage() {
           </div>
         )}
 
-        {/* Top Navigation & Controls */}
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/80">
+        {/* Top Header & Navigation */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-border/80">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="h-9 w-9 rounded-xl border border-border bg-card/60 hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition"
+              className="h-9 w-9 rounded-xl border border-border bg-card hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition shadow-2xs"
               title="Back to Dashboard"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -302,37 +516,43 @@ export default function DailyNightTaskPage() {
                 <div className="h-7 w-7 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center">
                   <Moon className="h-4 w-4" />
                 </div>
-                <h1 className="text-xl font-black text-foreground tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">
                   Daily Night Task Submission
                 </h1>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-bold uppercase">
+                  10-Point SOP
+                </span>
               </div>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Central Broadcast IT Night-Time Maintenance &amp; Backup Verification Protocol
+                Independent Television &bull; Broadcast IT Night Maintenance &amp; Backup Verification Protocol
               </p>
             </div>
           </div>
 
-          {/* Tab Switcher: Form vs History */}
-          <div className="flex items-center gap-2">
-            <div className="p-1 rounded-xl border border-border bg-card/80 flex items-center gap-1 shadow-xs">
+          {/* View Tab Switcher & Print */}
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <div className="p-1 rounded-xl border border-border bg-card flex items-center gap-1 shadow-2xs">
               <button
                 type="button"
                 onClick={() => setActiveTab('form')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
                   activeTab === 'form'
-                    ? 'bg-primary text-primary-foreground shadow-xs'
+                    ? 'bg-primary text-primary-foreground shadow-2xs'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <FileText className="h-3.5 w-3.5" />
-                <span>Report Form</span>
+                <span>Form</span>
+                <span className="ml-1 px-1.5 py-0.2 text-[10px] font-mono rounded bg-white/20 text-white">
+                  {filledCount}/10
+                </span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('history')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
                   activeTab === 'history'
-                    ? 'bg-primary text-primary-foreground shadow-xs'
+                    ? 'bg-primary text-primary-foreground shadow-2xs'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -344,7 +564,7 @@ export default function DailyNightTaskPage() {
             <button
               type="button"
               onClick={() => window.print()}
-              className="h-8 px-2.5 rounded-xl border border-border bg-card hover:bg-muted text-xs font-medium text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition shadow-xs"
+              className="h-8 px-2.5 rounded-xl border border-border bg-card hover:bg-muted text-xs font-medium text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition shadow-2xs"
               title="Print form"
             >
               <Printer className="h-3.5 w-3.5" />
@@ -353,543 +573,328 @@ export default function DailyNightTaskPage() {
           </div>
         </div>
 
-        {/* ================================================================= */}
-        {/* TOP ALERT BANNER: EXACT MATCH WITH SCREENSHOT (TIME WINDOW LOCK) */}
-        {/* ================================================================= */}
-        <div className="max-w-4xl mx-auto">
-          <div
-            className={`p-4 sm:p-5 rounded-xl shadow-md border transition-all text-white relative overflow-hidden ${
-              isWindowOpen
-                ? 'bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 border-emerald-500/50'
-                : 'bg-gradient-to-r from-red-600 via-rose-600 to-red-700 border-red-500/50'
-            }`}
-          >
-            {/* Subtle background glow */}
-            <div className="absolute -right-10 -bottom-10 w-44 h-44 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 relative z-10">
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0 shadow-inner">
-                  {isWindowOpen ? (
-                    <Unlock className="h-5 w-5 text-white" />
-                  ) : (
-                    <Lock className="h-5 w-5 text-white" />
-                  )}
-                </div>
-                <div>
-                  <h2 className="text-sm sm:text-base font-extrabold tracking-tight text-white flex items-center gap-2">
-                    <span>Data Backup &amp; Form Submission Available Only Between 1:30 A.M. And 6:00 A.M.</span>
-                  </h2>
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-red-50">
-                    <span className="inline-flex items-center gap-1.5 font-medium">
-                      <Clock className="h-3.5 w-3.5 opacity-90" />
-                      <span>
-                        Current Server Time:{' '}
-                        <strong className="text-white font-mono font-bold">
-                          {currentTime.toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit',
-                            hour12: true,
-                          })}
-                        </strong>
-                      </span>
-                    </span>
-
-                    <span className="inline-flex items-center gap-1.5 font-medium">
-                      <span className="opacity-90">⏳</span>
-                      <span>
-                        {isWindowOpen ? (
-                          <>
-                            Portal Closes In:{' '}
-                            <strong className="text-emerald-100 font-mono font-bold">
-                              {countdownStr}
-                            </strong>
-                          </>
-                        ) : (
-                          <>
-                            Portal Opens In:{' '}
-                            <strong className="text-amber-200 font-mono font-bold">
-                              {countdownStr}
-                            </strong>
-                          </>
-                        )}
-                      </span>
-                    </span>
-                  </div>
-                </div>
+        {/* Compact Operational Status Strip */}
+        <div className="p-3 sm:p-4 rounded-xl border border-border bg-card/70 backdrop-blur-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
+          <div className="flex items-center gap-3 min-w-0">
+            <div
+              className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 border ${
+                isWindowOpen || adminBypass
+                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+                  : 'bg-rose-500/10 border-rose-500/30 text-rose-500'
+              }`}
+            >
+              {isWindowOpen || adminBypass ? <Unlock className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-foreground">Maintenance Window:</span>
+                <span className="font-mono text-muted-foreground">01:30 AM – 06:00 AM</span>
+                {adminBypass && !isWindowOpen && (
+                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 uppercase">
+                    Bypass Active
+                  </span>
+                )}
               </div>
-
-              {/* Admin Bypass Switch (Discreet & Convenient for Testing) */}
-              <div className="flex items-center gap-2 self-start md:self-center bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/15 text-[11px]">
-                <span className="text-red-100 font-medium">Admin Test Bypass:</span>
-                <button
-                  type="button"
-                  onClick={() => setAdminBypass(!adminBypass)}
-                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-white/20 transition-colors duration-200 ${
-                    adminBypass ? 'bg-emerald-400' : 'bg-slate-700'
-                  }`}
-                  title="Toggle to allow submissions anytime during testing"
-                >
-                  <span
-                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ${
-                      adminBypass ? 'translate-x-4' : 'translate-x-0.5'
-                    }`}
-                  />
-                </button>
+              <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-0.5">
+                <span className="flex items-center gap-1 font-mono">
+                  <Clock className="h-3 w-3 text-primary" />
+                  <span>
+                    BST: <strong className="text-foreground">{currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}</strong>
+                  </span>
+                </span>
+                <span>&bull;</span>
+                <span className="font-mono">
+                  {isWindowOpen ? `Window closes in: ${countdownStr}` : `Window opens in: ${countdownStr}`}
+                </span>
               </div>
             </div>
+          </div>
+
+          {/* Test Bypass Switch */}
+          <div className="flex items-center gap-2 self-start sm:self-center px-2.5 py-1 rounded-lg border border-border/70 bg-muted/30 text-[11px]">
+            <span className="text-muted-foreground font-medium">Admin Test Bypass:</span>
+            <button
+              type="button"
+              onClick={() => setAdminBypass(!adminBypass)}
+              className={`relative inline-flex h-4 w-8 shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-200 ${
+                adminBypass ? 'bg-primary' : 'bg-muted-foreground/30'
+              }`}
+              title="Allow submission outside 1:30 AM - 6:00 AM for testing"
+            >
+              <span
+                className={`pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition duration-200 ${
+                  adminBypass ? 'translate-x-4' : 'translate-x-0.5'
+                }`}
+              />
+            </button>
           </div>
         </div>
 
         {/* ================================================================= */}
-        {/* VIEW 1: THE CENTRALIZED REORGANIZED FORM                          */}
+        {/* VIEW 1: SIMPLIFIED, HIGH-READABILITY FORM WITH SUGGESTIONS        */}
         {/* ================================================================= */}
         {activeTab === 'form' && (
-          <div className="max-w-4xl mx-auto">
-            <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden transition-all">
-              {/* Form Title Banner - Independent Television Corporate Broadcast Header */}
-              <div className="bg-gradient-to-r from-slate-900 via-zinc-900 to-slate-950 border-b border-border/80 px-6 py-4 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-                <div>
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-[10px] tracking-[0.2em] text-red-500 uppercase font-black">
-                      INDEPENDENT TELEVISION
-                    </span>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-white/10 text-slate-300 font-mono">
-                      LOG-NIGHT
-                    </span>
-                  </div>
-                  <h2 className="text-base sm:text-lg font-bold tracking-tight text-white">
-                    Daily Night-Time Maintenance Report Submission
-                  </h2>
-                  <p className="text-xs text-slate-400 font-medium">
-                    Broadcast IT &amp; Central Infrastructure Operations Log &bull; 01:30 AM – 06:00 AM Window
-                  </p>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Top Toolbar: Reporting Metadata & Quick-Fill Actions */}
+            <div className="p-4 rounded-xl border border-border bg-card shadow-2xs space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/70">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-foreground uppercase tracking-wider">
+                    Report Parameters
+                  </span>
+                  <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                    {filledCount} of 10 Completed
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={handleQuickFillAll}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-semibold text-white transition shadow-xs"
-                    title="Quickly fill routine verification text across all fields"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary text-primary hover:text-white border border-primary/20 text-xs font-semibold transition shadow-2xs cursor-pointer"
+                    title="Fill all 10 fields with verified routine status"
                   >
-                    <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                    <span>Auto-Fill All</span>
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <span>Auto-Fill All Defaults</span>
                   </button>
+
                   <button
                     type="button"
                     onClick={handleReset}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-white/90 transition"
-                    title="Reset all inputs"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border bg-card hover:bg-muted text-xs font-medium text-muted-foreground hover:text-foreground transition cursor-pointer"
+                    title="Clear all fields"
                   >
-                    <RotateCcw className="h-3.5 w-3.5" />
-                    <span>Reset</span>
+                    <RotateCcw className="h-3 w-3" />
+                    <span>Clear</span>
                   </button>
                 </div>
               </div>
 
-              {/* Form Body */}
-              <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6 bg-card/60">
-                {/* Engineer Metadata Sub-Bar */}
-                <div className="p-4 rounded-xl border border-border/80 bg-muted/30 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                      Reporting Engineer
-                    </label>
-                    <div className="relative">
-                      <User className="h-3.5 w-3.5 text-muted-foreground absolute left-3 top-2.5" />
-                      <input
-                        type="text"
-                        required
-                        value={engineerName}
-                        onChange={(e) => setEngineerName(e.target.value)}
-                        placeholder="Engineer Full Name"
-                        className="w-full pl-8 pr-3 py-2 rounded-lg border border-border bg-background text-xs font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                      Maintenance Shift
-                    </label>
-                    <div className="px-3 py-2 rounded-lg border border-border bg-background/50 text-xs font-mono text-muted-foreground flex items-center justify-between">
-                      <span>Night (01:30 - 06:00)</span>
-                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* --------------------------------------------------------------------------------- */}
-                {/* THE 10 FIELDS IN EXACT REQUESTED SEQUENCE: 1, 3, 4, 6, 2, 5, 8, 9, 10, 11 (7 removed) */}
-                {/* --------------------------------------------------------------------------------- */}
-                <div className="space-y-5">
-                  {/* #1 (Original 1): Check GV STRATUS Engines STRATUS Rules */}
-                  <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                        <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          1
-                        </span>
-                        <span>Check GV STRATUS Engines STRATUS Rules</span>
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuickValue(setGvStratusRules, 'All STRATUS Engine rules active. No queue backlog.')}
-                          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
-                        >
-                          + Normal
-                        </button>
-                      </div>
-                    </div>
-                    <textarea
-                      rows={2}
-                      required
-                      value={gvStratusRules}
-                      onChange={(e) => setGvStratusRules(e.target.value)}
-                      placeholder="Describe GV STRATUS engine status, workflow rules, playout & ingest queues..."
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
-                    />
-                  </div>
-
-                  {/* #2 (Original 3): Take Octopus Server Backup */}
-                  <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                        <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          2
-                        </span>
-                        <span>Take Octopus Server Backup</span>
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuickValue(setOctopusBackup, 'Octopus NRCS Database & rundown backup taken successfully.')}
-                          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
-                        >
-                          + Completed
-                        </button>
-                      </div>
-                    </div>
-                    <textarea
-                      rows={2}
-                      required
-                      value={octopusBackup}
-                      onChange={(e) => setOctopusBackup(e.target.value)}
-                      placeholder="Enter Octopus server backup destination, timestamp, and verification status..."
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
-                    />
-                  </div>
-
-                  {/* #3 (Original 4): Take Core Server Backup */}
-                  <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                        <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          3
-                        </span>
-                        <span>Take Core Server Backup</span>
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuickValue(setCoreServerBackup, 'Core Server system image and database snapshot completed.')}
-                          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
-                        >
-                          + Completed
-                        </button>
-                      </div>
-                    </div>
-                    <textarea
-                      rows={2}
-                      required
-                      value={coreServerBackup}
-                      onChange={(e) => setCoreServerBackup(e.target.value)}
-                      placeholder="Enter Core server backup status, drive location, and file integrity check..."
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
-                    />
-                  </div>
-
-                  {/* #4 (Original 6): Check FSM Server Control Panel services */}
-                  <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                        <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          4
-                        </span>
-                        <span>Check FSM Server Control Panel services</span>
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuickValue(setFsmServerServices, 'FSM Server Control Panel services running. No service stoppage.')}
-                          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
-                        >
-                          + Active
-                        </button>
-                      </div>
-                    </div>
-                    <textarea
-                      rows={2}
-                      required
-                      value={fsmServerServices}
-                      onChange={(e) => setFsmServerServices(e.target.value)}
-                      placeholder="Check services in FSM Control Panel (daemons, services status, sync listeners)..."
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
-                    />
-                  </div>
-
-                  {/* #5 (Original 2): Check Storage of V drive */}
-                  <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                        <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          5
-                        </span>
-                        <span>Check Storage of V drive</span>
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuickValue(setStorageVDrive, 'V: Drive storage capacity checked. Adequate free headroom.')}
-                          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
-                        >
-                          + Healthy
-                        </button>
-                      </div>
-                    </div>
-                    <textarea
-                      rows={2}
-                      required
-                      value={storageVDrive}
-                      onChange={(e) => setStorageVDrive(e.target.value)}
-                      placeholder="Enter V: drive total capacity, available free space, and volume health..."
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
-                    />
-                  </div>
-
-                  {/* #6 (Original 5): Check Total Space and Free Space on ALTO */}
-                  <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                        <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          6
-                        </span>
-                        <span>Check Total Space and Free Space on ALTO</span>
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuickValue(setAltoStorageSpace, 'ALTO Archive storage checked: Space normal, free headroom sufficient.')}
-                          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
-                        >
-                          + Normal
-                        </button>
-                      </div>
-                    </div>
-                    <textarea
-                      rows={2}
-                      required
-                      value={altoStorageSpace}
-                      onChange={(e) => setAltoStorageSpace(e.target.value)}
-                      placeholder="Enter ALTO archive total capacity and available free space in TB/GB..."
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
-                    />
-                  </div>
-
-                  {/* #7 (Original 8): Take HR ERP Data Backup */}
-                  <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                        <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          7
-                        </span>
-                        <span>Take HR ERP Data Backup</span>
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuickValue(setHrErpBackup, 'HR ERP database automated & manual backup verified on NAS.')}
-                          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
-                        >
-                          + Completed
-                        </button>
-                      </div>
-                    </div>
-                    <textarea
-                      rows={2}
-                      required
-                      value={hrErpBackup}
-                      onChange={(e) => setHrErpBackup(e.target.value)}
-                      placeholder="Confirm HR ERP database export, destination directory, and file size..."
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
-                    />
-                  </div>
-
-                  {/* #8 (Original 9): Take K Drive Backup */}
-                  <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                        <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          8
-                        </span>
-                        <span>Take K Drive Backup</span>
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuickValue(setKDriveBackup, 'K: Drive department and shared folders backup verified.')}
-                          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
-                        >
-                          + Completed
-                        </button>
-                      </div>
-                    </div>
-                    <textarea
-                      rows={2}
-                      required
-                      value={kDriveBackup}
-                      onChange={(e) => setKDriveBackup(e.target.value)}
-                      placeholder="Enter K: drive backup destination, file sync verification, and time of completion..."
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
-                    />
-                  </div>
-
-                  {/* #9 (Original 10): Delete Vizrt Old Data (with Special SOP Note Callout) */}
-                  <div className="space-y-2 p-4 sm:p-5 rounded-xl border-2 border-indigo-500/30 bg-indigo-500/5 hover:border-indigo-500/50 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                        <span className="h-5 w-5 rounded-md bg-indigo-600 text-white flex items-center justify-center text-[11px] font-mono font-black">
-                          9
-                        </span>
-                        <span>Delete Vizrt Old Data</span>
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setQuickValue(
-                              setVizrtOldData,
-                              'VCP LOWER 3RD 2014 data deleted for 2 days. Start Date: 2015-06-01, End Date: 2015-06-02.'
-                            )
-                          }
-                          className="text-[10px] px-2 py-0.5 rounded bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 transition font-medium"
-                        >
-                          + Insert Sample
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Official SOP Guideline Note directly from screenshot */}
-                    <div className="p-3 rounded-lg bg-background/80 border border-border/80 flex items-start gap-2.5 text-[11px] text-muted-foreground leading-relaxed">
-                      <Info className="h-4 w-4 text-indigo-400 shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="text-foreground">SOP Instruction: </strong>
-                        In VCP, go to the <strong>Data tab</strong>. Select{' '}
-                        <span className="font-mono text-foreground font-semibold">
-                          Concept =&gt; LOWER 3RD 2014
-                        </span>
-                        , <span className="font-mono text-foreground font-semibold">Template =&gt; ALL</span>, then sort by <strong>Date</strong>. Start deleting from <strong>2015</strong>, making sure to delete at least two days&apos; worth of data Daily. Mention Start and End Date of Deletion.
-                      </div>
-                    </div>
-
-                    <textarea
-                      rows={2}
-                      required
-                      value={vizrtOldData}
-                      onChange={(e) => setVizrtOldData(e.target.value)}
-                      placeholder="State deletion range: e.g. Deleted 2 days data from 2015-05-10 to 2015-05-11..."
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 leading-relaxed transition"
-                    />
-                  </div>
-
-                  {/* #10 (Original 11): Check Cloud Demo */}
-                  <div className="space-y-1.5 p-4 rounded-xl border border-border/70 bg-card/40 hover:border-primary/40 transition">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                        <span className="h-5 w-5 rounded-md bg-blue-500/10 text-blue-500 flex items-center justify-center text-[11px] font-mono font-black">
-                          10
-                        </span>
-                        <span>Check Cloud Demo</span>
-                      </label>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => setQuickValue(setCloudDemo, 'Cloud Demo system checked and responsive.')}
-                          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-primary/10 text-muted-foreground hover:text-primary border border-border transition font-medium"
-                        >
-                          + Normal
-                        </button>
-                      </div>
-                    </div>
-                    <textarea
-                      rows={2}
-                      required
-                      value={cloudDemo}
-                      onChange={(e) => setCloudDemo(e.target.value)}
-                      placeholder="Enter Cloud Demo streaming & cloud playout engine status..."
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed transition"
-                    />
-                  </div>
-                </div>
-
-                {/* Optional Handover Notes */}
-                <div className="pt-2">
-                  <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
-                    Handover Notes / Remarks (Optional)
+              {/* Metadata row */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div>
+                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                    Reporting Engineer
                   </label>
-                  <textarea
-                    rows={2}
-                    value={overallNotes}
-                    onChange={(e) => setOverallNotes(e.target.value)}
-                    placeholder="Any observations, pending tasks, or issues to flag for morning shift engineers..."
-                    className="w-full px-3.5 py-2 rounded-lg border border-border bg-background text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  />
+                  <div className="relative">
+                    <User className="h-3.5 w-3.5 text-muted-foreground absolute left-3 top-2.5" />
+                    <input
+                      type="text"
+                      required
+                      value={engineerName}
+                      onChange={(e) => setEngineerName(e.target.value)}
+                      placeholder="Engineer Full Name"
+                      className="w-full pl-8 pr-3 py-2 rounded-lg border border-border bg-background text-xs font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
+                  </div>
                 </div>
 
-                {/* Submit Button */}
-                <div className="pt-4 border-t border-border">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting || (!isWindowOpen && !adminBypass)}
-                    className={`w-full py-3.5 px-6 rounded-xl font-bold text-sm tracking-wide shadow-lg flex items-center justify-center gap-2 transition-all ${
-                      !isWindowOpen && !adminBypass
-                        ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:via-indigo-500 hover:to-blue-600 text-white shadow-blue-600/25 active:scale-[0.99]'
-                    }`}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Submitting Daily Maintenance Report...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4" />
-                        <span>Submit Report</span>
-                      </>
-                    )}
-                  </button>
-
-                  {!isWindowOpen && !adminBypass && (
-                    <p className="text-center text-[11px] text-red-400 mt-2">
-                      🔒 Submission window locked. Turn on &ldquo;Admin Test Bypass&rdquo; at the top to submit outside 1:30 AM - 6:00 AM.
-                    </p>
-                  )}
+                <div>
+                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                    Submission Date
+                  </label>
+                  <div className="px-3 py-2 rounded-lg border border-border bg-muted/30 text-xs font-mono font-semibold text-foreground">
+                    {formatDate(new Date().toISOString())}
+                  </div>
                 </div>
-              </form>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                    Operational Shift
+                  </label>
+                  <div className="px-3 py-2 rounded-lg border border-border bg-muted/30 text-xs font-mono text-muted-foreground flex items-center justify-between">
+                    <span className="font-semibold text-foreground">Night Shift (01:30 - 06:00)</span>
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+
+            {/* --------------------------------------------------------------- */}
+            {/* 3 STRUCTURED OPERATIONAL SYSTEM GROUPS                           */}
+            {/* --------------------------------------------------------------- */}
+            {categories.map((cat, catIdx) => (
+              <div key={cat.title} className="rounded-xl border border-border bg-card shadow-2xs overflow-hidden">
+                {/* Category Header */}
+                <div className="px-5 py-3.5 bg-muted/40 border-b border-border/80 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="h-7 w-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                      <cat.icon className="h-3.5 w-3.5" />
+                    </div>
+                    <div>
+                      <h2 className="text-sm font-bold text-foreground tracking-tight">
+                        {cat.title}
+                      </h2>
+                      <p className="text-[11px] text-muted-foreground">
+                        {cat.desc}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Category Fields List */}
+                <div className="p-4 sm:p-5 space-y-5 divide-y divide-border/60">
+                  {cat.fields.map((field, fIdx) => {
+                    const isFilled = field.value.trim().length > 0;
+
+                    return (
+                      <div key={field.num} className={fIdx > 0 ? 'pt-5' : ''}>
+                        {/* Field Label & Status Header */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                          <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
+                            <span className="h-5 w-5 rounded-md bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-[11px] font-mono font-black shrink-0">
+                              {field.num}
+                            </span>
+                            <span>{field.label}</span>
+                          </label>
+
+                          <div className="flex items-center gap-2">
+                            {isFilled ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                                <Check className="h-2.5 w-2.5" />
+                                <span>Recorded</span>
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-mono text-muted-foreground px-2 py-0.5 rounded bg-muted/60">
+                                Pending
+                              </span>
+                            )}
+
+                            {isFilled && (
+                              <button
+                                type="button"
+                                onClick={() => field.setter('')}
+                                className="h-5 w-5 rounded hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition"
+                                title="Clear field"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Special SOP Hint for Vizrt (#9) */}
+                        {field.sopHint && (
+                          <div className="mb-2 p-2.5 rounded-lg bg-indigo-500/5 dark:bg-indigo-500/10 border border-indigo-500/20 flex items-start gap-2 text-[11px] text-muted-foreground leading-relaxed">
+                            <Info className="h-3.5 w-3.5 text-indigo-500 shrink-0 mt-0.5" />
+                            <div>
+                              <strong className="text-foreground">SOP Rule: </strong>
+                              {field.sopHint}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Interactive Clickable Suggestions Pills */}
+                        <div className="my-2">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1 select-none pr-1">
+                              <Sparkles className="h-3 w-3 text-primary" /> Suggestions:
+                            </span>
+
+                            {field.suggestions.map((sug, sIdx) => {
+                              const isSelected = field.value === sug;
+
+                              return (
+                                <button
+                                  key={sIdx}
+                                  type="button"
+                                  onClick={() => field.setter(sug)}
+                                  className={cn(
+                                    'px-2.5 py-1 rounded-md text-xs font-medium border transition-all duration-150 cursor-pointer flex items-center gap-1.5 text-left select-none',
+                                    isSelected
+                                      ? 'bg-primary/10 text-primary border-primary/40 font-semibold shadow-2xs ring-1 ring-primary/20'
+                                      : 'bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground border-border/70 hover:border-primary/40'
+                                  )}
+                                  title="Click to apply this suggestion"
+                                >
+                                  {isSelected ? (
+                                    <Check className="h-3 w-3 text-primary shrink-0" />
+                                  ) : (
+                                    <span className="h-1.5 w-1.5 rounded-full bg-primary/40 shrink-0" />
+                                  )}
+                                  <span>{sug}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Input Area */}
+                        <textarea
+                          rows={2}
+                          required
+                          value={field.value}
+                          onChange={(e) => field.setter(e.target.value)}
+                          placeholder={field.placeholder}
+                          className="w-full px-3.5 py-2 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+
+            {/* Handover Remarks (Optional) */}
+            <div className="p-4 sm:p-5 rounded-xl border border-border bg-card shadow-2xs space-y-2">
+              <label className="block text-xs font-bold text-foreground uppercase tracking-wider">
+                Shift Handover Notes &amp; Remarks (Optional)
+              </label>
+              <textarea
+                rows={2}
+                value={overallNotes}
+                onChange={(e) => setOverallNotes(e.target.value)}
+                placeholder="Mention any abnormal behaviors, pending tickets, or observations to handover to morning shift..."
+                className="w-full px-3.5 py-2 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
+              />
+            </div>
+
+            {/* Submission Action Bar */}
+            <div className="p-4 rounded-xl border border-border bg-card shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="text-xs text-muted-foreground">
+                <p className="font-semibold text-foreground">
+                  {filledCount === 10
+                    ? '✓ All 10 maintenance points recorded and ready for submission.'
+                    : `⚠️ ${10 - filledCount} maintenance points still pending verification.`}
+                </p>
+                <p className="text-[11px] mt-0.5">
+                  Submissions are logged to the official ITV Central Broadcast Archive.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="submit"
+                  disabled={isSubmitting || (!isWindowOpen && !adminBypass)}
+                  className={`px-6 py-2.5 rounded-xl font-bold text-xs tracking-wide shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                    !isWindowOpen && !adminBypass
+                      ? 'bg-muted text-muted-foreground cursor-not-allowed border border-border'
+                      : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-primary/20 active:scale-[0.98]'
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Saving Report...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-3.5 w-3.5" />
+                      <span>Submit Daily Night Report</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </form>
         )}
 
         {/* ================================================================= */}
-        {/* VIEW 2: SUBMISSIONS HISTORY LOG (ORGANIZED & CLEAN)               */}
+        {/* VIEW 2: SUBMISSIONS HISTORY LOG (CLEAN & ORDERED)                  */}
         {/* ================================================================= */}
         {activeTab === 'history' && (
-          <div className="max-w-4xl mx-auto space-y-4">
-            <div className="p-5 rounded-xl border border-border bg-card shadow-sm space-y-4">
+          <div className="space-y-4">
+            <div className="p-5 rounded-xl border border-border bg-card shadow-2xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border">
                 <div>
                   <h3 className="text-base font-bold text-foreground flex items-center gap-2">
@@ -897,15 +902,15 @@ export default function DailyNightTaskPage() {
                     <span>Submitted Daily Night Reports</span>
                   </h3>
                   <p className="text-xs text-muted-foreground">
-                    Historical archive of 10-point broadcast maintenance checks
+                    Historical record of completed 10-point night maintenance shifts
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setActiveTab('form')}
-                  className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-bold self-start sm:self-auto hover:bg-primary/90 transition"
+                  className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-bold self-start sm:self-auto hover:bg-primary/90 transition shadow-2xs"
                 >
-                  + New Submission
+                  + New Report Submission
                 </button>
               </div>
 
@@ -919,7 +924,7 @@ export default function DailyNightTaskPage() {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2.5">
                           <span className="font-bold text-sm text-foreground">{rep.engineerName}</span>
-                          <span className="text-[10px] font-mono text-muted-foreground">
+                          <span className="text-[10px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded">
                             {formatDate(rep.date)}
                           </span>
                         </div>
@@ -933,10 +938,10 @@ export default function DailyNightTaskPage() {
                         <button
                           type="button"
                           onClick={() => setActiveReport(rep)}
-                          className="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground flex items-center gap-1.5 transition shadow-xs"
+                          className="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground flex items-center gap-1.5 transition shadow-2xs"
                         >
                           <Eye className="h-3.5 w-3.5 text-primary" />
-                          <span>View Full Report</span>
+                          <span>View Report Details</span>
                         </button>
                       </div>
                     </div>
@@ -980,7 +985,7 @@ export default function DailyNightTaskPage() {
                 </button>
               </div>
 
-              {/* 10 Tasks Detailed List in Requested Sequence */}
+              {/* 10 Tasks Detailed List */}
               <div className="space-y-3 text-xs divide-y divide-border/60">
                 <div className="pt-2">
                   <p className="font-bold text-foreground">1. Check GV STRATUS Engines STRATUS Rules</p>
@@ -1048,6 +1053,5 @@ export default function DailyNightTaskPage() {
           </div>
         )}
       </div>
-    </AccessGuard>
   );
 }
