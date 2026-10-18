@@ -23,6 +23,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Radio,
+  LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth, AppModule } from '@/context/AuthContext';
@@ -93,7 +94,7 @@ const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { hasModuleAccess } = useAuth();
+  const { hasModuleAccess, user, logout } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Read saved collapse state
@@ -304,25 +305,52 @@ export function Sidebar() {
         </nav>
       </div>
 
-      {/* Network Operations Status Footer */}
-      <div className="p-2.5 border-t border-border shrink-0 bg-muted/20">
+      {/* Network Operations Status Footer & Sign Out */}
+      <div className="p-2.5 border-t border-border shrink-0 bg-muted/20 space-y-2">
         {!isCollapsed ? (
-          <div className="p-2 rounded-lg bg-card border border-border/80 flex items-center gap-2.5">
-            <span className="relative flex h-2 w-2 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <div className="text-xs truncate min-w-0">
-              <p className="font-semibold text-foreground truncate text-[11px]">ITV Central LAN</p>
-              <p className="text-[10px] text-muted-foreground font-mono truncate">10.1.0.0/16 Active</p>
+          <>
+            <div className="p-2 rounded-lg bg-card border border-border/80 flex items-center gap-2.5">
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <div className="text-xs truncate min-w-0">
+                <p className="font-semibold text-foreground truncate text-[11px]">ITV Central LAN</p>
+                <p className="text-[10px] text-muted-foreground font-mono truncate">10.1.0.0/16 Active</p>
+              </div>
             </div>
-          </div>
+
+            {user && (
+              <button
+                type="button"
+                onClick={() => logout()}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 hover:border-rose-500/30 border border-transparent transition-all duration-150 cursor-pointer"
+                title="Sign Out of ITV Operations"
+              >
+                <LogOut className="h-3.5 w-3.5 shrink-0" />
+                <span>Sign Out</span>
+              </button>
+            )}
+          </>
         ) : (
-          <div className="flex items-center justify-center py-1" title="ITV Central LAN 10.1.0.0/16 Active">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-            </span>
+          <div className="flex flex-col items-center gap-2 py-1">
+            <div title="ITV Central LAN 10.1.0.0/16 Active" className="p-1">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+              </span>
+            </div>
+            {user && (
+              <button
+                type="button"
+                onClick={() => logout()}
+                className="h-8 w-8 rounded-lg flex items-center justify-center text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 hover:border-rose-500/30 border border-transparent transition-all duration-150 cursor-pointer"
+                title="Sign Out"
+                aria-label="Sign Out"
+              >
+                <LogOut className="h-4 w-4 shrink-0" />
+              </button>
+            )}
           </div>
         )}
       </div>

@@ -68,7 +68,7 @@ const SEARCH_SHORTCUTS = [
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
   // Dropdown & Modal states
@@ -353,7 +353,13 @@ export function Header() {
 
                   <div className="my-1 border-t border-border" />
 
-                  <AnimatedLogoutButton variant="dropdown" />
+                  <AnimatedLogoutButton
+                    variant="dropdown"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      logout();
+                    }}
+                  />
                 </div>
               )}
             </div>

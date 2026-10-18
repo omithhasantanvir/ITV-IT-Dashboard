@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
 
 interface AnimatedLogoutButtonProps {
   onClick?: () => void;
@@ -17,6 +18,7 @@ export function AnimatedLogoutButton({
   label = 'Sign Out',
   variant = 'dropdown',
 }: AnimatedLogoutButtonProps) {
+  const { logout } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
   const [isFalling, setIsFalling] = useState(false);
   const [doorSlammed, setDoorSlammed] = useState(false);
@@ -52,7 +54,11 @@ export function AnimatedLogoutButton({
 
     // After tumbling all the way to the bottom of the screen (~920ms), trigger logout
     setTimeout(() => {
-      onClick?.();
+      if (onClick) {
+        onClick();
+      } else {
+        logout();
+      }
     }, 920);
   };
 
@@ -65,14 +71,14 @@ export function AnimatedLogoutButton({
         onMouseEnter={() => !isFalling && setIsHovered(true)}
         onMouseLeave={() => !isFalling && setIsHovered(false)}
         className={cn(
-          'group relative flex items-center justify-between rounded-xl font-medium transition-all duration-300 cursor-pointer select-none overflow-hidden active:scale-[0.98]',
+          'group relative flex items-center justify-between rounded-lg font-medium transition-all duration-300 cursor-pointer select-none overflow-hidden active:scale-[0.98]',
           variant === 'dropdown' &&
-            'w-full px-3.5 py-2.5 bg-slate-900/90 hover:bg-slate-900 text-white border border-slate-700/70 hover:border-blue-500/60 shadow-sm hover:shadow-lg hover:shadow-blue-500/20 text-xs',
+            'w-full px-3 py-2 bg-slate-900/90 hover:bg-slate-900 text-white border border-slate-700/70 hover:border-primary/60 shadow-sm hover:shadow-md hover:shadow-primary/20 text-xs',
           variant === 'sidebar' &&
-            'w-full px-4 py-3 bg-gradient-to-r from-slate-900 to-slate-950 hover:from-slate-850 hover:to-slate-900 text-white border border-slate-800 hover:border-blue-500/50 shadow-md hover:shadow-xl hover:shadow-blue-500/15 text-xs',
+            'w-full px-4 py-2.5 bg-gradient-to-r from-slate-900 to-slate-950 hover:from-slate-850 hover:to-slate-900 text-white border border-slate-800 hover:border-primary/50 shadow-xs hover:shadow-md hover:shadow-primary/15 text-xs',
           variant === 'standalone' &&
-            'px-5 py-2.5 bg-slate-900 hover:bg-slate-850 text-white border border-slate-700 hover:border-blue-500 shadow-md text-sm',
-          isFalling && 'opacity-90 pointer-events-none border-blue-500/80 shadow-blue-500/30',
+            'px-5 py-2.5 bg-slate-900 hover:bg-slate-850 text-white border border-slate-700 hover:border-primary shadow-md text-sm',
+          isFalling && 'opacity-90 pointer-events-none border-primary/80 shadow-primary/30',
           className
         )}
         aria-label={label}
@@ -80,8 +86,8 @@ export function AnimatedLogoutButton({
         {/* Subtle ambient hover background glow */}
         <div
           className={cn(
-            'absolute inset-0 bg-gradient-to-r from-blue-600/10 via-indigo-500/10 to-rose-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none',
-            isFalling && 'opacity-100 from-blue-600/20 via-indigo-500/20 to-cyan-500/20'
+            'absolute inset-0 bg-gradient-to-r from-red-600/10 via-rose-500/10 to-amber-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none',
+            isFalling && 'opacity-100 from-red-600/20 via-rose-500/20 to-orange-500/20'
           )}
         />
 
@@ -90,11 +96,11 @@ export function AnimatedLogoutButton({
           <span
             className={cn(
               'font-semibold tracking-wide transition-all duration-300',
-              isHovered ? '-translate-x-0.5 text-blue-200' : 'text-slate-100',
-              isFalling && 'text-cyan-300'
+              isHovered ? '-translate-x-0.5 text-red-200' : 'text-slate-100',
+              isFalling && 'text-red-400'
             )}
           >
-            {isFalling ? 'Bye! 👋' : label}
+            {isFalling ? 'Signing Out...' : label}
           </span>
         </div>
 
@@ -116,14 +122,14 @@ export function AnimatedLogoutButton({
               className={cn(
                 'absolute inset-0 rounded-[4px] border-2 transition-all duration-300 overflow-hidden flex items-center justify-center',
                 !doorSlammed && (isHovered || isFalling)
-                  ? 'border-blue-400 bg-slate-950 shadow-[inset_0_0_8px_rgba(56,189,248,0.7)]'
+                  ? 'border-red-500 bg-slate-950 shadow-[inset_0_0_8px_rgba(239,68,68,0.7)]'
                   : 'border-slate-600 bg-slate-950/80'
               )}
             >
               {/* Interior glowing aperture when door is open */}
               <div
                 className={cn(
-                  'absolute inset-0 bg-[radial-gradient(ellipse_at_35%_50%,rgba(56,189,248,0.85)_0%,rgba(37,99,235,0.45)_55%,rgba(15,23,42,0.9)_100%)] transition-opacity duration-200',
+                  'absolute inset-0 bg-[radial-gradient(ellipse_at_35%_50%,rgba(239,68,68,0.85)_0%,rgba(220,38,38,0.45)_55%,rgba(15,23,42,0.9)_100%)] transition-opacity duration-200',
                   !doorSlammed && (isHovered || isFalling) ? 'opacity-100 animate-door-light' : 'opacity-0'
                 )}
               />
@@ -131,7 +137,7 @@ export function AnimatedLogoutButton({
               {/* Threshold Floor Beam */}
               <div
                 className={cn(
-                  'absolute -bottom-1 -right-2 w-7 h-3 bg-cyan-400/40 blur-[3px] rounded-full transition-opacity duration-200 pointer-events-none',
+                  'absolute -bottom-1 -right-2 w-7 h-3 bg-red-500/40 blur-[3px] rounded-full transition-opacity duration-200 pointer-events-none',
                   !doorSlammed && (isHovered || isFalling) ? 'opacity-100' : 'opacity-0'
                 )}
               />
