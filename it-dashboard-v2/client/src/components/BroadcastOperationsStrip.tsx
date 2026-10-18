@@ -133,15 +133,17 @@ export function BroadcastOperationsStrip({ className }: { className?: string }) 
     };
   }, [loadTasks]);
 
-  // Generate continuous seamless marquee loop (duplicated for translateX(-50%))
-  const loopItems = useMemo(() => {
-    if (tasks.length === 0) return [];
-    let base = [...tasks];
-    while (base.length < 6) {
-      base = [...base, ...tasks];
-    }
-    return [...base, ...base];
+  // Only the single immediate next upcoming maintenance task
+  const upcomingTask = useMemo(() => {
+    return tasks.length > 0 ? tasks[0] : null;
   }, [tasks]);
+
+  // Generate continuous seamless marquee loop of ONLY this upcoming task (duplicated for translateX(-50%))
+  const loopItems = useMemo(() => {
+    if (!upcomingTask) return [];
+    // Repeat the single upcoming task so it flows continuously across any widescreen resolution
+    return [upcomingTask, upcomingTask, upcomingTask, upcomingTask, upcomingTask, upcomingTask];
+  }, [upcomingTask]);
 
   return (
     <div
@@ -157,43 +159,56 @@ export function BroadcastOperationsStrip({ className }: { className?: string }) 
           <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
         </span>
         <Calendar className="h-3 w-3 shrink-0" />
-        <span className="font-sans font-bold tracking-wide">MAINTENANCE SCHEDULE</span>
+        <span className="font-sans font-bold tracking-wide">UPCOMING MAINTENANCE</span>
       </div>
 
-      {/* Center: Infinite Continuous Scrolling Marquee */}
+      {/* Center: Infinite Continuous Scrolling Marquee of ONLY the upcoming task */}
       <div className="relative flex-1 overflow-hidden h-full flex items-center mx-3">
         {/* Soft Left & Right Fade Masks */}
         <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-muted/70 dark:from-card/90 to-transparent pointer-events-none z-10" />
         <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-muted/70 dark:from-card/90 to-transparent pointer-events-none z-10" />
 
-        {tasks.length > 0 ? (
-          <div className="animate-itv-ticker will-change-transform flex items-center gap-6 py-0.5">
+        {upcomingTask ? (
+          <div className="animate-itv-ticker will-change-transform flex items-center gap-8 py-0.5">
             {loopItems.map((task, idx) => (
               <React.Fragment key={`${task.id}-${idx}`}>
                 <Link
                   href="/maintenance/task-submission"
-                  className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-card/80 hover:bg-card border border-border/70 hover:border-primary/50 text-foreground transition-all duration-150 group shadow-2xs hover:shadow-xs cursor-pointer"
-                  title={`Scheduled for ${task.date} (${task.dayOfWeek}) - Click to view or perform`}
+                  className="inline-flex items-center gap-3 px-3 py-1 rounded-md bg-card/85 hover:bg-card border border-border/70 hover:border-primary/50 text-foreground transition-all duration-150 group shadow-2xs hover:shadow-xs cursor-pointer"
+                  title={`Upcoming Maintenance: ${task.scheduledTask} scheduled for ${task.date} (${task.dayOfWeek}) - Click to view or perform`}
                 >
-                  <span className="text-[10px] font-mono font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">
-                    {task.date} <span className="opacity-75 font-sans font-medium">({task.dayOfWeek})</span>
+                  <span className="text-[10px] font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 flex items-center gap-1.5 shrink-0">
+                    <Calendar className="h-3 w-3 text-primary shrink-0" />
+                    <span>{task.date}</span>
+                    <span className="opacity-80 font-sans font-medium">({task.dayOfWeek})</span>
                   </span>
-                  <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors flex items-center gap-1">
-                    {task.scheduledTask}
+
+                  <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5 shrink-0">
+                    <span className="text-[9px] font-mono font-extrabold uppercase px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                      Next Up
+                    </span>
+                    <span>{task.scheduledTask}</span>
                   </span>
-                  <span className="text-[9px] font-mono font-bold uppercase px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                    Upcoming
+
+                  {task.task && (
+                    <span className="text-muted-foreground text-[11px] truncate max-w-[420px] lg:max-w-[650px] font-sans">
+                      &bull; {task.task.replace(/\n/g, ' &bull; ')}
+                    </span>
+                  )}
+
+                  <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-primary shrink-0 group-hover:underline pl-1">
+                    <span>Execute</span>
+                    <ArrowRight className="h-2.5 w-2.5 group-hover:translate-x-0.5 transition-transform" />
                   </span>
-                  <ArrowRight className="h-2.5 w-2.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all opacity-70" />
                 </Link>
-                <span className="text-muted-foreground/30 font-bold select-none text-xs">&bull;</span>
+                <span className="text-muted-foreground/30 font-bold select-none text-xs">&bull; &bull; &bull;</span>
               </React.Fragment>
             ))}
           </div>
         ) : (
           <div className="text-xs text-muted-foreground flex items-center gap-2 pl-4">
             <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-            <span>All scheduled maintenance tasks are completed for this cycle.</span>
+            <span>All scheduled maintenance tasks are completed for this cycle. No upcoming tasks.</span>
           </div>
         )}
       </div>
@@ -204,7 +219,7 @@ export function BroadcastOperationsStrip({ className }: { className?: string }) 
         className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold text-primary hover:text-primary-foreground bg-primary/10 hover:bg-primary border border-primary/20 transition-all duration-150 shrink-0 z-20 shadow-2xs group"
         title="Open Maintenance Schedule Manager"
       >
-        <span>View Schedule</span>
+        <span>All Schedules</span>
         <ArrowRight className="h-2.5 w-2.5 group-hover:translate-x-0.5 transition-transform" />
       </Link>
     </div>
