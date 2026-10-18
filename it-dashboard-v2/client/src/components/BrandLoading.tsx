@@ -22,21 +22,13 @@ export function ITVLogoSpinner({
 }) {
   const dimensions =
     size === 'sm'
-      ? { box: 'h-6 w-6', img: 'h-3.5', ring: '-inset-0.5 border' }
+      ? { box: 'h-6 w-6', img: 'h-3.5' }
       : size === 'lg'
-      ? { box: 'h-11 w-11', img: 'h-7', ring: '-inset-1.5 border-2' }
-      : { box: 'h-8 w-8', img: 'h-5', ring: '-inset-1 border-2' };
+      ? { box: 'h-11 w-11', img: 'h-7' }
+      : { box: 'h-8 w-8', img: 'h-5' };
 
   return (
     <div className={cn('relative inline-flex items-center justify-center shrink-0 select-none', className)}>
-      {/* Spinning Crimson Accent Ring */}
-      <div
-        className={cn(
-          'absolute rounded-full border-primary/20 border-t-primary animate-spin [animation-duration:1.2s]',
-          dimensions.ring
-        )}
-      />
-
       {/* ITV Logo Container */}
       <div
         className={cn(
@@ -94,11 +86,8 @@ export function BrandLoading({
       {/* Background Ambient Glow */}
       <div className="absolute w-52 h-52 rounded-full bg-primary/20 blur-3xl pointer-events-none -z-10 animate-pulse [animation-duration:3s]" />
 
-      {/* Animated Logo Container with Skeleton Shimmer Sweep */}
+      {/* Animated Logo Container with Skeleton Shimmer Sweep (No spinner) */}
       <div className="relative flex items-center justify-center">
-        {/* Outer Orbit Spinning Accent Ring */}
-        <div className="absolute -inset-3 rounded-full border-2 border-primary/20 border-t-primary border-r-primary/70 animate-spin [animation-duration:1.6s]" />
-
         {/* Center ITV Logo Card with Skeleton Effect */}
         <div className="relative h-20 w-20 rounded-2xl bg-card border border-border shadow-2xl flex items-center justify-center p-3.5 overflow-hidden select-none">
           {/* ITV Logo */}
