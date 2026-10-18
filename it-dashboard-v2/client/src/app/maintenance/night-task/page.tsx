@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import {
   Moon,
@@ -63,6 +63,301 @@ interface TaskFieldDef {
   placeholder: string;
   sopHint?: string;
   suggestions: string[];
+}
+
+// Substring highlight component for search/filter matching
+function HighlightMatch({ text, query }: { text: string; query: string }) {
+  if (!query || !query.trim()) return <span>{text}</span>;
+  const q = query.trim();
+  const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escaped})`, 'gi');
+  const parts = text.split(regex);
+  return (
+    <span>
+      {parts.map((part, i) =>
+        part.toLowerCase() === q.toLowerCase() ? (
+          <mark
+            key={i}
+            className="bg-primary/20 text-primary font-bold rounded-xs px-0.5"
+          >
+            {part}
+          </mark>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </span>
+  );
+}
+
+// Dynamic as-you-type Autocomplete Typeahead Input Field
+interface TypeaheadFieldProps {
+  id: string;
+  num: number;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  sopHint?: string;
+  suggestions: string[];
+  isFilled: boolean;
+  onClear: () => void;
+}
+
+function TypeaheadField({
+  id,
+  num,
+  label,
+  value,
+  onChange,
+  placeholder,
+  sopHint,
+  suggestions,
+  isFilled,
+  onClear,
+}: TypeaheadFieldProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Filter matching suggestions dynamically as the engineer types
+  const query = value.trim().toLowerCase();
+  const matchingSuggestions = useMemo(() => {
+    if (!query) {
+      // If user toggles suggestions while input is empty, show all available suggestions
+      return suggestions;
+    }
+    return suggestions.filter((s) => s.toLowerCase().includes(query));
+  }, [suggestions, query]);
+
+  // Handle typing: open dropdown when user types text
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    onChange(val);
+    setHighlightedIndex(-1);
+    if (val.trim().length > 0) {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  };
+
+  // Select suggestion
+  const handleSelect = (sug: string) => {
+    onChange(sug);
+    setIsOpen(false);
+    setHighlightedIndex(-1);
+  };
+
+  // Keyboard navigation: ArrowDown, ArrowUp, Enter to select, Escape to close
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!isOpen || matchingSuggestions.length === 0) {
+      if (e.key === 'ArrowDown' && suggestions.length > 0) {
+        e.preventDefault();
+        setIsOpen(true);
+        setHighlightedIndex(0);
+      }
+      return;
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlightedIndex((prev) => (prev + 1) % matchingSuggestions.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlightedIndex((prev) => (prev - 1 + matchingSuggestions.length) % matchingSuggestions.length);
+    } else if (e.key === 'Enter') {
+      if (highlightedIndex >= 0 && highlightedIndex < matchingSuggestions.length) {
+        e.preventDefault();
+        handleSelect(matchingSuggestions[highlightedIndex]);
+      }
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setIsOpen(false);
+    }
+  };
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={containerRef} className="space-y-1.5 relative">
+      {/* Field Label & Status Header */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <label
+          htmlFor={id}
+          className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2 cursor-pointer select-none"
+        >
+          <span className="h-5 w-5 rounded-md bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-[11px] font-mono font-black shrink-0">
+            {num}
+          </span>
+          <span>{label}</span>
+        </label>
+
+        <div className="flex items-center gap-2">
+          {isFilled ? (
+            <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <Check className="h-2.5 w-2.5" />
+              <span>Recorded</span>
+            </span>
+          ) : (
+            <span className="text-[10px] font-mono text-muted-foreground px-2 py-0.5 rounded bg-muted/60">
+              Pending
+            </span>
+          )}
+
+          {isFilled && (
+            <button
+              type="button"
+              onClick={onClear}
+              className="h-5 w-5 rounded hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition cursor-pointer"
+              title="Clear field"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Special SOP Hint for Vizrt (#9) */}
+      {sopHint && (
+        <div className="p-2.5 rounded-lg bg-indigo-500/5 dark:bg-indigo-500/10 border border-indigo-500/20 flex items-start gap-2 text-[11px] text-muted-foreground leading-relaxed">
+          <Info className="h-3.5 w-3.5 text-indigo-500 shrink-0 mt-0.5" />
+          <div>
+            <strong className="text-foreground">SOP Rule: </strong>
+            {sopHint}
+          </div>
+        </div>
+      )}
+
+      {/* Autocomplete Input Container */}
+      <div className="relative">
+        <input
+          ref={inputRef}
+          id={id}
+          type="text"
+          required
+          autoComplete="off"
+          list={`datalist-field-${num}`}
+          value={value}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onFocus={() => {
+            if (value.trim().length > 0 && matchingSuggestions.length > 0) {
+              setIsOpen(true);
+            }
+          }}
+          placeholder={placeholder}
+          className="w-full pl-3.5 pr-16 py-2.5 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition shadow-2xs font-normal"
+        />
+
+        {/* Fallback Native Browser Datalist */}
+        <datalist id={`datalist-field-${num}`}>
+          {suggestions.map((sug, sIdx) => (
+            <option key={sIdx} value={sug} />
+          ))}
+        </datalist>
+
+        {/* Right side accessories */}
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          {value.length > 0 && (
+            <button
+              type="button"
+              onClick={onClear}
+              className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted/60 transition cursor-pointer"
+              title="Clear entry"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={() => {
+              setIsOpen(!isOpen);
+              if (!isOpen) {
+                inputRef.current?.focus();
+              }
+            }}
+            className={cn(
+              "p-1 rounded text-muted-foreground hover:text-primary transition cursor-pointer",
+              isOpen && "text-primary bg-primary/10"
+            )}
+            title="Toggle suggestions list"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+          </button>
+        </div>
+
+        {/* Floating Autocomplete Dropdown - Shown dynamically as you type */}
+        {isOpen && matchingSuggestions.length > 0 && (
+          <div className="absolute left-0 right-0 top-full mt-1.5 z-40 bg-card/98 dark:bg-zinc-900/98 backdrop-blur-md border border-border shadow-xl rounded-xl py-1 overflow-hidden animate-in fade-in-50 slide-in-from-top-1 duration-150 ring-1 ring-black/5 dark:ring-white/10">
+            <div className="px-3 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center justify-between border-b border-border/50 bg-muted/40">
+              <span className="flex items-center gap-1.5 text-primary">
+                <Sparkles className="h-3 w-3" />
+                <span>Suggestions ({matchingSuggestions.length})</span>
+              </span>
+              <span className="text-[9px] font-mono text-muted-foreground/80">
+                ↑↓ to navigate &bull; Enter or click to fill
+              </span>
+            </div>
+
+            <div className="max-h-56 overflow-y-auto divide-y divide-border/40 py-0.5">
+              {matchingSuggestions.map((sug, sIdx) => {
+                const isSelected = highlightedIndex === sIdx;
+                const isExactCurrent = value.trim() === sug.trim();
+
+                return (
+                  <button
+                    key={sIdx}
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      handleSelect(sug);
+                    }}
+                    onMouseEnter={() => setHighlightedIndex(sIdx)}
+                    className={cn(
+                      "w-full text-left px-3.5 py-2.5 text-xs transition-colors flex items-start justify-between gap-3 cursor-pointer",
+                      isSelected
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "hover:bg-muted/70 text-foreground",
+                      isExactCurrent && "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold"
+                    )}
+                  >
+                    <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                      <div className="mt-0.5 shrink-0">
+                        {isExactCurrent ? (
+                          <Check className="h-3.5 w-3.5 text-emerald-500" />
+                        ) : (
+                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary/60 mt-1.5" />
+                        )}
+                      </div>
+                      <div className="text-xs leading-relaxed break-words">
+                        <HighlightMatch text={sug} query={value} />
+                      </div>
+                    </div>
+
+                    <span className="text-[10px] font-mono text-muted-foreground/60 shrink-0 px-1 py-0.5 rounded bg-muted/50 border border-border/50 hidden sm:inline-block">
+                      Select ↵
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function DailyNightTaskPage() {
@@ -739,94 +1034,17 @@ export default function DailyNightTaskPage() {
 
                     return (
                       <div key={field.num} className={fIdx > 0 ? 'pt-5' : ''}>
-                        {/* Field Label & Status Header */}
-                        <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                          <label className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
-                            <span className="h-5 w-5 rounded-md bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-[11px] font-mono font-black shrink-0">
-                              {field.num}
-                            </span>
-                            <span>{field.label}</span>
-                          </label>
-
-                          <div className="flex items-center gap-2">
-                            {isFilled ? (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                                <Check className="h-2.5 w-2.5" />
-                                <span>Recorded</span>
-                              </span>
-                            ) : (
-                              <span className="text-[10px] font-mono text-muted-foreground px-2 py-0.5 rounded bg-muted/60">
-                                Pending
-                              </span>
-                            )}
-
-                            {isFilled && (
-                              <button
-                                type="button"
-                                onClick={() => field.setter('')}
-                                className="h-5 w-5 rounded hover:bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition"
-                                title="Clear field"
-                              >
-                                <X className="h-3 w-3" />
-                              </button>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Special SOP Hint for Vizrt (#9) */}
-                        {field.sopHint && (
-                          <div className="mb-2 p-2.5 rounded-lg bg-indigo-500/5 dark:bg-indigo-500/10 border border-indigo-500/20 flex items-start gap-2 text-[11px] text-muted-foreground leading-relaxed">
-                            <Info className="h-3.5 w-3.5 text-indigo-500 shrink-0 mt-0.5" />
-                            <div>
-                              <strong className="text-foreground">SOP Rule: </strong>
-                              {field.sopHint}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Interactive Clickable Suggestions Pills */}
-                        <div className="my-2">
-                          <div className="flex flex-wrap items-center gap-1.5">
-                            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1 select-none pr-1">
-                              <Sparkles className="h-3 w-3 text-primary" /> Suggestions:
-                            </span>
-
-                            {field.suggestions.map((sug, sIdx) => {
-                              const isSelected = field.value === sug;
-
-                              return (
-                                <button
-                                  key={sIdx}
-                                  type="button"
-                                  onClick={() => field.setter(sug)}
-                                  className={cn(
-                                    'px-2.5 py-1 rounded-md text-xs font-medium border transition-all duration-150 cursor-pointer flex items-center gap-1.5 text-left select-none',
-                                    isSelected
-                                      ? 'bg-primary/10 text-primary border-primary/40 font-semibold shadow-2xs ring-1 ring-primary/20'
-                                      : 'bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground border-border/70 hover:border-primary/40'
-                                  )}
-                                  title="Click to apply this suggestion"
-                                >
-                                  {isSelected ? (
-                                    <Check className="h-3 w-3 text-primary shrink-0" />
-                                  ) : (
-                                    <span className="h-1.5 w-1.5 rounded-full bg-primary/40 shrink-0" />
-                                  )}
-                                  <span>{sug}</span>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-
-                        {/* Input Area */}
-                        <textarea
-                          rows={2}
-                          required
+                        <TypeaheadField
+                          id={`night-task-field-${field.num}`}
+                          num={field.num}
+                          label={field.label}
                           value={field.value}
-                          onChange={(e) => field.setter(e.target.value)}
+                          onChange={field.setter}
                           placeholder={field.placeholder}
-                          className="w-full px-3.5 py-2 rounded-lg border border-border bg-background text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition"
+                          sopHint={field.sopHint}
+                          suggestions={field.suggestions}
+                          isFilled={isFilled}
+                          onClear={() => field.setter('')}
                         />
                       </div>
                     );
