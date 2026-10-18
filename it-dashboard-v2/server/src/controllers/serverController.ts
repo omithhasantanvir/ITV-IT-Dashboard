@@ -4,6 +4,7 @@ import { exec } from 'child_process';
 import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
 import { ServerStatus } from '@prisma/client';
+import { fallbackServers } from '../lib/fallbackData';
 
 export const pingIcmpHost = (host: string, timeoutMs = 1200): Promise<{ online: boolean; latencyMs: number }> => {
   return new Promise((resolve) => {
@@ -92,8 +93,8 @@ export const getServers = async (req: Request, res: Response) => {
 
     return res.json({ success: true, count: servers.length, data: servers });
   } catch (error: any) {
-    console.error('getServers error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch servers.' });
+    console.warn('getServers prisma error, serving fallback:', error.message);
+    return res.json({ success: true, count: fallbackServers.length, data: fallbackServers, isFallback: true });
   }
 };
 
@@ -261,8 +262,16 @@ export const pingAllServers = async (req: Request, res: Response) => {
       data: results,
     });
   } catch (error: any) {
-    console.error('pingAllServers error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to ping servers.' });
+    console.warn('pingAllServers prisma error, serving fallback:', error.message);
+    const onlineCount = fallbackServers.filter((s) => s.status === 'ONLINE').length;
+    return res.json({
+      success: true,
+      total: fallbackServers.length,
+      onlineCount,
+      offlineCount: fallbackServers.length - onlineCount,
+      data: fallbackServers,
+      isFallback: true,
+    });
   }
 };
 

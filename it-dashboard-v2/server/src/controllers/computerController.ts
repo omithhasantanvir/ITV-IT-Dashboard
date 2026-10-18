@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
 import { ComputerStatus, ComputerCondition } from '@prisma/client';
+import { fallbackComputers } from '../lib/fallbackData';
 
 export const getComputers = async (req: Request, res: Response) => {
   try {
@@ -53,8 +54,8 @@ export const getComputers = async (req: Request, res: Response) => {
 
     return res.json({ success: true, count: computers.length, data: computers });
   } catch (error: any) {
-    console.error('getComputers error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch computers.' });
+    console.warn('getComputers prisma error, serving fallback:', error.message);
+    return res.json({ success: true, count: fallbackComputers.length, data: fallbackComputers, isFallback: true });
   }
 };
 

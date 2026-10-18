@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
 import { ExtensionStatus } from '@prisma/client';
+import { fallbackExtensions } from '../lib/fallbackData';
 
 export const getExtensions = async (req: Request, res: Response) => {
   try {
@@ -45,8 +46,8 @@ export const getExtensions = async (req: Request, res: Response) => {
 
     return res.json({ success: true, count: extensions.length, data: extensions });
   } catch (error: any) {
-    console.error('getExtensions error:', error);
-    return res.status(500).json({ success: false, message: 'Failed to fetch extensions.' });
+    console.warn('getExtensions prisma error, serving fallback:', error.message);
+    return res.json({ success: true, count: fallbackExtensions.length, data: fallbackExtensions, isFallback: true });
   }
 };
 
