@@ -181,7 +181,7 @@ export default function DashboardPage() {
         <div className="p-4 rounded-xl border border-border bg-card shadow-2xs hover:border-primary/40 transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Datacenter Fleet</span>
-            <div className="h-7 w-7 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center">
+            <div className="h-7 w-7 rounded-lg bg-sky-500/10 text-sky-500 flex items-center justify-center">
               <Server className="h-3.5 w-3.5" />
             </div>
           </div>

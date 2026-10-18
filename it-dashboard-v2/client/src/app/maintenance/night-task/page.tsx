@@ -274,7 +274,7 @@ export default function DailyNightTaskPage() {
         {/* Floating Toast Notification */}
         {toast && (
           <div
-            className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-5 py-3 rounded-2xl text-white font-semibold text-xs shadow-2xl animate-in slide-in-from-bottom-3 ${
+            className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-5 py-3 rounded-xl text-white font-semibold text-xs shadow-2xl animate-in slide-in-from-bottom-3 ${
               toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'
             }`}
           >
@@ -299,7 +299,7 @@ export default function DailyNightTaskPage() {
             </Link>
             <div>
               <div className="flex items-center gap-2">
-                <div className="h-7 w-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                <div className="h-7 w-7 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center">
                   <Moon className="h-4 w-4" />
                 </div>
                 <h1 className="text-xl font-black text-foreground tracking-tight">
@@ -358,7 +358,7 @@ export default function DailyNightTaskPage() {
         {/* ================================================================= */}
         <div className="max-w-4xl mx-auto">
           <div
-            className={`p-4 sm:p-5 rounded-2xl shadow-lg border transition-all text-white relative overflow-hidden ${
+            className={`p-4 sm:p-5 rounded-xl shadow-md border transition-all text-white relative overflow-hidden ${
               isWindowOpen
                 ? 'bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 border-emerald-500/50'
                 : 'bg-gradient-to-r from-red-600 via-rose-600 to-red-700 border-red-500/50'
@@ -447,15 +447,23 @@ export default function DailyNightTaskPage() {
         {/* ================================================================= */}
         {activeTab === 'form' && (
           <div className="max-w-4xl mx-auto">
-            <div className="rounded-2xl border border-border bg-card shadow-xl overflow-hidden transition-all">
-              {/* Form Title Banner - Modern Cobalt Blue Header */}
-              <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 px-6 py-4 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+            <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden transition-all">
+              {/* Form Title Banner - Independent Television Corporate Broadcast Header */}
+              <div className="bg-gradient-to-r from-slate-900 via-zinc-900 to-slate-950 border-b border-border/80 px-6 py-4 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
                 <div>
-                  <h2 className="text-base sm:text-lg font-black tracking-tight text-white">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="text-[10px] tracking-[0.2em] text-red-500 uppercase font-black">
+                      INDEPENDENT TELEVISION
+                    </span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-white/10 text-slate-300 font-mono">
+                      LOG-NIGHT
+                    </span>
+                  </div>
+                  <h2 className="text-base sm:text-lg font-bold tracking-tight text-white">
                     Daily Night-Time Maintenance Report Submission
                   </h2>
-                  <p className="text-xs text-blue-100 font-medium">
-                    Independent Television Ltd. &bull; Broadcast IT &amp; Central Operations Log
+                  <p className="text-xs text-slate-400 font-medium">
+                    Broadcast IT &amp; Central Infrastructure Operations Log &bull; 01:30 AM – 06:00 AM Window
                   </p>
                 </div>
 
@@ -463,16 +471,16 @@ export default function DailyNightTaskPage() {
                   <button
                     type="button"
                     onClick={handleQuickFillAll}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-xs font-semibold text-white transition shadow-xs"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-semibold text-white transition shadow-xs"
                     title="Quickly fill routine verification text across all fields"
                   >
-                    <Sparkles className="h-3.5 w-3.5" />
+                    <Sparkles className="h-3.5 w-3.5 text-amber-400" />
                     <span>Auto-Fill All</span>
                   </button>
                   <button
                     type="button"
                     onClick={handleReset}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-white transition"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-white/90 transition"
                     title="Reset all inputs"
                   >
                     <RotateCcw className="h-3.5 w-3.5" />
@@ -881,7 +889,7 @@ export default function DailyNightTaskPage() {
         {/* ================================================================= */}
         {activeTab === 'history' && (
           <div className="max-w-4xl mx-auto space-y-4">
-            <div className="p-5 rounded-2xl border border-border bg-card shadow-lg space-y-4">
+            <div className="p-5 rounded-xl border border-border bg-card shadow-sm space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border">
                 <div>
                   <h3 className="text-base font-bold text-foreground flex items-center gap-2">
@@ -949,10 +957,10 @@ export default function DailyNightTaskPage() {
         {activeReport && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
             <div className="fixed inset-0" onClick={() => setActiveReport(null)} />
-            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-card text-foreground shadow-2xl p-6 z-10 space-y-4">
+            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl border border-border bg-card text-foreground shadow-2xl p-6 z-10 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-border">
                 <div className="flex items-center gap-2.5">
-                  <div className="h-8 w-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                     <Moon className="h-4 w-4" />
                   </div>
                   <div>

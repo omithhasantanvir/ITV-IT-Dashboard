@@ -401,8 +401,8 @@ export default function ServersPage() {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-zinc-800 to-black border border-zinc-700/80 flex items-center justify-center text-emerald-400 shadow-xl shadow-black/60">
-                <Server className="h-6 w-6 stroke-[2]" />
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-zinc-800 to-black border border-zinc-700/80 flex items-center justify-center text-emerald-400 shadow-xl shadow-black/60">
+                <Server className="h-5 w-5 stroke-[2]" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
@@ -533,7 +533,7 @@ export default function ServersPage() {
 
         {/* Quick KPI Overview */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-4 rounded-2xl border border-border bg-card/60 backdrop-blur-sm shadow-sm flex items-center gap-3">
+          <div className="p-4 rounded-xl border border-border bg-card/60 backdrop-blur-sm shadow-sm flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
               <Server className="h-5 w-5" />
             </div>
@@ -543,7 +543,7 @@ export default function ServersPage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl border border-border bg-card/60 backdrop-blur-sm shadow-sm flex items-center gap-3">
+          <div className="p-4 rounded-xl border border-border bg-card/60 backdrop-blur-sm shadow-sm flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold">
               <CheckCircle2 className="h-5 w-5" />
             </div>
@@ -553,7 +553,7 @@ export default function ServersPage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl border border-border bg-card/60 backdrop-blur-sm shadow-sm flex items-center gap-3">
+          <div className="p-4 rounded-xl border border-border bg-card/60 backdrop-blur-sm shadow-sm flex items-center gap-3">
             <div
               className={`h-10 w-10 rounded-xl flex items-center justify-center font-bold ${
                 stats.offline > 0 ? 'bg-rose-500/10 text-rose-500 animate-pulse' : 'bg-muted text-muted-foreground'
@@ -569,8 +569,8 @@ export default function ServersPage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl border border-border bg-card/60 backdrop-blur-sm shadow-sm flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold">
+          <div className="p-4 rounded-xl border border-border bg-card/60 backdrop-blur-sm shadow-sm flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center font-bold">
               <Activity className="h-5 w-5" />
             </div>
             <div>
@@ -584,9 +584,9 @@ export default function ServersPage() {
 
         {/* Offline Warning Alert Bar */}
         {stats.offline > 0 && (
-          <div className="p-4 rounded-2xl border border-rose-500/40 bg-rose-500/10 backdrop-blur-md flex items-center justify-between gap-4 animate-pulse">
+          <div className="p-4 rounded-xl border border-rose-500/40 bg-rose-500/10 backdrop-blur-md flex items-center justify-between gap-4 animate-pulse">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-xl bg-rose-500/20 text-rose-500 flex items-center justify-center shrink-0">
+              <div className="h-9 w-9 rounded-lg bg-rose-500/20 text-rose-500 flex items-center justify-center shrink-0">
                 <AlertOctagon className="h-5 w-5" />
               </div>
               <div>
@@ -693,7 +693,7 @@ export default function ServersPage() {
               return (
                 <div
                   key={srv.id}
-                  className={`p-6 rounded-2xl border transition-all duration-300 relative group overflow-hidden ${
+                  className={`p-5 rounded-xl border transition-all duration-300 relative group overflow-hidden ${
                     isOnline
                       ? 'border-border bg-card/80 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10'
                       : 'border-rose-500/40 bg-rose-500/5 shadow-lg shadow-rose-500/10'
@@ -916,7 +916,7 @@ function UniformServerRack({
         )}
 
         {/* Main Cabinet Chassis Frame */}
-        <div className={`w-full rounded-2xl border-[3px] border-zinc-900 bg-[#090a0d] shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-visible relative ${is3DMode ? 'rounded-t-none border-t-0' : ''}`}>
+        <div className={`w-full rounded-xl border-[2px] border-zinc-900 bg-[#090a0d] shadow-[0_20px_60px_rgba(0,0,0,0.9)] overflow-visible relative ${is3DMode ? 'rounded-t-none border-t-0' : ''}`}>
           {/* Side Metal Bezel Pillars with EIA 19" Rack Rails */}
           <div className="absolute inset-y-0 left-0 w-2.5 bg-gradient-to-r from-zinc-700 via-zinc-850 to-black border-r border-zinc-800 z-20 pointer-events-none flex flex-col justify-between py-12 items-center opacity-80">
             {['42U', '36U', '28U', '20U', '14U', '7U', '1U'].map((ru) => (

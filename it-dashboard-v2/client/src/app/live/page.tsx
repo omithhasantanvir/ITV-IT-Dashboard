@@ -82,7 +82,7 @@ export default function LiveTVPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Main 16:9 Cinema / Theater Screen */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="rounded-3xl border border-primary/30 bg-card/90 shadow-2xl overflow-hidden">
+            <div className="rounded-2xl border border-primary/30 bg-card shadow-2xl overflow-hidden">
               {/* Studio Top Control Strip */}
               <div className="px-5 py-3.5 bg-gradient-to-r from-slate-950 via-zinc-900 to-slate-950 border-b border-white/10 text-white flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -140,9 +140,9 @@ export default function LiveTVPage() {
             </div>
 
             {/* Quick Channel Info Banner */}
-            <div className="p-4 rounded-2xl border border-border bg-card/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div className="p-4 rounded-xl border border-border bg-card shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
               <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
                   <Volume2 className="h-4 w-4" />
                 </div>
                 <div>
@@ -154,7 +154,7 @@ export default function LiveTVPage() {
               </div>
               <Link
                 href="/"
-                className="px-3.5 py-1.5 rounded-xl border border-border hover:bg-muted font-semibold text-foreground transition text-center shrink-0"
+                className="px-3.5 py-1.5 rounded-lg border border-border hover:bg-muted font-semibold text-foreground transition text-center shrink-0 shadow-2xs"
               >
                 Go to Overview
               </Link>
@@ -164,7 +164,7 @@ export default function LiveTVPage() {
           {/* Telemetry & Studio Roster Column */}
           <div className="lg:col-span-4 space-y-4">
             {/* Live Telemetry Card */}
-            <div className="p-5 rounded-3xl border border-border bg-card/70 backdrop-blur-sm space-y-4">
+            <div className="p-5 rounded-xl border border-border bg-card shadow-2xs space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                   <Signal className="h-4 w-4 text-primary" />
@@ -174,23 +174,23 @@ export default function LiveTVPage() {
               </div>
 
               <div className="space-y-2.5">
-                <div className="p-3 rounded-xl bg-muted/40 border border-border/60 flex items-center justify-between text-xs">
+                <div className="p-3 rounded-lg bg-muted/40 border border-border flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Master Feed Status</span>
                   <span className="font-bold font-mono text-emerald-400">ACTIVE ON-AIR</span>
                 </div>
-                <div className="p-3 rounded-xl bg-muted/40 border border-border/60 flex items-center justify-between text-xs">
+                <div className="p-3 rounded-lg bg-muted/40 border border-border flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Output Quality</span>
                   <span className="font-bold font-mono text-foreground">1080p FHD (50 fps)</span>
                 </div>
-                <div className="p-3 rounded-xl bg-muted/40 border border-border/60 flex items-center justify-between text-xs">
+                <div className="p-3 rounded-lg bg-muted/40 border border-border flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Satellite Uplink</span>
                   <span className="font-bold font-mono text-emerald-400">BS-1 (93.5°E) Lock</span>
                 </div>
-                <div className="p-3 rounded-xl bg-muted/40 border border-border/60 flex items-center justify-between text-xs">
+                <div className="p-3 rounded-lg bg-muted/40 border border-border flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Broadcast Engine</span>
                   <span className="font-bold font-mono text-foreground">Harmonic Spectrum X</span>
                 </div>
-                <div className="p-3 rounded-xl bg-muted/40 border border-border/60 flex items-center justify-between text-xs">
+                <div className="p-3 rounded-lg bg-muted/40 border border-border flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Latency</span>
                   <span className="font-bold font-mono text-foreground">1.8s (Edge CDN)</span>
                 </div>
@@ -198,7 +198,7 @@ export default function LiveTVPage() {
             </div>
 
             {/* Quick Links & Safety Check */}
-            <div className="p-5 rounded-3xl border border-border bg-card/70 backdrop-blur-sm space-y-3">
+            <div className="p-5 rounded-xl border border-border bg-card shadow-2xs space-y-3">
               <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4 text-primary" />
                 <span>IT Operations Hub</span>
@@ -209,25 +209,25 @@ export default function LiveTVPage() {
               <div className="grid grid-cols-2 gap-2 pt-1">
                 <Link
                   href="/servers"
-                  className="p-2.5 rounded-xl border border-border bg-muted/30 hover:bg-muted/70 text-center text-xs font-semibold transition"
+                  className="p-2.5 rounded-lg border border-border bg-card hover:bg-muted text-center text-xs font-semibold transition shadow-2xs"
                 >
                   Server Health
                 </Link>
                 <Link
                   href="/slips"
-                  className="p-2.5 rounded-xl border border-border bg-muted/30 hover:bg-muted/70 text-center text-xs font-semibold transition"
+                  className="p-2.5 rounded-lg border border-border bg-card hover:bg-muted text-center text-xs font-semibold transition shadow-2xs"
                 >
                   Employee Slips
                 </Link>
                 <Link
                   href="/roster"
-                  className="p-2.5 rounded-xl border border-border bg-muted/30 hover:bg-muted/70 text-center text-xs font-semibold transition"
+                  className="p-2.5 rounded-lg border border-border bg-card hover:bg-muted text-center text-xs font-semibold transition shadow-2xs"
                 >
                   Duty Roster
                 </Link>
                 <Link
                   href="/computers"
-                  className="p-2.5 rounded-xl border border-border bg-muted/30 hover:bg-muted/70 text-center text-xs font-semibold transition"
+                  className="p-2.5 rounded-lg border border-border bg-card hover:bg-muted text-center text-xs font-semibold transition shadow-2xs"
                 >
                   IT Assets
                 </Link>

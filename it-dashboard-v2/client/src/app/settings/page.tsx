@@ -586,16 +586,16 @@ export default function SettingsPage() {
     >
       <div className="space-y-6 max-w-7xl">
         {/* Header Banner */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl border border-border bg-gradient-to-r from-card via-card to-primary/5 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-xl border border-border bg-card shadow-2xs">
           <div className="space-y-1">
             <div className="flex items-center gap-2.5">
-              <div className="h-10 w-10 rounded-2xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shadow-xs">
-                <ShieldCheck className="h-6 w-6" />
+              <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shadow-xs">
+                <ShieldCheck className="h-5 w-5" />
               </div>
               <div>
                 <h1 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
                   <span>Role & Permission Access Management</span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/20 uppercase">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 uppercase">
                     Super Admin Controlled
                   </span>
                 </h1>
@@ -607,8 +607,8 @@ export default function SettingsPage() {
           </div>
 
           {/* Quick Active Super Admin Badge */}
-          <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-muted/40 border border-border/80 shrink-0">
-            <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-xs uppercase overflow-hidden">
+          <div className="flex items-center gap-3 px-3.5 py-1.5 rounded-lg bg-muted/40 border border-border shrink-0">
+            <div className="h-7 w-7 rounded-md bg-primary/10 text-primary flex items-center justify-center font-bold text-xs uppercase overflow-hidden">
               {user?.profilePhoto ? (
                 <img src={user.profilePhoto} alt={user.name} className="w-full h-full object-cover object-top" />
               ) : (
@@ -626,7 +626,7 @@ export default function SettingsPage() {
         {toast && (
           <div
             className={cn(
-              'p-3.5 rounded-2xl border text-xs flex items-center gap-2.5 shadow-lg animate-in fade-in slide-in-from-top-2',
+              'p-3 rounded-lg border text-xs flex items-center gap-2.5 shadow-sm animate-in fade-in slide-in-from-top-2',
               toast.type === 'success'
                 ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500'
                 : 'bg-rose-500/10 border-rose-500/30 text-rose-500'
@@ -643,54 +643,56 @@ export default function SettingsPage() {
 
         {/* Tabs Bar */}
         <div className="flex items-center gap-2 border-b border-border pb-2">
-          <button
-            onClick={() => setActiveTab('PERMISSIONS')}
-            className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all',
-              activeTab === 'PERMISSIONS'
-                ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-            )}
-          >
-            <Shield className="h-3.5 w-3.5" />
-            <span>Role Permissions Checkboxes</span>
-          </button>
+          <div className="flex items-center p-1 rounded-lg border border-border bg-card shadow-2xs">
+            <button
+              onClick={() => setActiveTab('PERMISSIONS')}
+              className={cn(
+                'flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition',
+                activeTab === 'PERMISSIONS'
+                  ? 'bg-primary text-primary-foreground shadow-2xs'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <Shield className="h-3.5 w-3.5" />
+              <span>Role Permissions Checkboxes</span>
+            </button>
 
-          <button
-            onClick={() => setActiveTab('USERS')}
-            className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all',
-              activeTab === 'USERS'
-                ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-            )}
-          >
-            <Users className="h-3.5 w-3.5" />
-            <span>Staff Role Assignment</span>
-          </button>
+            <button
+              onClick={() => setActiveTab('USERS')}
+              className={cn(
+                'flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition',
+                activeTab === 'USERS'
+                  ? 'bg-primary text-primary-foreground shadow-2xs'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <Users className="h-3.5 w-3.5" />
+              <span>Staff Role Assignment</span>
+            </button>
 
-          <button
-            onClick={() => setActiveTab('SYSTEM')}
-            className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all',
-              activeTab === 'SYSTEM'
-                ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-            )}
-          >
-            <Settings className="h-3.5 w-3.5" />
-            <span>System Configuration</span>
-          </button>
+            <button
+              onClick={() => setActiveTab('SYSTEM')}
+              className={cn(
+                'flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition',
+                activeTab === 'SYSTEM'
+                  ? 'bg-primary text-primary-foreground shadow-2xs'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <Settings className="h-3.5 w-3.5" />
+              <span>System Configuration</span>
+            </button>
+          </div>
         </div>
 
         {/* TAB 1: ROLE PERMISSIONS CHECKBOX MATRIX */}
         {activeTab === 'PERMISSIONS' && (
           <div className="space-y-5">
             {/* Role Selector Tabs & Action Controls */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 rounded-3xl border border-border bg-card shadow-xs">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4 rounded-xl border border-border bg-card shadow-2xs">
               {/* Role Select Pills */}
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold text-muted-foreground uppercase mr-1">Select Role:</span>
+                <span className="text-xs font-semibold text-muted-foreground uppercase mr-1">Select Role:</span>
                 {(['SUPER_ADMIN', 'IT_ADMIN', 'IT_SUPPORT', 'VIEWER'] as RoleName[]).map((r) => {
                   const meta = ROLES_META[r];
                   const isCurrent = selectedRole === r;
@@ -700,16 +702,16 @@ export default function SettingsPage() {
                       type="button"
                       onClick={() => setSelectedRole(r)}
                       className={cn(
-                        'flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all border',
+                        'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition border',
                         isCurrent
-                          ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                          : 'bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted/70 border-border/80'
+                          ? 'bg-primary text-primary-foreground border-primary shadow-2xs'
+                          : 'bg-muted/30 text-muted-foreground hover:text-foreground hover:bg-muted border-border'
                       )}
                     >
                       <span>{meta.title}</span>
                       <span
                         className={cn(
-                          'text-[9px] px-1.5 py-0.2 rounded font-semibold uppercase',
+                          'text-[9px] px-1.5 py-0.2 rounded font-mono uppercase',
                           isCurrent ? 'bg-white/20 text-white' : 'bg-muted text-muted-foreground'
                         )}
                       >
@@ -725,7 +727,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={handleResetDefaults}
-                  className="px-3.5 py-2 rounded-xl border border-border bg-muted/40 hover:bg-muted text-muted-foreground text-xs font-semibold flex items-center gap-1.5 transition"
+                  className="px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted text-foreground text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
                   <span>Reset Defaults</span>
@@ -735,7 +737,7 @@ export default function SettingsPage() {
                   type="button"
                   disabled={savingMatrix}
                   onClick={handleSavePermissions}
-                  className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 flex items-center gap-1.5 transition shadow-md shadow-primary/25 disabled:opacity-50"
+                  className="px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 flex items-center gap-1.5 transition shadow-2xs disabled:opacity-50"
                 >
                   <Save className="h-3.5 w-3.5" />
                   <span>{savingMatrix ? 'Saving...' : 'Save Permissions'}</span>
@@ -744,7 +746,7 @@ export default function SettingsPage() {
             </div>
 
             {/* Role Header Banner */}
-            <div className="p-4 rounded-2xl border border-border bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-4 rounded-xl border border-border bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-sm text-foreground">
@@ -765,7 +767,7 @@ export default function SettingsPage() {
               </div>
 
               {isSuper && (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold shrink-0">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20 text-primary text-xs font-bold shrink-0">
                   <Lock className="h-3.5 w-3.5" />
                   <span>Super Admin has permanent full authority</span>
                 </div>
@@ -773,12 +775,12 @@ export default function SettingsPage() {
             </div>
 
             {/* Checkbox Matrix Table */}
-            <div className="rounded-3xl border border-border bg-card overflow-hidden shadow-sm">
+            <div className="rounded-xl border border-border bg-card overflow-hidden shadow-2xs">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-border bg-muted/40 text-muted-foreground uppercase text-[10px] tracking-wider font-semibold">
-                      <th className="p-4 min-w-[260px]">Application Module</th>
+                    <tr className="border-b border-border bg-muted/50 text-muted-foreground uppercase text-[11px] tracking-wider font-semibold">
+                      <th className="px-4 py-3 min-w-[260px]">Application Module</th>
 
                       {/* View Access Column */}
                       <th className="p-4 text-center min-w-[130px]">
@@ -1020,15 +1022,15 @@ export default function SettingsPage() {
         {activeTab === 'USERS' && (
           <div className="space-y-4">
             {/* Filter and Search Bar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl border border-border bg-card/60">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-xl border border-border bg-card shadow-2xs">
               <div className="relative w-full sm:w-72">
-                <Search className="h-4 w-4 absolute left-3 top-2.5 text-muted-foreground" />
+                <Search className="h-3.5 w-3.5 absolute left-3 top-2.5 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search staff name, ID or email..."
                   value={userSearch}
                   onChange={(e) => setUserSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-border bg-muted/40 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs placeholder:text-muted-foreground/60"
                 />
               </div>
 
@@ -1037,7 +1039,7 @@ export default function SettingsPage() {
                 <select
                   value={roleFilter}
                   onChange={(e) => setRoleFilter(e.target.value)}
-                  className="px-3 py-1.5 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="px-3 py-1.5 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
                 >
                   <option value="ALL">All Roles ({usersList.length})</option>
                   <option value="SUPER_ADMIN">Super Admins</option>
@@ -1049,16 +1051,16 @@ export default function SettingsPage() {
             </div>
 
             {/* Users Table */}
-            <div className="rounded-3xl border border-border bg-card overflow-hidden shadow-sm">
+            <div className="rounded-xl border border-border bg-card overflow-hidden shadow-2xs">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-border bg-muted/40 text-muted-foreground uppercase text-[10px] tracking-wider font-semibold">
-                    <th className="p-4">Staff Member</th>
-                    <th className="p-4">Employee ID & Email</th>
-                    <th className="p-4">Department & Designation</th>
-                    <th className="p-4">Assigned Role</th>
-                    <th className="p-4">Permission Mode</th>
-                    <th className="p-4 text-right">Actions</th>
+                  <tr className="border-b border-border bg-muted/50 text-muted-foreground uppercase text-[11px] tracking-wider font-semibold">
+                    <th className="px-4 py-3">Staff Member</th>
+                    <th className="px-4 py-3">Employee ID & Email</th>
+                    <th className="px-4 py-3">Department & Designation</th>
+                    <th className="px-4 py-3">Assigned Role</th>
+                    <th className="px-4 py-3">Permission Mode</th>
+                    <th className="px-4 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
@@ -1205,7 +1207,7 @@ export default function SettingsPage() {
         {activeTab === 'SYSTEM' && (
           <form
             onSubmit={handleSaveSystemConfig}
-            className="p-6 rounded-3xl border border-border bg-card shadow-sm space-y-5 max-w-2xl"
+            className="p-5 rounded-xl border border-border bg-card shadow-2xs space-y-4 max-w-2xl"
           >
             <div className="border-b border-border pb-3">
               <h2 className="text-sm font-bold text-foreground">Global Application & Network Setup</h2>
@@ -1220,7 +1222,7 @@ export default function SettingsPage() {
                 type="text"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
               />
             </div>
 
@@ -1230,7 +1232,7 @@ export default function SettingsPage() {
                 type="text"
                 value={subtitle}
                 onChange={(e) => setSubtitle(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
               />
             </div>
 
@@ -1239,7 +1241,7 @@ export default function SettingsPage() {
               <select
                 value={monitoringInterval}
                 onChange={(e) => setMonitoringInterval(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
               >
                 <option value="30s">30 seconds (High frequency)</option>
                 <option value="1m">1 minute (Recommended)</option>
@@ -1264,7 +1266,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={savingConfig}
-              className="py-2.5 px-5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 flex items-center gap-2 transition shadow-md shadow-primary/20 disabled:opacity-50"
+              className="py-2 px-4 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 flex items-center gap-2 transition shadow-2xs disabled:opacity-50"
             >
               <Save className="h-4 w-4" />
               <span>{savingConfig ? 'Saving...' : 'Save Configurations'}</span>
@@ -1275,11 +1277,11 @@ export default function SettingsPage() {
         {/* MODAL: INDIVIDUAL USER CUSTOM PERMISSIONS */}
         {selectedUserForPerms && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-card border border-border rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150">
+            <div className="bg-card border border-border rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150">
               {/* Modal Header */}
               <div className="p-4 sm:p-5 border-b border-border flex items-center justify-between bg-muted/20">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl overflow-hidden border border-border bg-muted flex items-center justify-center shrink-0">
+                  <div className="w-11 h-11 rounded-xl overflow-hidden border border-border bg-muted flex items-center justify-center shrink-0">
                     {selectedUserForPerms.profilePhoto ? (
                       <img
                         src={selectedUserForPerms.profilePhoto}
@@ -1319,7 +1321,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedUserForPerms(null)}
-                  className="h-8 w-8 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition"
+                  className="h-8 w-8 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -1330,10 +1332,10 @@ export default function SettingsPage() {
                 {/* Status Notice */}
                 <div
                   className={cn(
-                    'p-3.5 rounded-2xl border flex items-center justify-between gap-3 text-xs',
+                    'p-3.5 rounded-xl border flex items-center justify-between gap-3 text-xs',
                     isInheritingRole
-                      ? 'bg-blue-500/5 border-blue-500/20 text-blue-600 dark:text-blue-400'
-                      : 'bg-purple-500/5 border-purple-500/20 text-purple-600 dark:text-purple-400'
+                      ? 'bg-sky-500/10 border-sky-500/20 text-sky-500'
+                      : 'bg-primary/10 border-primary/20 text-primary'
                   )}
                 >
                   <div className="flex items-center gap-2">

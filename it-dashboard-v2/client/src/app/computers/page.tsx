@@ -535,16 +535,16 @@ export default function ComputersPage() {
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => handleOpenCompModal()}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow-md shadow-primary/20 transition active:scale-95"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow-2xs transition active:scale-95"
             >
               <Plus className="h-4 w-4" />
               <span>Add Computer</span>
             </button>
             <button
               onClick={() => handleOpenSsdModal()}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-md shadow-indigo-500/20 transition active:scale-95"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-border bg-card hover:bg-muted text-foreground font-semibold text-xs shadow-2xs transition active:scale-95"
             >
-              <Disc className="h-4 w-4" />
+              <Disc className="h-4 w-4 text-primary" />
               <span>Add SSD Drive</span>
             </button>
           </div>
@@ -552,74 +552,78 @@ export default function ComputersPage() {
 
         {/* Overview Stat Badges */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3.5 rounded-2xl bg-card/70 border border-border/80 shadow-sm flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
+          <div className="p-3.5 rounded-xl bg-card border border-border shadow-2xs flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
               <ComputerIcon className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-[11px] font-medium text-muted-foreground">Total Workstations</p>
-              <p className="text-xl font-bold text-foreground">{stats.totalComp}</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total Workstations</p>
+              <p className="text-xl font-bold font-mono text-foreground">{stats.totalComp}</p>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-card/70 border border-border/80 shadow-sm flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+          <div className="p-3.5 rounded-xl bg-card border border-border shadow-2xs flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
               <User className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-[11px] font-medium text-muted-foreground">Assigned to Staff</p>
-              <p className="text-xl font-bold text-foreground">{stats.assignedComp}</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Assigned to Staff</p>
+              <p className="text-xl font-bold font-mono text-foreground">{stats.assignedComp}</p>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-card/70 border border-border/80 shadow-sm flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center shrink-0">
+          <div className="p-3.5 rounded-xl bg-card border border-border shadow-2xs flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-sky-500/10 text-sky-500 flex items-center justify-center shrink-0">
               <HardDrive className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-[11px] font-medium text-muted-foreground">Total SSD Drives</p>
-              <p className="text-xl font-bold text-foreground">{stats.totalSsd}</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total SSD Drives</p>
+              <p className="text-xl font-bold font-mono text-foreground">{stats.totalSsd}</p>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-card/70 border border-border/80 shadow-sm flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
+          <div className="p-3.5 rounded-xl bg-card border border-border shadow-2xs flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
               <Disc className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-[11px] font-medium text-muted-foreground">Installed in PCs</p>
-              <p className="text-xl font-bold text-foreground">{stats.installedSsd}</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Installed in PCs</p>
+              <p className="text-xl font-bold font-mono text-foreground">{stats.installedSsd}</p>
             </div>
           </div>
         </div>
 
         {/* Tab Toggle Navigation */}
         <div className="flex items-center gap-2 border-b border-border pb-2">
-          <button
-            onClick={() => setActiveTab('computers')}
-            className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all',
-              activeTab === 'computers'
-                ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-            )}
-          >
-            <ComputerIcon className="h-4 w-4" />
-            <span>Computers & PCs ({computers.length})</span>
-          </button>
+          <div className="flex items-center p-1 rounded-lg border border-border bg-card shadow-2xs">
+            <button
+              onClick={() => setActiveTab('computers')}
+              className={cn(
+                'flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition',
+                activeTab === 'computers'
+                  ? 'bg-primary text-primary-foreground shadow-2xs'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <ComputerIcon className="h-4 w-4" />
+              <span>Computers & Workstations</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-muted/80">{computers.length}</span>
+            </button>
 
-          <button
-            onClick={() => setActiveTab('ssds')}
-            className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all',
-              activeTab === 'ssds'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-            )}
-          >
-            <HardDrive className="h-4 w-4" />
-            <span>SSD Storage Inventory ({ssds.length})</span>
-          </button>
+            <button
+              onClick={() => setActiveTab('ssds')}
+              className={cn(
+                'flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition',
+                activeTab === 'ssds'
+                  ? 'bg-primary text-primary-foreground shadow-2xs'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <HardDrive className="h-4 w-4" />
+              <span>SSD Storage Inventory</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-muted/80">{ssds.length}</span>
+            </button>
+          </div>
         </div>
 
         {/* TAB 1: COMPUTERS TABLE */}
@@ -628,13 +632,13 @@ export default function ComputersPage() {
             {/* Filter Bar */}
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="h-4 w-4 absolute left-3.5 top-2.5 text-muted-foreground" />
+                <Search className="h-3.5 w-3.5 absolute left-3.5 top-2.5 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search by Host Name, brand, model, graphics card, employee, serial number..."
                   value={compSearch}
                   onChange={(e) => setCompSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500"
+                  className="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs placeholder:text-muted-foreground/60"
                 />
               </div>
 
@@ -642,7 +646,7 @@ export default function ComputersPage() {
                 value={compType}
                 onChange={(e) => setCompType(e.target.value)}
                 aria-label="Filter by computer type"
-                className="px-3 py-2 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                className="px-3 py-2 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
               >
                 <option value="">All PC Types</option>
                 <option value="Desktop">Desktop</option>
@@ -656,7 +660,7 @@ export default function ComputersPage() {
                 value={compStatus}
                 onChange={(e) => setCompStatus(e.target.value)}
                 aria-label="Filter by hardware status"
-                className="px-3 py-2 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                className="px-3 py-2 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
               >
                 <option value="">All Statuses</option>
                 <option value="AVAILABLE">Available</option>
@@ -668,18 +672,18 @@ export default function ComputersPage() {
             </div>
 
             {/* Computers Table */}
-            <div className="rounded-2xl border border-border bg-card/70 backdrop-blur-md overflow-hidden shadow-sm">
+            <div className="rounded-xl border border-border bg-card overflow-hidden shadow-2xs">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-muted/40 border-b border-border text-muted-foreground font-semibold">
+                  <thead className="bg-muted/50 border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                     <tr>
-                      <th className="p-3.5">Host Name</th>
-                      <th className="p-3.5">Brand & Model</th>
-                      <th className="p-3.5">Hardware Specs</th>
-                      <th className="p-3.5">Assigned Employee</th>
-                      <th className="p-3.5">Location & IP</th>
-                      <th className="p-3.5">Status</th>
-                      <th className="p-3.5 text-right">Actions</th>
+                      <th className="px-4 py-3">Host Name</th>
+                      <th className="px-4 py-3">Brand & Model</th>
+                      <th className="px-4 py-3">Hardware Specs</th>
+                      <th className="px-4 py-3">Assigned Employee</th>
+                      <th className="px-4 py-3">Location & IP</th>
+                      <th className="px-4 py-3">Status</th>
+                      <th className="px-4 py-3 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
@@ -835,13 +839,13 @@ export default function ComputersPage() {
             {/* Filter Bar */}
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="h-4 w-4 absolute left-3.5 top-2.5 text-muted-foreground" />
+                <Search className="h-3.5 w-3.5 absolute left-3.5 top-2.5 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search by SSD ID, Serial Number, brand, capacity, location..."
                   value={ssdSearch}
                   onChange={(e) => setSsdSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500"
+                  className="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs placeholder:text-muted-foreground/60"
                 />
               </div>
 
@@ -849,7 +853,7 @@ export default function ComputersPage() {
                 value={ssdStatus}
                 onChange={(e) => setSsdStatus(e.target.value)}
                 aria-label="Filter by SSD status"
-                className="px-3 py-2 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                className="px-3 py-2 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
               >
                 <option value="">All SSD Statuses</option>
                 <option value="AVAILABLE">Available / Spare</option>
@@ -861,19 +865,19 @@ export default function ComputersPage() {
             </div>
 
             {/* SSD Table */}
-            <div className="rounded-2xl border border-border bg-card/70 backdrop-blur-md overflow-hidden shadow-sm">
+            <div className="rounded-xl border border-border bg-card overflow-hidden shadow-2xs">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-muted/40 border-b border-border text-muted-foreground font-semibold">
+                  <thead className="bg-muted/50 border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                     <tr>
-                      <th className="p-3.5">SSD ID</th>
-                      <th className="p-3.5">Brand & Model</th>
-                      <th className="p-3.5">Capacity & Interface</th>
-                      <th className="p-3.5">Health Status</th>
-                      <th className="p-3.5">Installed in PC</th>
-                      <th className="p-3.5">Location / Shelf</th>
-                      <th className="p-3.5">Status</th>
-                      <th className="p-3.5 text-right">Actions</th>
+                      <th className="px-4 py-3">SSD ID</th>
+                      <th className="px-4 py-3">Brand & Model</th>
+                      <th className="px-4 py-3">Capacity & Interface</th>
+                      <th className="px-4 py-3">Health Status</th>
+                      <th className="px-4 py-3">Installed in PC</th>
+                      <th className="px-4 py-3">Location / Shelf</th>
+                      <th className="px-4 py-3">Status</th>
+                      <th className="px-4 py-3 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
@@ -1012,11 +1016,11 @@ export default function ComputersPage() {
         {/* ======================================================== */}
         {isCompModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-in fade-in">
-            <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95">
+            <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95">
               {/* Modal Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/30">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/20">
                 <div className="flex items-center gap-2.5">
-                  <div className="h-9 w-9 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold">
+                  <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
                     <ComputerIcon className="h-5 w-5" />
                   </div>
                   <div>
@@ -1031,7 +1035,7 @@ export default function ComputersPage() {
                 <button
                   type="button"
                   onClick={() => setIsCompModalOpen(false)}
-                  className="p-1.5 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition"
+                  className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -1041,7 +1045,7 @@ export default function ComputersPage() {
               <form onSubmit={handleSubmitComputer} className="flex-1 overflow-y-auto p-6 space-y-5">
                 {/* 1. Identity */}
                 <div className="space-y-3">
-                  <h3 className="text-xs font-bold text-blue-500 uppercase tracking-wider flex items-center gap-2">
+                  <h3 className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-2">
                     <Layers className="h-3.5 w-3.5" />
                     <span>Identity & Hardware Class</span>
                   </h3>
@@ -1056,7 +1060,7 @@ export default function ComputersPage() {
                         value={compForm.assetId}
                         onChange={(e) => setCompForm({ ...compForm, assetId: e.target.value })}
                         placeholder="e.g. ITV-WS-001"
-                        className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-blue-500/40 font-mono"
+                        className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground focus:ring-1 focus:ring-primary focus:border-primary font-mono shadow-2xs"
                       />
                     </div>
 
@@ -1335,11 +1339,11 @@ export default function ComputersPage() {
         {/* ======================================================== */}
         {isSsdModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-in fade-in">
-            <div className="w-full max-w-xl max-h-[90vh] flex flex-col rounded-3xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95">
+            <div className="w-full max-w-xl max-h-[90vh] flex flex-col rounded-2xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95">
               {/* Modal Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/30">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/20">
                 <div className="flex items-center gap-2.5">
-                  <div className="h-9 w-9 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center font-bold">
+                  <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
                     <Disc className="h-5 w-5" />
                   </div>
                   <div>
@@ -1354,7 +1358,7 @@ export default function ComputersPage() {
                 <button
                   type="button"
                   onClick={() => setIsSsdModalOpen(false)}
-                  className="p-1.5 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition"
+                  className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -1372,7 +1376,7 @@ export default function ComputersPage() {
                     value={ssdForm.serialNumber}
                     onChange={(e) => setSsdForm({ ...ssdForm, serialNumber: e.target.value })}
                     placeholder="e.g. S4A9NX0M123456"
-                    className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:ring-2 focus:ring-indigo-500/40 font-mono"
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground focus:ring-1 focus:ring-primary focus:border-primary font-mono shadow-2xs"
                   />
                 </div>
 

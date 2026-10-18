@@ -329,7 +329,7 @@ export default function LoginPage() {
               : 'opacity-0 translate-y-6 scale-95 pointer-events-none'
           }`}
         >
-          <div className="rounded-3xl bg-[#121420]/90 backdrop-blur-2xl border border-white/10 p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_40px_rgba(239,68,68,0.15)] relative overflow-hidden">
+          <div className="rounded-2xl bg-[#121420]/90 backdrop-blur-2xl border border-white/10 p-6 sm:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_40px_rgba(239,68,68,0.15)] relative overflow-hidden">
             {/* Subtle top red accent line */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent" />
 
@@ -349,7 +349,7 @@ export default function LoginPage() {
 
             {/* Error Message Alert */}
             {error && (
-              <div className="mb-4 flex items-start gap-2.5 rounded-xl bg-red-500/10 border border-red-500/30 p-3 text-xs text-red-300 animate-in fade-in duration-200">
+              <div className="mb-4 flex items-start gap-2.5 rounded-lg bg-red-500/10 border border-red-500/30 p-3 text-xs text-red-300 animate-in fade-in duration-200">
                 <AlertCircle className="w-4 h-4 shrink-0 text-red-400 mt-0.5" />
                 <span className="flex-1">{error}</span>
               </div>
@@ -372,7 +372,7 @@ export default function LoginPage() {
                     onChange={(e) => setUsername(e.target.value)}
                     required
                     placeholder="Enter your username"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#1c1f30]/90 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#1c1f30]/90 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition-all"
                   />
                 </div>
               </div>
@@ -392,7 +392,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     placeholder="••••••••••••"
-                    className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#1c1f30]/90 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all font-mono"
+                    className="w-full pl-10 pr-10 py-2.5 rounded-lg bg-[#1c1f30]/90 border border-white/10 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/30 transition-all font-mono"
                   />
                   <button
                     type="button"
@@ -430,7 +430,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-3 py-3 px-4 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-red-500 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm shadow-[0_10px_25px_-5px_rgba(220,38,38,0.5)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full mt-3 py-2.5 px-4 rounded-lg bg-gradient-to-r from-red-600 via-rose-600 to-red-500 hover:from-red-500 hover:to-rose-500 text-white font-bold text-sm shadow-[0_10px_25px_-5px_rgba(220,38,38,0.5)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>

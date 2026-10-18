@@ -283,52 +283,52 @@ export default function ExtensionsPage() {
 
           <button
             onClick={handleOpenAdd}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold shadow-md shadow-primary/20 hover:opacity-90 active:scale-95 transition"
+            className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold shadow-2xs hover:opacity-90 active:scale-95 transition"
           >
             <Plus className="h-4 w-4" />
-            Add Extension
+            <span>Add Extension</span>
           </button>
         </div>
 
         {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-4 rounded-2xl border border-border bg-card/60 backdrop-blur-sm shadow-sm flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="p-3.5 rounded-xl border border-border bg-card shadow-2xs flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
               <Hash className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Total Lines</p>
-              <p className="text-xl font-bold text-foreground">{stats.total}</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total Lines</p>
+              <p className="text-xl font-bold font-mono text-foreground">{stats.total}</p>
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl border border-border bg-card/60 backdrop-blur-sm shadow-sm flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold">
+          <div className="p-3.5 rounded-xl border border-border bg-card shadow-2xs flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
               <PhoneCall className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Assigned</p>
-              <p className="text-xl font-bold text-foreground">{stats.assigned}</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Assigned</p>
+              <p className="text-xl font-bold font-mono text-foreground">{stats.assigned}</p>
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl border border-border bg-card/60 backdrop-blur-sm shadow-sm flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold">
+          <div className="p-3.5 rounded-xl border border-border bg-card shadow-2xs flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold">
               <CheckCircle2 className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Available</p>
-              <p className="text-xl font-bold text-foreground">{stats.available}</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Available</p>
+              <p className="text-xl font-bold font-mono text-foreground">{stats.available}</p>
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl border border-border bg-card/60 backdrop-blur-sm shadow-sm flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-slate-500/10 text-slate-400 flex items-center justify-center font-bold">
+          <div className="p-3.5 rounded-xl border border-border bg-card shadow-2xs flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg bg-muted text-muted-foreground flex items-center justify-center font-bold">
               <Info className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Reserved/Other</p>
-              <p className="text-xl font-bold text-foreground">{stats.disabled}</p>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Reserved/Other</p>
+              <p className="text-xl font-bold font-mono text-foreground">{stats.disabled}</p>
             </div>
           </div>
         </div>
@@ -336,22 +336,22 @@ export default function ExtensionsPage() {
         {/* Filter and Search Bar */}
         <div className="flex flex-col sm:flex-row items-center gap-3">
           <div className="relative flex-1 w-full">
-            <Search className="h-4 w-4 absolute left-3.5 top-3 text-muted-foreground" />
+            <Search className="h-3.5 w-3.5 absolute left-3.5 top-2.5 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search by extension number, line holder, employee ID, department, mobile..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary shadow-sm"
+              className="w-full pl-9 pr-4 py-2 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs placeholder:text-muted-foreground/60"
             />
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <Filter className="h-4 w-4 text-muted-foreground hidden sm:block" />
+            <Filter className="h-3.5 w-3.5 text-muted-foreground hidden sm:block" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full sm:w-44 px-3 py-2.5 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary shadow-sm"
+              className="w-full sm:w-44 px-3 py-2 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs"
             >
               <option value="ALL">All Statuses</option>
               <option value="ASSIGNED">Assigned</option>
@@ -363,18 +363,18 @@ export default function ExtensionsPage() {
         </div>
 
         {/* Table View */}
-        <div className="rounded-2xl border border-border bg-card/70 backdrop-blur-md overflow-hidden shadow-sm">
+        <div className="rounded-xl border border-border bg-card overflow-hidden shadow-2xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-muted/40 border-b border-border text-muted-foreground font-semibold">
+              <thead className="bg-muted/50 border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                 <tr>
-                  <th className="p-4">Extension</th>
-                  <th className="p-4">Line Holder</th>
-                  <th className="p-4">Designation</th>
-                  <th className="p-4">Department</th>
-                  <th className="p-4">Mobile</th>
-                  <th className="p-4">Status</th>
-                  <th className="p-4 text-right">Actions</th>
+                  <th className="px-4 py-3">Extension</th>
+                  <th className="px-4 py-3">Line Holder</th>
+                  <th className="px-4 py-3">Designation</th>
+                  <th className="px-4 py-3">Department</th>
+                  <th className="px-4 py-3">Mobile</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
@@ -444,10 +444,10 @@ export default function ExtensionsPage() {
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
                             ext.status === 'ASSIGNED'
-                              ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20'
+                              ? 'bg-primary/10 text-primary border border-primary/20'
                               : ext.status === 'AVAILABLE'
                               ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
-                              : 'bg-slate-500/10 text-slate-400 border border-slate-500/20'
+                              : 'bg-muted text-muted-foreground border border-border'
                           }`}
                         >
                           {ext.status}
@@ -619,7 +619,7 @@ export default function ExtensionsPage() {
                       placeholder="e.g. 30200 or 1101"
                       value={formData.extensionNumber}
                       onChange={(e) => setFormData({ ...formData, extensionNumber: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs"
                     />
                   </div>
 
@@ -629,7 +629,7 @@ export default function ExtensionsPage() {
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs"
                     >
                       <option value="ASSIGNED">ASSIGNED</option>
                       <option value="AVAILABLE">AVAILABLE</option>
@@ -650,7 +650,7 @@ export default function ExtensionsPage() {
                       placeholder="e.g. 101493"
                       value={formData.customEmployeeId}
                       onChange={(e) => handleEmployeeIdChange(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs"
                     />
                   </div>
 
@@ -664,7 +664,7 @@ export default function ExtensionsPage() {
                       placeholder="e.g. M Shamsur Rahman or Front Desk"
                       value={formData.holderName}
                       onChange={(e) => setFormData({ ...formData, holderName: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs"
                     />
                   </div>
                 </div>
@@ -680,7 +680,7 @@ export default function ExtensionsPage() {
                       placeholder="e.g. Broadcast Engineer, Manager"
                       value={formData.designation}
                       onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs"
                     />
                   </div>
 
@@ -692,7 +692,7 @@ export default function ExtensionsPage() {
                       placeholder="e.g. Broadcast Technology"
                       value={formData.department}
                       onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs"
                     />
                   </div>
                 </div>
@@ -706,7 +706,7 @@ export default function ExtensionsPage() {
                       placeholder="e.g. 01711522049"
                       value={formData.mobile}
                       onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs"
                     />
                   </div>
 
@@ -718,7 +718,7 @@ export default function ExtensionsPage() {
                       placeholder="e.g. HQ Tejgaon, Floor 3"
                       value={formData.location}
                       onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs"
                     />
                   </div>
                 </div>
@@ -731,7 +731,7 @@ export default function ExtensionsPage() {
                     placeholder="e.g. Direct hunting line, Analog set, VIP contact"
                     value={formData.remarks}
                     onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-2xs"
                   />
                 </div>
 
@@ -740,14 +740,14 @@ export default function ExtensionsPage() {
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2 rounded-xl border border-border text-xs font-medium text-foreground hover:bg-muted/50 transition"
+                    className="px-4 py-2 rounded-lg border border-border text-xs font-medium text-foreground hover:bg-muted/50 transition"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold shadow-md shadow-primary/20 hover:opacity-90 active:scale-95 disabled:opacity-50 transition flex items-center gap-2"
+                    className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold shadow-2xs hover:opacity-90 active:scale-95 disabled:opacity-50 transition flex items-center gap-2"
                   >
                     {submitting && (
                       <span className="h-3.5 w-3.5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />

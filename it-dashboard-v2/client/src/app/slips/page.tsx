@@ -492,10 +492,10 @@ IT Support: Ext. 30555 or 01730701335
         {/* ======================================================== */}
         {mode === 'HUB' && (
           <div className="min-h-[75vh] flex items-center justify-center p-4">
-            <div className="w-full max-w-md bg-card/95 border border-border/80 rounded-3xl p-8 sm:p-10 shadow-2xl backdrop-blur-xl flex flex-col items-center text-center relative overflow-hidden transition-all duration-300">
+            <div className="w-full max-w-md bg-card border border-border rounded-xl p-8 sm:p-10 shadow-lg flex flex-col items-center text-center relative overflow-hidden transition-all duration-300">
               
               {/* Subtle top accent gradient */}
-              <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-red-600 via-primary to-rose-500" />
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-600 via-primary to-rose-500" />
 
               {/* Centered Independent Television Logo */}
               <div className="mb-3 flex items-center justify-center">
@@ -519,15 +519,15 @@ IT Support: Ext. 30555 or 01730701335
                 IT Support Credential &amp; Registration System
               </p>
 
-              {/* Action Buttons from Image 2 */}
-              <div className="w-full space-y-3.5">
+              {/* Action Buttons */}
+              <div className="w-full space-y-3">
                 {/* Button 1: Add New Employee Slip */}
                 <button
                   onClick={() => {
                     resetForm();
                     setMode('FORM');
                   }}
-                  className="w-full py-3 px-5 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
+                  className="w-full py-2.5 px-4 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm shadow-sm transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Add New Employee Slip</span>
@@ -536,7 +536,7 @@ IT Support: Ext. 30555 or 01730701335
                 {/* Button 2: View All Employee Slips */}
                 <button
                   onClick={() => setMode('LIST')}
-                  className="w-full py-3 px-5 rounded-2xl bg-muted/60 hover:bg-muted text-foreground font-bold text-sm border border-border/80 shadow-xs hover:border-border transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
+                  className="w-full py-2.5 px-4 rounded-lg bg-muted/60 hover:bg-muted text-foreground font-bold text-sm border border-border shadow-xs hover:border-border transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
                 >
                   <FileSpreadsheet className="h-4 w-4 text-primary" />
                   <span>View All Employee Slips ({slips.length})</span>
@@ -599,18 +599,18 @@ IT Support: Ext. 30555 or 01730701335
             </div>
 
             {/* Studio Hero Banner Header */}
-            <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-r from-slate-950 via-zinc-900 to-slate-950 p-6 sm:p-8 text-white shadow-2xl">
+            <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-r from-slate-950 via-zinc-900 to-slate-950 p-6 sm:p-7 text-white shadow-md">
               {/* Subtle Ambient Red Glow Effects */}
               <div className="absolute top-0 right-0 -mr-16 -mt-16 w-80 h-80 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
               <div className="absolute bottom-0 left-1/4 -mb-16 w-60 h-60 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
 
               <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-start sm:items-center gap-4">
-                  <div className="h-14 w-14 rounded-2xl bg-black/40 border border-white/10 p-2 flex items-center justify-center shrink-0 shadow-inner">
+                  <div className="h-12 w-12 rounded-xl bg-black/40 border border-white/10 p-2 flex items-center justify-center shrink-0 shadow-inner">
                     <img
                       src="/itv-logo.png"
                       alt="Independent Television Logo"
-                      className="h-10 w-auto object-contain drop-shadow-[0_2px_8px_rgba(239,68,68,0.6)]"
+                      className="h-9 w-auto object-contain drop-shadow-[0_2px_8px_rgba(239,68,68,0.6)]"
                     />
                   </div>
                   <div>
@@ -643,7 +643,7 @@ IT Support: Ext. 30555 or 01730701335
 
             {/* Error Message */}
             {error && (
-              <div className="p-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 text-rose-500 text-xs flex items-center gap-2.5 animate-in fade-in shadow-xs">
+              <div className="p-3.5 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-500 text-xs flex items-center gap-2.5 animate-in fade-in shadow-xs">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span className="font-medium">{error}</span>
               </div>
@@ -658,7 +658,7 @@ IT Support: Ext. 30555 or 01730701335
                   {/* ======================================================== */}
                   {/* CARD 1: GENERAL INFORMATION                              */}
                   {/* ======================================================== */}
-                  <div className="rounded-3xl border border-border/80 bg-card/90 backdrop-blur-md p-6 sm:p-7 shadow-lg space-y-5">
+                  <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
                     <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
                       <div className="flex items-center gap-2.5">
                         <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
@@ -817,7 +817,7 @@ IT Support: Ext. 30555 or 01730701335
                   {/* ======================================================== */}
                   {/* CARD 2: ACCOUNT CREDENTIALS                              */}
                   {/* ======================================================== */}
-                  <div className="rounded-3xl border border-border/80 bg-card/90 backdrop-blur-md p-6 sm:p-7 shadow-lg space-y-5">
+                  <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
                     <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
                       <div className="flex items-center gap-2.5">
                         <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
@@ -839,7 +839,7 @@ IT Support: Ext. 30555 or 01730701335
 
                     <div className="space-y-4">
                       {/* Credential 1: Corporate E-Mail */}
-                      <div className="p-4 rounded-2xl border border-border/80 bg-muted/20 hover:border-primary/40 transition space-y-3">
+                      <div className="p-3.5 rounded-lg border border-border/80 bg-muted/20 hover:border-primary/40 transition space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-xs font-bold text-foreground">
                             <Mail className="h-4 w-4 text-primary" />
@@ -890,7 +890,7 @@ IT Support: Ext. 30555 or 01730701335
                       </div>
 
                       {/* Credential 2: Active Directory Domain */}
-                      <div className="p-4 rounded-2xl border border-border/80 bg-muted/20 hover:border-primary/40 transition space-y-3">
+                      <div className="p-3.5 rounded-lg border border-border/80 bg-muted/20 hover:border-primary/40 transition space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-xs font-bold text-foreground">
                             <Laptop className="h-4 w-4 text-primary" />
@@ -911,7 +911,7 @@ IT Support: Ext. 30555 or 01730701335
                               value={domainId}
                               onChange={(e) => setDomainId(e.target.value)}
                               placeholder="e.g. firstname.lastname"
-                              className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
+                              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
                             />
                           </div>
 
@@ -925,7 +925,7 @@ IT Support: Ext. 30555 or 01730701335
                                 value={domainPassword}
                                 onChange={(e) => setDomainPassword(e.target.value)}
                                 placeholder="Itv4312"
-                                className="w-full px-3 py-2 pr-9 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
+                                className="w-full px-3 py-2 pr-9 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
                               />
                               <button
                                 type="button"
@@ -941,7 +941,7 @@ IT Support: Ext. 30555 or 01730701335
                       </div>
 
                       {/* Credential 3: X-Factor HRMS */}
-                      <div className="p-4 rounded-2xl border border-border/80 bg-muted/20 hover:border-emerald-500/40 transition space-y-3">
+                      <div className="p-3.5 rounded-lg border border-border/80 bg-muted/20 hover:border-emerald-500/40 transition space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-xs font-bold text-foreground">
                             <UserCheck className="h-4 w-4 text-emerald-500" />
@@ -962,7 +962,7 @@ IT Support: Ext. 30555 or 01730701335
                               value={hrmsUsername}
                               onChange={(e) => setHrmsUsername(e.target.value)}
                               placeholder="Auto-synced from PIN"
-                              className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition shadow-xs"
+                              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition shadow-xs"
                             />
                           </div>
 
@@ -976,7 +976,7 @@ IT Support: Ext. 30555 or 01730701335
                                 value={hrmsPassword}
                                 onChange={(e) => setHrmsPassword(e.target.value)}
                                 placeholder="Auto-synced from PIN"
-                                className="w-full px-3 py-2 pr-9 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition shadow-xs"
+                                className="w-full px-3 py-2 pr-9 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition shadow-xs"
                               />
                               <button
                                 type="button"
@@ -992,7 +992,7 @@ IT Support: Ext. 30555 or 01730701335
                       </div>
 
                       {/* Credential 4: Food Requisition System */}
-                      <div className="p-4 rounded-2xl border border-border/80 bg-muted/20 hover:border-amber-500/40 transition space-y-3">
+                      <div className="p-3.5 rounded-lg border border-border/80 bg-muted/20 hover:border-amber-500/40 transition space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 text-xs font-bold text-foreground">
                             <FileText className="h-4 w-4 text-amber-500" />
@@ -1013,7 +1013,7 @@ IT Support: Ext. 30555 or 01730701335
                               value={foodUsername}
                               onChange={(e) => setFoodUsername(e.target.value)}
                               placeholder="Auto-synced from Email"
-                              className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition shadow-xs"
+                              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition shadow-xs"
                             />
                           </div>
 
@@ -1027,7 +1027,7 @@ IT Support: Ext. 30555 or 01730701335
                                 value={foodPassword}
                                 onChange={(e) => setFoodPassword(e.target.value)}
                                 placeholder="123456"
-                                className="w-full px-3 py-2 pr-9 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition shadow-xs"
+                                className="w-full px-3 py-2 pr-9 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition shadow-xs"
                               />
                               <button
                                 type="button"
@@ -1047,7 +1047,7 @@ IT Support: Ext. 30555 or 01730701335
                   {/* ======================================================== */}
                   {/* CARD 3: SLIP AUTHORIZATION                               */}
                   {/* ======================================================== */}
-                  <div className="rounded-3xl border border-border/80 bg-card/90 backdrop-blur-md p-6 sm:p-7 shadow-lg space-y-5">
+                  <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
                     <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
                       <div className="flex items-center gap-2.5">
                         <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
@@ -1080,7 +1080,7 @@ IT Support: Ext. 30555 or 01730701335
                           onChange={(e) => setCreatedBy(e.target.value)}
                           placeholder="Creator Name"
                           required
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
+                          className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary transition shadow-xs"
                         />
                       </div>
 
@@ -1096,7 +1096,7 @@ IT Support: Ext. 30555 or 01730701335
                           onChange={(e) => setCreatorDesignation(e.target.value)}
                           placeholder="e.g. IT Support Engineer"
                           required
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
+                          className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary transition shadow-xs"
                         />
                       </div>
                     </div>
@@ -1107,9 +1107,9 @@ IT Support: Ext. 30555 or 01730701335
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="w-full py-4 px-8 rounded-2xl bg-gradient-to-r from-primary via-primary/95 to-red-700 hover:from-primary/90 hover:to-red-800 text-white font-extrabold text-sm shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 active:scale-[0.99] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                      className="w-full py-3 px-6 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm shadow-md shadow-primary/20 hover:shadow-lg transition-all flex items-center justify-center gap-2.5 disabled:opacity-50"
                     >
-                      <CheckCircle2 className="h-5 w-5" />
+                      <CheckCircle2 className="h-4 w-4" />
                       <span>{submitting ? 'Generating Official Slip...' : 'Submit Registration & Generate Slip'}</span>
                     </button>
 
@@ -1123,7 +1123,7 @@ IT Support: Ext. 30555 or 01730701335
 
               {/* Right Column: Live Interactive Credential Slip Preview */}
               <div className="xl:col-span-5 sticky top-6 space-y-4">
-                <div className="rounded-3xl border border-border/80 bg-card/90 backdrop-blur-md p-6 shadow-2xl space-y-5">
+                <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
                   {/* Top Preview Bar */}
                   <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
                     <div className="flex items-center gap-2">
@@ -1138,7 +1138,7 @@ IT Support: Ext. 30555 or 01730701335
                   </div>
 
                   {/* Mini Official Slip Preview Box */}
-                  <div className="rounded-2xl border border-border bg-background/95 p-4 sm:p-5 shadow-inner space-y-4 text-foreground">
+                  <div className="rounded-lg border border-border bg-background p-4 sm:p-5 shadow-xs space-y-4 text-foreground">
                     {/* Official Banner Header */}
                     <div className="border-b border-border/70 pb-3 flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -1343,12 +1343,12 @@ IT Support: Ext. 30555 or 01730701335
                 placeholder="Search by Slip No, Name, PIN, Department, or Email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
               />
             </div>
 
             {/* Slips Table */}
-            <div className="rounded-2xl border border-border bg-card/70 backdrop-blur-md overflow-hidden shadow-sm">
+            <div className="rounded-xl border border-border bg-card overflow-hidden shadow-xs">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-muted/40 border-b border-border text-muted-foreground font-semibold">
@@ -1474,7 +1474,7 @@ IT Support: Ext. 30555 or 01730701335
         {/* ======================================================== */}
         {activeSlip && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-background/80 backdrop-blur-md animate-in fade-in overflow-y-auto">
-            <div className="w-full max-w-3xl my-auto rounded-3xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95 flex flex-col max-h-[95vh]">
+            <div className="w-full max-w-3xl my-auto rounded-2xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95 flex flex-col max-h-[95vh]">
               
               {/* Modal Top Control Toolbar (No-Print) */}
               <div className="p-4 border-b border-border flex flex-wrap items-center justify-between gap-3 bg-muted/40 no-print shrink-0">
@@ -1494,7 +1494,7 @@ IT Support: Ext. 30555 or 01730701335
                   {/* Copy All Text */}
                   <button
                     onClick={handleCopyAllCredentials}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition"
                     title="Copy formatted text to clipboard"
                   >
                     {copiedField === 'all' ? (
@@ -1514,7 +1514,7 @@ IT Support: Ext. 30555 or 01730701335
                   <button
                     onClick={handleDownloadPdf}
                     disabled={isDownloadingPdf}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition disabled:opacity-50"
                   >
                     <Download className="h-3.5 w-3.5" />
                     <span>{isDownloadingPdf ? 'Generating...' : 'PDF'}</span>
@@ -1523,7 +1523,7 @@ IT Support: Ext. 30555 or 01730701335
                   {/* Print Slip */}
                   <button
                     onClick={handlePrintSlip}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-md shadow-primary/25 hover:bg-primary/90 transition"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground font-bold text-xs shadow-md shadow-primary/20 hover:bg-primary/90 transition"
                   >
                     <Printer className="h-3.5 w-3.5" />
                     <span>Print Slip</span>
@@ -1532,7 +1532,7 @@ IT Support: Ext. 30555 or 01730701335
                   {/* Close */}
                   <button
                     onClick={() => setActiveSlip(null)}
-                    className="px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-semibold text-muted-foreground hover:bg-muted transition"
+                    className="px-3 py-1.5 rounded-lg border border-border bg-card text-xs font-semibold text-muted-foreground hover:bg-muted transition"
                   >
                     Close
                   </button>
@@ -1544,15 +1544,11 @@ IT Support: Ext. 30555 or 01730701335
                 
                 {/* ---------------------------------------------------- */}
                 {/* THE OFFICIAL PRINTABLE A4 SLIP CONTAINER             */}
-                {/* (Matches the user's uploaded official image exactly) */}
-                {/* ---------------------------------------------------- */}
-                {/* ---------------------------------------------------- */}
-                {/* THE OFFICIAL PRINTABLE A4 SLIP CONTAINER             */}
                 {/* (Calibrated for strict 1-page A4 print & PDF export) */}
                 {/* ---------------------------------------------------- */}
                 <div
                   ref={slipPrintRef}
-                  className="print-area w-full max-w-[680px] bg-white text-slate-900 border border-slate-300 rounded-2xl p-4 sm:p-6 shadow-sm space-y-2.5 font-sans select-text text-left"
+                  className="print-area w-full max-w-[680px] bg-white text-slate-900 border border-slate-300 rounded-xl p-4 sm:p-6 shadow-sm space-y-2.5 font-sans select-text text-left"
                 >
                   
                   {/* Top Mini Header */}

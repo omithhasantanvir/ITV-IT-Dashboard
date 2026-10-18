@@ -571,47 +571,47 @@ export default function EmployeesPage() {
       </div>
 
       {/* Telemetry Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div
           onClick={() => setActiveTab('ALL')}
           className={cn(
-            'p-4 rounded-2xl border transition cursor-pointer backdrop-blur-sm',
+            'p-4 rounded-xl border transition-all cursor-pointer backdrop-blur-sm',
             activeTab === 'ALL'
-              ? 'border-primary/60 bg-primary/5 ring-1 ring-primary/40'
-              : 'border-border bg-card/60 hover:border-border/80'
+              ? 'border-primary/60 bg-primary/5 ring-1 ring-primary/40 shadow-xs'
+              : 'border-border bg-card hover:border-border/80'
           )}
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Total IT Staff
             </span>
-            <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
               <Users className="h-4 w-4" />
             </div>
           </div>
-          <p className="text-2xl font-extrabold text-foreground mt-2">{totalCount}</p>
+          <p className="text-2xl font-bold font-mono text-foreground mt-2">{totalCount}</p>
           <p className="text-[10px] text-muted-foreground mt-0.5">Running & Ex IT personnel</p>
         </div>
 
         <div
           onClick={() => setActiveTab('RUNNING')}
           className={cn(
-            'p-4 rounded-2xl border transition cursor-pointer backdrop-blur-sm',
+            'p-4 rounded-xl border transition-all cursor-pointer backdrop-blur-sm',
             activeTab === 'RUNNING'
-              ? 'border-emerald-500/60 bg-emerald-500/5 ring-1 ring-emerald-500/40'
-              : 'border-border bg-card/60 hover:border-border/80'
+              ? 'border-emerald-500/60 bg-emerald-500/5 ring-1 ring-emerald-500/40 shadow-xs'
+              : 'border-border bg-card hover:border-border/80'
           )}
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               IT Running Staff
             </span>
-            <div className="h-8 w-8 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
               <UserCheck className="h-4 w-4" />
             </div>
           </div>
           <div className="flex items-baseline gap-2 mt-2">
-            <p className="text-2xl font-extrabold text-emerald-500">{runningCount}</p>
+            <p className="text-2xl font-bold font-mono text-emerald-500">{runningCount}</p>
             <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
           </div>
           <p className="text-[10px] text-muted-foreground mt-0.5">Active on duty</p>
@@ -620,34 +620,34 @@ export default function EmployeesPage() {
         <div
           onClick={() => setActiveTab('EX')}
           className={cn(
-            'p-4 rounded-2xl border transition cursor-pointer backdrop-blur-sm',
+            'p-4 rounded-xl border transition-all cursor-pointer backdrop-blur-sm',
             activeTab === 'EX'
-              ? 'border-amber-500/60 bg-amber-500/5 ring-1 ring-amber-500/40'
-              : 'border-border bg-card/60 hover:border-border/80'
+              ? 'border-amber-500/60 bg-amber-500/5 ring-1 ring-amber-500/40 shadow-xs'
+              : 'border-border bg-card hover:border-border/80'
           )}
         >
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               EX IT Employees
             </span>
-            <div className="h-8 w-8 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
               <UserX className="h-4 w-4" />
             </div>
           </div>
-          <p className="text-2xl font-extrabold text-amber-500 mt-2">{exCount}</p>
+          <p className="text-2xl font-bold font-mono text-amber-500 mt-2">{exCount}</p>
           <p className="text-[10px] text-muted-foreground mt-0.5">Resigned / Former staff</p>
         </div>
 
-        <div className="p-4 rounded-2xl border border-border bg-card/60 backdrop-blur-sm">
+        <div className="p-4 rounded-xl border border-border bg-card backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Available Now
             </span>
-            <div className="h-8 w-8 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
               <Activity className="h-4 w-4" />
             </div>
           </div>
-          <p className="text-2xl font-extrabold text-purple-400 mt-2">{availableCount}</p>
+          <p className="text-2xl font-bold font-mono text-foreground mt-2">{availableCount}</p>
           <p className="text-[10px] text-muted-foreground mt-0.5">Free for urgent assignments</p>
         </div>
       </div>
@@ -655,32 +655,32 @@ export default function EmployeesPage() {
       {/* Tabs and Search Controls */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Navigation Tabs */}
-        <div className="flex items-center p-1 rounded-xl border border-border bg-card/80 backdrop-blur-md w-fit">
+        <div className="flex items-center p-1 rounded-lg border border-border bg-card w-fit shadow-2xs">
           <button
             onClick={() => setActiveTab('ALL')}
             className={cn(
-              'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5',
+              'px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5',
               activeTab === 'ALL'
-                ? 'bg-primary text-primary-foreground shadow-sm'
+                ? 'bg-primary text-primary-foreground shadow-2xs'
                 : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <span>All IT Personnel</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-muted/60">{totalCount}</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-muted/80">{totalCount}</span>
           </button>
 
           <button
             onClick={() => setActiveTab('RUNNING')}
             className={cn(
-              'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5',
+              'px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5',
               activeTab === 'RUNNING'
-                ? 'bg-emerald-600 text-white shadow-sm'
+                ? 'bg-emerald-500/15 text-emerald-500 border border-emerald-500/30 font-bold shadow-2xs'
                 : 'text-muted-foreground hover:text-foreground'
             )}
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>IT Running Employee</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>IT Running</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-500">
               {runningCount}
             </span>
           </button>
@@ -688,14 +688,14 @@ export default function EmployeesPage() {
           <button
             onClick={() => setActiveTab('EX')}
             className={cn(
-              'px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5',
+              'px-3 py-1.5 rounded-md text-xs font-semibold transition flex items-center gap-1.5',
               activeTab === 'EX'
-                ? 'bg-amber-600 text-white shadow-sm'
+                ? 'bg-amber-500/15 text-amber-500 border border-amber-500/30 font-bold shadow-2xs'
                 : 'text-muted-foreground hover:text-foreground'
             )}
           >
-            <span>EX IT Employee</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300">
+            <span>EX IT Personnel</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-500">
               {exCount}
             </span>
           </button>
@@ -704,20 +704,20 @@ export default function EmployeesPage() {
         {/* Search & Filters */}
         <div className="flex items-center gap-2 flex-1 sm:max-w-md">
           <div className="relative flex-1">
-            <Search className="h-3.5 w-3.5 absolute left-3.5 top-3 text-muted-foreground" />
+            <Search className="h-3.5 w-3.5 absolute left-3.5 top-2.5 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search by name, ID, designation, ext..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary placeholder:text-muted-foreground/60"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-muted-foreground/60 shadow-2xs"
             />
           </div>
 
           <select
             value={itStatusFilter}
             onChange={(e) => setItStatusFilter(e.target.value)}
-            className="px-2.5 py-2 rounded-xl border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="px-2.5 py-2 rounded-lg border border-border bg-card text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
           >
             <option value="">Duty Status</option>
             <option value="AVAILABLE">Available</option>
@@ -729,18 +729,18 @@ export default function EmployeesPage() {
       </div>
 
       {/* Employees Table */}
-      <div className="rounded-2xl border border-border bg-card/70 backdrop-blur-md overflow-hidden shadow-sm">
+      <div className="rounded-xl border border-border bg-card overflow-hidden shadow-2xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-muted/40 border-b border-border text-muted-foreground font-semibold">
+            <thead className="bg-muted/50 border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               <tr>
-                <th className="p-4">Employee</th>
-                <th className="p-4">ID & Contact</th>
-                <th className="p-4">Status & Category</th>
-                <th className="p-4">Duty Status</th>
-                <th className="p-4">Service Timeline</th>
-                {activeTab !== 'EX' && <th className="p-4">PABX & Hardware</th>}
-                <th className="p-4 text-right">Actions</th>
+                <th className="px-4 py-3">Employee</th>
+                <th className="px-4 py-3">ID & Contact</th>
+                <th className="px-4 py-3">Status & Category</th>
+                <th className="px-4 py-3">Duty Status</th>
+                <th className="px-4 py-3">Service Timeline</th>
+                {activeTab !== 'EX' && <th className="px-4 py-3">PABX & Hardware</th>}
+                <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60">
@@ -1019,9 +1019,9 @@ export default function EmployeesPage() {
       {/* Add Employee Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-2xl max-h-[92vh] flex flex-col rounded-3xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95">
+          <div className="w-full max-w-2xl max-h-[92vh] flex flex-col rounded-2xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95">
             {/* Modal Header */}
-            <div className="px-6 py-5 border-b border-border flex items-center justify-between bg-card/60">
+            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-muted/20">
               <div>
                 <h3 className="text-base font-bold text-foreground flex items-center gap-2">
                   <ShieldCheck className="h-5 w-5 text-primary" />
@@ -1035,7 +1035,7 @@ export default function EmployeesPage() {
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="h-8 w-8 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition"
+                className="h-8 w-8 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -1044,7 +1044,7 @@ export default function EmployeesPage() {
             {/* Modal Form Content */}
             <form onSubmit={handleSubmit} className="overflow-y-auto p-6 space-y-5 flex-1">
               {formError && (
-                <div className="p-3.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-500 text-xs flex items-center gap-2">
+                <div className="p-3.5 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-500 text-xs flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>{formError}</span>
                 </div>
@@ -1066,17 +1066,17 @@ export default function EmployeesPage() {
                       }))
                     }
                     className={cn(
-                      'p-3.5 rounded-2xl border text-left transition flex items-center gap-3',
+                      'p-3.5 rounded-xl border text-left transition flex items-center gap-3',
                       formData.employmentStatus === 'Active'
-                        ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400 ring-2 ring-emerald-500/30'
-                        : 'border-border bg-muted/40 text-muted-foreground hover:border-border/80'
+                        ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30'
+                        : 'border-border bg-muted/30 text-muted-foreground hover:border-border/80'
                     )}
                   >
                     <div
                       className={cn(
-                        'h-9 w-9 rounded-xl flex items-center justify-center shrink-0',
+                        'h-9 w-9 rounded-lg flex items-center justify-center shrink-0',
                         formData.employmentStatus === 'Active'
-                          ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
+                          ? 'bg-emerald-500 text-white shadow-sm'
                           : 'bg-muted text-muted-foreground'
                       )}
                     >
@@ -1099,17 +1099,17 @@ export default function EmployeesPage() {
                       }))
                     }
                     className={cn(
-                      'p-3.5 rounded-2xl border text-left transition flex items-center gap-3',
+                      'p-3.5 rounded-xl border text-left transition flex items-center gap-3',
                       formData.employmentStatus !== 'Active'
-                        ? 'border-amber-500 bg-amber-500/10 text-amber-400 ring-2 ring-amber-500/30'
-                        : 'border-border bg-muted/40 text-muted-foreground hover:border-border/80'
+                        ? 'border-amber-500 bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/30'
+                        : 'border-border bg-muted/30 text-muted-foreground hover:border-border/80'
                     )}
                   >
                     <div
                       className={cn(
-                        'h-9 w-9 rounded-xl flex items-center justify-center shrink-0',
+                        'h-9 w-9 rounded-lg flex items-center justify-center shrink-0',
                         formData.employmentStatus !== 'Active'
-                          ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20'
+                          ? 'bg-amber-500 text-white shadow-sm'
                           : 'bg-muted text-muted-foreground'
                       )}
                     >
@@ -1123,7 +1123,7 @@ export default function EmployeesPage() {
                 </div>
 
                 {formData.employmentStatus !== 'Active' && (
-                  <div className="mt-2 p-3 rounded-2xl border border-amber-500/25 bg-amber-500/5 text-amber-500 text-xs flex items-center gap-2 animate-in fade-in">
+                  <div className="mt-2 p-3 rounded-xl border border-amber-500/25 bg-amber-500/5 text-amber-500 text-xs flex items-center gap-2 animate-in fade-in">
                     <Sparkles className="h-4 w-4 shrink-0 text-amber-500" />
                     <span className="font-medium text-[11px]">
                       EX IT Employee: No fields are mandatory. You can submit with whatever information you have available.
@@ -1494,11 +1494,11 @@ export default function EmployeesPage() {
       {/* Individual Employee Details Modal */}
       {viewingEmployee && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95">
+          <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl border border-border bg-card shadow-2xl overflow-hidden animate-in zoom-in-95">
             {/* Header banner */}
-            <div className="relative px-6 pt-6 pb-4 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-b border-border flex items-start justify-between">
+            <div className="relative px-6 pt-5 pb-4 bg-muted/20 border-b border-border flex items-start justify-between">
               <div className="flex items-center gap-4">
-                <div className="relative w-16 h-16 rounded-2xl overflow-hidden border-2 border-primary/30 shadow-md bg-muted/60 flex items-center justify-center shrink-0">
+                <div className="relative w-14 h-14 rounded-xl overflow-hidden border-2 border-primary/30 shadow-sm bg-muted/60 flex items-center justify-center shrink-0">
                   {viewingEmployee.profilePhoto ? (
                     <img
                       src={viewingEmployee.profilePhoto}
@@ -1512,7 +1512,7 @@ export default function EmployeesPage() {
                   )}
                   <span
                     className={cn(
-                      'absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-card',
+                      'absolute bottom-1 right-1 h-3 w-3 rounded-full border-2 border-card',
                       viewingEmployee.itStatus === 'AVAILABLE'
                         ? 'bg-emerald-500'
                         : viewingEmployee.itStatus === 'BUSY'
@@ -1527,7 +1527,7 @@ export default function EmployeesPage() {
 
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-black text-foreground">{viewingEmployee.name}</h3>
+                    <h3 className="text-base font-bold text-foreground">{viewingEmployee.name}</h3>
                     <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded-md bg-muted border border-border text-foreground">
                       {viewingEmployee.employeeId}
                     </span>
@@ -1555,7 +1555,7 @@ export default function EmployeesPage() {
 
               <button
                 onClick={() => setViewingEmployee(null)}
-                className="h-8 w-8 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted"
+                className="h-8 w-8 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -1569,8 +1569,8 @@ export default function EmployeesPage() {
                   Contact & Communication
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-3 rounded-2xl bg-muted/30 border border-border flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <div className="p-3 rounded-xl bg-muted/30 border border-border flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
                       <Mail className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
@@ -1581,8 +1581,8 @@ export default function EmployeesPage() {
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-2xl bg-muted/30 border border-border flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+                  <div className="p-3 rounded-xl bg-muted/30 border border-border flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
                       <Phone className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
@@ -1593,8 +1593,8 @@ export default function EmployeesPage() {
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-2xl bg-muted/30 border border-border flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
+                  <div className="p-3 rounded-xl bg-muted/30 border border-border flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
                       <PhoneCall className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
@@ -1605,8 +1605,8 @@ export default function EmployeesPage() {
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-2xl bg-muted/30 border border-border flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center shrink-0">
+                  <div className="p-3 rounded-xl bg-muted/30 border border-border flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
                       <Building2 className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
@@ -1625,23 +1625,23 @@ export default function EmployeesPage() {
                   Service Timeline & Status
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="p-3 rounded-2xl bg-muted/30 border border-border">
+                  <div className="p-3 rounded-xl bg-muted/30 border border-border">
                     <p className="text-[10px] text-muted-foreground">Joining Date</p>
                     <p className="font-bold text-foreground mt-0.5">{formatDate(viewingEmployee.joiningDate)}</p>
                   </div>
-                  <div className="p-3 rounded-2xl bg-muted/30 border border-border">
+                  <div className="p-3 rounded-xl bg-muted/30 border border-border">
                     <p className="text-[10px] text-muted-foreground">Release / Leaving Date</p>
                     <p className="font-bold text-foreground mt-0.5">
                       {viewingEmployee.leavingDate ? formatDate(viewingEmployee.leavingDate) : 'Currently Active'}
                     </p>
                   </div>
-                  <div className="p-3 rounded-2xl bg-muted/30 border border-border">
+                  <div className="p-3 rounded-xl bg-muted/30 border border-border">
                     <p className="text-[10px] text-muted-foreground">Username</p>
                     <p className="font-mono font-bold text-foreground mt-0.5">{viewingEmployee.username}</p>
                   </div>
                 </div>
                 {viewingEmployee.remarks && (
-                  <div className="mt-2.5 p-3 rounded-2xl bg-muted/20 border border-border">
+                  <div className="mt-2.5 p-3 rounded-xl bg-muted/20 border border-border">
                     <p className="text-[10px] text-muted-foreground font-semibold">Remarks & Handover Notes:</p>
                     <p className="text-xs text-foreground italic mt-0.5">"{viewingEmployee.remarks}"</p>
                   </div>
