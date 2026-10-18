@@ -83,7 +83,7 @@ export function BrandLoading({
     );
   }
 
-  // 3. FULLSCREEN MODE (Whole page loads & auth checks)
+  // 3. FULLSCREEN MODE (Clean logo-only with skeleton shimmer wave)
   return (
     <div
       className={cn(
@@ -91,45 +91,29 @@ export function BrandLoading({
         className
       )}
     >
-      {/* Background Soft Glow */}
-      <div className="absolute w-44 h-44 rounded-full bg-primary/15 blur-2xl pointer-events-none -z-10 animate-pulse" />
+      {/* Background Ambient Glow */}
+      <div className="absolute w-52 h-52 rounded-full bg-primary/20 blur-3xl pointer-events-none -z-10 animate-pulse [animation-duration:3s]" />
 
-      {/* Animated Logo */}
+      {/* Animated Logo Container with Skeleton Shimmer Sweep */}
       <div className="relative flex items-center justify-center">
-        {/* Outer Orbit Spinning Ring */}
-        <div className="absolute -inset-2.5 rounded-full border-2 border-primary/20 border-t-primary border-r-primary/70 animate-spin [animation-duration:1.6s]" />
+        {/* Outer Orbit Spinning Accent Ring */}
+        <div className="absolute -inset-3 rounded-full border-2 border-primary/20 border-t-primary border-r-primary/70 animate-spin [animation-duration:1.6s]" />
 
-        {/* Center ITV Logo Card */}
-        <div className="relative h-16 w-16 rounded-2xl bg-card border border-border shadow-2xl flex items-center justify-center p-2.5 animate-pulse">
+        {/* Center ITV Logo Card with Skeleton Effect */}
+        <div className="relative h-20 w-20 rounded-2xl bg-card border border-border shadow-2xl flex items-center justify-center p-3.5 overflow-hidden select-none">
+          {/* ITV Logo */}
           <img
             src="/itv-logo.png"
-            alt="Independent Television Logo"
-            className="h-10 w-auto object-contain drop-shadow-[0_2px_8px_rgba(227,30,36,0.6)]"
+            alt="ITV Logo"
+            className="h-11 w-auto object-contain select-none drop-shadow-[0_2px_10px_rgba(227,30,36,0.55)] relative z-10"
           />
+
+          {/* Skeleton Shimmer Wave Passing Over the Logo */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-20">
+            <div className="absolute -inset-full animate-skeleton-sweep bg-gradient-to-r from-transparent via-white/40 dark:via-white/30 to-transparent" />
+          </div>
         </div>
       </div>
-
-      {/* Brand Identity Typography */}
-      <div className="flex flex-col items-center mt-5 text-center">
-        <span className="text-[11px] font-black tracking-[0.3em] text-foreground uppercase font-sans">
-          INDEPENDENT
-        </span>
-        <span className="text-[9px] font-mono tracking-widest text-primary font-bold uppercase mt-0.5">
-          TELEVISION
-        </span>
-      </div>
-
-      {/* Status Text */}
-      {text && (
-        <p className="text-xs text-muted-foreground font-medium mt-3 tracking-wide text-center">
-          {text}
-        </p>
-      )}
-      {subtext && (
-        <p className="text-[10px] text-muted-foreground/75 font-mono mt-1 tracking-wide text-center">
-          {subtext}
-        </p>
-      )}
     </div>
   );
 }

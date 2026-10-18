@@ -27,13 +27,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   // Auth pages (like /login)
   if (isAuthPage) {
     if (loading) {
-      return (
-        <BrandLoading
-          size="fullscreen"
-          text="Verifying ITV Secure Session..."
-          subtext="Independent Television • Portal Access"
-        />
-      );
+      return <BrandLoading size="fullscreen" />;
     }
     // Prevent flash of login page if already authenticated and redirecting to /
     if (user && token) {
@@ -44,13 +38,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   // Protected pages: Loading state
   if (loading) {
-    return (
-      <BrandLoading
-        size="fullscreen"
-        text="Authorizing Operations Access..."
-        subtext="Independent Television • IT Platform"
-      />
-    );
+    return <BrandLoading size="fullscreen" />;
   }
 
   // Protected pages: Not logged in -> do not render dashboard content while redirecting to /login
