@@ -1,156 +1,212 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  Radio,
-  Server,
-  Network,
-  Clock,
   Calendar,
-  AlertTriangle,
-  CheckCircle2,
-  Tv,
   ArrowRight,
-  ShieldCheck,
+  CheckCircle2,
 } from 'lucide-react';
-import api from '@/lib/api';
+import { cn } from '@/lib/utils';
+
+export interface ScheduledMaintenanceTask {
+  id: string;
+  date: string;
+  dayOfWeek: string;
+  scheduledTask: string;
+  task: string;
+  status: 'Pending' | 'Completed' | 'Incomplete';
+  completedAt?: string;
+  completedBy?: string;
+}
+
+const STORAGE_KEY = 'itv_scheduled_maintenance_tasks_v2';
+
+const DEFAULT_SCHEDULED_TASKS: ScheduledMaintenanceTask[] = [
+  {
+    id: 'sched-001',
+    date: '2026-10-19',
+    dayOfWeek: 'Monday',
+    scheduledTask: 'GV Quarterly Maintenance',
+    task: '1. Restart all GV Clients\n2. Power Down GV Full System according to procedure\n3. After 10 to 15 min Power Up GV Full system according to procedure',
+    status: 'Pending',
+  },
+  {
+    id: 'sched-002',
+    date: '2026-10-20',
+    dayOfWeek: 'Tuesday',
+    scheduledTask: 'Monthly Vizrt Maintenance',
+    task: '1. Restart VizDB, VizRTDB Server, Viz1, Viz2, Viz3 Server\n2. Restart Viz Ticker RE, Viz Frame Server\n3. Restart Viz Ticker Client (L2-PCR)',
+    status: 'Pending',
+  },
+  {
+    id: 'sched-003',
+    date: '2026-10-28',
+    dayOfWeek: 'Wednesday',
+    scheduledTask: 'GV Weekly Maintenance',
+    task: '1. Restart GV Stratus Rundown(PCR)\n2. Restart All Edius Clients\n3. Restart RMI-Ingest\n4. Restart MCR-Ingest',
+    status: 'Pending',
+  },
+  {
+    id: 'sched-004',
+    date: '2026-11-05',
+    dayOfWeek: 'Thursday',
+    scheduledTask: 'GV Weekly Maintenance',
+    task: '1. Restart GV Stratus Rundown(PCR)\n2. Restart All Edius Clients\n3. Restart RMI-Ingest\n4. Restart MCR-Ingest',
+    status: 'Pending',
+  },
+  {
+    id: 'sched-005',
+    date: '2026-11-13',
+    dayOfWeek: 'Friday',
+    scheduledTask: 'GV Weekly Maintenance',
+    task: '1. Restart GV Stratus Rundown(PCR)\n2. Restart All Edius Clients\n3. Restart RMI-Ingest\n4. Restart MCR-Ingest',
+    status: 'Pending',
+  },
+  {
+    id: 'sched-006',
+    date: '2026-11-21',
+    dayOfWeek: 'Saturday',
+    scheduledTask: 'GV Monthly Maintenance',
+    task: '1. Restart all GV Clients\n2. Restart K2-Summit1 & K2-Summit2\n3. Restart Rendering Engine RE1, RE2\n4. Restart GV FTP1\n5. Restart XRE',
+    status: 'Pending',
+  },
+  {
+    id: 'sched-007',
+    date: '2026-11-23',
+    dayOfWeek: 'Monday',
+    scheduledTask: 'Monthly Domain Maintenance',
+    task: '1. Restart DC-01, DC-02, ITV-SQL-1\n2. Restart DSE Server\n3. Restart WiFi Access Devices',
+    status: 'Pending',
+  },
+  {
+    id: 'sched-008',
+    date: '2026-11-24',
+    dayOfWeek: 'Tuesday',
+    scheduledTask: 'Monthly Vizrt Maintenance',
+    task: '1. Restart VizDB, VizRTDB Server, Viz1, Viz2, Viz3 Server\n2. Restart Viz Ticker RE, Viz Frame Server\n3. Restart Viz Ticker Client (L2-PCR)',
+    status: 'Pending',
+  },
+];
 
 export function BroadcastOperationsStrip({ className }: { className?: string }) {
-  const [stats, setStats] = useState<any>(null);
-  const [nextMaintenance, setNextMaintenance] = useState<string>('GV Quarterly Maintenance (2026-10-19)');
-  const [timeStr, setTimeStr] = useState<string>('');
-  const [loading, setLoading] = useState(true);
+  const [tasks, setTasks] = useState<ScheduledMaintenanceTask[]>([]);
+  const [mounted, setMounted] = useState(false);
 
-  // Live Bangladesh Standard Time Clock (BST UTC+6)
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTimeStr(
-        now.toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: true,
-          timeZone: 'Asia/Dhaka',
-        })
-      );
-    };
-    updateTime();
-    const timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Fetch real telemetry and maintenance schedule
-  useEffect(() => {
-    const fetchTelemetry = async () => {
-      try {
-        const res = await api.get('/api/dashboard/summary');
-        if (res.data?.success && res.data.stats) {
-          setStats(res.data.stats);
-        }
-      } catch (err) {
-        // Fallback or offline
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTelemetry();
-    const interval = setInterval(fetchTelemetry, 30000);
-
-    // Read next pending task from localStorage
+  // Load scheduled maintenance tasks (strictly excluding daily night tasks)
+  const loadTasks = useCallback(() => {
     try {
-      const raw = localStorage.getItem('itv_scheduled_maintenance_tasks_v2');
+      const raw = localStorage.getItem(STORAGE_KEY);
+      let list: ScheduledMaintenanceTask[] = [];
       if (raw) {
-        const tasks = JSON.parse(raw);
-        const pending = tasks.filter((t: any) => t.status === 'Pending');
-        if (pending.length > 0) {
-          setNextMaintenance(`${pending[0].scheduledTask} (${pending[0].date})`);
-        }
+        list = JSON.parse(raw);
+      } else {
+        list = DEFAULT_SCHEDULED_TASKS;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_SCHEDULED_TASKS));
       }
-    } catch {
-      // fallback
-    }
 
-    return () => clearInterval(interval);
+      // Filter only upcoming/pending tasks in chronological sequence (when one completes, next takes priority)
+      const pending = list
+        .filter((t) => t.status === 'Pending')
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+      setTasks(pending);
+    } catch (e) {
+      console.error('Failed to load maintenance tasks', e);
+      setTasks(DEFAULT_SCHEDULED_TASKS.filter((t) => t.status === 'Pending'));
+    }
   }, []);
 
-  const totalServers = stats?.totalServers || 9;
-  const onlineServers = stats?.onlineServers || 9;
-  const warningServers = stats?.warningServers || 0;
-  const offlineServers = stats?.offlineServers || 0;
-  const isServerHealthy = offlineServers === 0 && warningServers === 0;
+  useEffect(() => {
+    setMounted(true);
+    loadTasks();
+
+    const handleUpdate = () => loadTasks();
+    window.addEventListener('itv_maintenance_tasks_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    const interval = setInterval(loadTasks, 4000);
+
+    return () => {
+      window.removeEventListener('itv_maintenance_tasks_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+      clearInterval(interval);
+    };
+  }, [loadTasks]);
+
+  // Generate continuous seamless marquee loop (duplicated for translateX(-50%))
+  const loopItems = useMemo(() => {
+    if (tasks.length === 0) return [];
+    let base = [...tasks];
+    while (base.length < 6) {
+      base = [...base, ...tasks];
+    }
+    return [...base, ...base];
+  }, [tasks]);
 
   return (
     <div
-      className={`h-9 border-b border-border/80 bg-muted/40 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between text-[11px] font-mono select-none overflow-x-auto custom-scrollbar whitespace-nowrap z-10 ${
-        className || ''
-      }`}
+      className={cn(
+        'h-9 border-b border-border/80 bg-muted/40 dark:bg-card/70 backdrop-blur-md px-3 sm:px-4 flex items-center justify-between text-[11px] select-none overflow-hidden whitespace-nowrap z-10 relative',
+        className
+      )}
     >
-      {/* Left: Broadcast Transmission & Server Fleet */}
-      <div className="flex items-center gap-4 sm:gap-6 divide-x divide-border/60">
-        {/* Broadcast Transmission Engine */}
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2 w-2 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-          </span>
-          <span className="font-semibold text-foreground tracking-tight flex items-center gap-1.5">
-            <Tv className="h-3 w-3 text-primary" />
-            <span>ITV Master Transmission:</span>
-            <span className="text-emerald-500 font-bold uppercase">1080p Live</span>
-          </span>
-        </div>
-
-        {/* Real Core Server Availability */}
-        <div className="pl-4 sm:pl-6 flex items-center gap-2">
-          <Server className="h-3 w-3 text-muted-foreground" />
-          <span className="text-muted-foreground">Datacenter:</span>
-          <Link
-            href="/servers"
-            className="flex items-center gap-1 font-bold text-foreground hover:text-primary transition-colors"
-          >
-            <span className={isServerHealthy ? 'text-emerald-500' : 'text-amber-500'}>
-              {loading ? '...' : `${onlineServers}/${totalServers} Online`}
-            </span>
-            {offlineServers > 0 && (
-              <span className="text-rose-500">({offlineServers} Offline)</span>
-            )}
-          </Link>
-        </div>
-
-        {/* Network Operations */}
-        <div className="pl-4 sm:pl-6 hidden md:flex items-center gap-2">
-          <Network className="h-3 w-3 text-muted-foreground" />
-          <span className="text-muted-foreground">Operations LAN:</span>
-          <span className="font-semibold text-foreground">10.1.0.0/16 Active</span>
-        </div>
-
-        {/* Next Scheduled Maintenance */}
-        <div className="pl-4 sm:pl-6 hidden lg:flex items-center gap-2">
-          <Calendar className="h-3 w-3 text-amber-500" />
-          <span className="text-muted-foreground">Scheduled Maintenance:</span>
-          <Link
-            href="/maintenance/task-submission"
-            className="text-foreground font-semibold hover:text-primary transition-colors flex items-center gap-1"
-          >
-            <span>{nextMaintenance}</span>
-            <ArrowRight className="h-2.5 w-2.5 opacity-60" />
-          </Link>
-        </div>
+      {/* Left Badge: Fixed Branding Anchor */}
+      <div className="flex items-center gap-2 pl-2.5 pr-3 py-1 bg-gradient-to-r from-primary to-rose-700 text-white font-bold text-[10px] tracking-wider rounded-md shrink-0 shadow-xs uppercase select-none z-20">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
+        </span>
+        <Calendar className="h-3 w-3 shrink-0" />
+        <span className="font-sans font-bold tracking-wide">MAINTENANCE SCHEDULE</span>
       </div>
 
-      {/* Right: Bangladesh Standard Time (BST) */}
-      <div className="flex items-center gap-3 shrink-0 pl-4">
-        <div className="flex items-center gap-1.5 text-muted-foreground font-mono">
-          <Clock className="h-3 w-3 text-primary" />
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-sans font-bold">
-            Dhaka BST:
-          </span>
-          <span className="font-bold text-foreground tabular-nums">{timeStr || '--:--:--'}</span>
-        </div>
+      {/* Center: Infinite Continuous Scrolling Marquee */}
+      <div className="relative flex-1 overflow-hidden h-full flex items-center mx-3">
+        {/* Soft Left & Right Fade Masks */}
+        <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-muted/70 dark:from-card/90 to-transparent pointer-events-none z-10" />
+        <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-muted/70 dark:from-card/90 to-transparent pointer-events-none z-10" />
+
+        {tasks.length > 0 ? (
+          <div className="animate-itv-ticker will-change-transform flex items-center gap-6 py-0.5">
+            {loopItems.map((task, idx) => (
+              <React.Fragment key={`${task.id}-${idx}`}>
+                <Link
+                  href="/maintenance/task-submission"
+                  className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-card/80 hover:bg-card border border-border/70 hover:border-primary/50 text-foreground transition-all duration-150 group shadow-2xs hover:shadow-xs cursor-pointer"
+                  title={`Scheduled for ${task.date} (${task.dayOfWeek}) - Click to view or perform`}
+                >
+                  <span className="text-[10px] font-mono font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">
+                    {task.date} <span className="opacity-75 font-sans font-medium">({task.dayOfWeek})</span>
+                  </span>
+                  <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors flex items-center gap-1">
+                    {task.scheduledTask}
+                  </span>
+                  <span className="text-[9px] font-mono font-bold uppercase px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                    Upcoming
+                  </span>
+                  <ArrowRight className="h-2.5 w-2.5 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all opacity-70" />
+                </Link>
+                <span className="text-muted-foreground/30 font-bold select-none text-xs">&bull;</span>
+              </React.Fragment>
+            ))}
+          </div>
+        ) : (
+          <div className="text-xs text-muted-foreground flex items-center gap-2 pl-4">
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+            <span>All scheduled maintenance tasks are completed for this cycle.</span>
+          </div>
+        )}
       </div>
+
+      {/* Right Action: Direct Link to Maintenance Schedule Manager */}
+      <Link
+        href="/maintenance/task-submission"
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold text-primary hover:text-primary-foreground bg-primary/10 hover:bg-primary border border-primary/20 transition-all duration-150 shrink-0 z-20 shadow-2xs group"
+        title="Open Maintenance Schedule Manager"
+      >
+        <span>View Schedule</span>
+        <ArrowRight className="h-2.5 w-2.5 group-hover:translate-x-0.5 transition-transform" />
+      </Link>
     </div>
   );
 }

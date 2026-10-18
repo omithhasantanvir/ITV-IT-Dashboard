@@ -576,7 +576,13 @@ body {
 }
 
 .animate-itv-ticker {
-  animation: itvTicker 35s linear infinite;
+  display: flex;
+  width: max-content;
+  animation: itvTicker 38s linear infinite;
+}
+
+.animate-itv-ticker:hover {
+  animation-play-state: paused;
 }
 
 @keyframes itvMeshGradient {

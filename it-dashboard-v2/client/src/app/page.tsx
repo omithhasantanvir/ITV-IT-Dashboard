@@ -96,14 +96,6 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex items-center gap-2.5">
-          <Link
-            href="/live"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500 hover:text-white text-red-500 text-xs font-semibold transition-colors"
-          >
-            <Tv className="h-3.5 w-3.5" />
-            <span>Watch Live Transmission</span>
-          </Link>
-
           <button
             onClick={() => fetchSummary(true)}
             disabled={loading || refreshing}

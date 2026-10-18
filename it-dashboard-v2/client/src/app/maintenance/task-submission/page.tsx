@@ -232,6 +232,9 @@ export default function ScheduledTasksPage() {
     setTasks(updated);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('itv_maintenance_tasks_updated'));
+      }
     } catch (e) {
       console.error('Failed to save tasks', e);
     }
