@@ -739,7 +739,7 @@ export default function EmployeesPage() {
                 <th className="px-4 py-3">Status & Category</th>
                 <th className="px-4 py-3">Duty Status</th>
                 <th className="px-4 py-3">Service Timeline</th>
-                {activeTab !== 'EX' && <th className="px-4 py-3">PABX & Hardware</th>}
+                {activeTab !== 'EX' && <th className="px-4 py-3">PABX Extension</th>}
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -917,34 +917,17 @@ export default function EmployeesPage() {
                         )}
                       </td>
 
-                      {/* Hardware & Extensions */}
+                      {/* PABX Extension */}
                       {activeTab !== 'EX' && (
                         <td className="p-4">
-                          <div className="space-y-1">
-                            {emp.extensionNumber ? (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
-                                <PhoneCall className="h-2.5 w-2.5" />
-                                <span>Ext {emp.extensionNumber}</span>
-                              </span>
-                            ) : (
-                              <span className="text-[10px] text-muted-foreground">No Extension</span>
-                            )}
-
-                            <div>
-                              {emp.computers && emp.computers.length > 0 ? (
-                                emp.computers.map((c: any) => (
-                                  <span
-                                    key={c.id || c.assetId}
-                                    className="inline-block text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground mr-1"
-                                  >
-                                    {c.assetId}
-                                  </span>
-                                ))
-                              ) : (
-                                <p className="text-[10px] text-muted-foreground">0 Workstations</p>
-                              )}
-                            </div>
-                          </div>
+                          {emp.extensionNumber ? (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+                              <PhoneCall className="h-2.5 w-2.5" />
+                              <span>Ext {emp.extensionNumber}</span>
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-muted-foreground">No Extension</span>
+                          )}
                         </td>
                       )}
 

@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import prisma from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth';
 import { ITStatus, Role } from '@prisma/client';
-import { fallbackUsers } from '../lib/fallbackData';
+import { fallbackUsers, saveFallbackData } from '../lib/fallbackData';
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -307,6 +307,7 @@ export const createUser = async (req: AuthRequest, res: Response) => {
       }
 
       fallbackUsers.unshift(safeUserData);
+      saveFallbackData();
       return res.status(201).json({
         success: true,
         message: 'Employee created successfully.',
@@ -411,6 +412,7 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
       const idx = fallbackUsers.findIndex((u) => u.id === targetUser.id || u.employeeId === targetUser.id);
       if (idx !== -1) {
         fallbackUsers[idx] = { ...fallbackUsers[idx], ...dataToUpdate, updatedAt: new Date() };
+        saveFallbackData();
         return res.json({ success: true, message: 'User updated successfully.', data: fallbackUsers[idx] });
       }
       return res.status(404).json({ success: false, message: 'User not found.' });
@@ -478,6 +480,7 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
       const idx = fallbackUsers.findIndex((u) => u.id === targetUser.id || u.employeeId === targetUser.id);
       if (idx !== -1) {
         fallbackUsers.splice(idx, 1);
+        saveFallbackData();
       }
     }
 
@@ -521,6 +524,7 @@ export const updateITStatus = async (req: AuthRequest, res: Response) => {
       const u = fallbackUsers.find((x) => x.id === id || x.employeeId === id);
       if (u) {
         u.itStatus = itStatus;
+        saveFallbackData();
         return res.json({ success: true, message: 'IT status updated.', data: { id: u.id, name: u.name, itStatus } });
       }
       return res.status(404).json({ success: false, message: 'User not found.' });
@@ -572,6 +576,7 @@ export const resetUserPassword = async (req: AuthRequest, res: Response) => {
       const idx = fallbackUsers.findIndex((u) => u.id === targetUser.id || u.employeeId === targetUser.id);
       if (idx !== -1) {
         fallbackUsers[idx].password = hashedPassword;
+        saveFallbackData();
       }
     }
 
