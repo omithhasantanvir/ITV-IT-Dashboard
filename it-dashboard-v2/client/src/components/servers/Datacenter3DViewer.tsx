@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { ServerNode } from '@/app/servers/page';
+import { ServerNode } from '@/components/servers/rack/RackTypes';
 import {
   RotateCcw,
   DoorOpen,
