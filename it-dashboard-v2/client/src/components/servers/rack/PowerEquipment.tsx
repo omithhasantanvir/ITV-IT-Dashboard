@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { RackEquipment } from './RackTypes';
+import { RackEquipment, U_HEIGHT_PX } from './RackTypes';
 import { Zap, ShieldCheck } from 'lucide-react';
 
 interface PowerEquipmentProps {
@@ -10,7 +10,7 @@ interface PowerEquipmentProps {
 
 export const PowerEquipment: React.FC<PowerEquipmentProps> = ({ equipment }) => {
   const isUps = equipment.category === 'ups';
-  const heightPx = equipment.uHeight * 28;
+  const heightPx = equipment.uHeight * U_HEIGHT_PX;
 
   if (isUps) {
     return (

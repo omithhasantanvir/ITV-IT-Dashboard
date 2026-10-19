@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ServerNode,
   RackEquipment,
   RackViewMode,
+  U_HEIGHT_PX,
 } from './RackTypes';
 import { RackRail } from './RackRail';
 import { RackServer } from './RackServer';
@@ -13,7 +14,7 @@ import { PatchPanel } from './PatchPanel';
 import { StorageArray } from './StorageArray';
 import { PowerEquipment } from './PowerEquipment';
 import { ServerDetailsPanel } from './ServerDetailsPanel';
-import { RackStatusSummary, VerticalOccupancyStrip } from './RackStatusSummary';
+import { VerticalOccupancyStrip } from './RackStatusSummary';
 import {
   Server,
   Layers,
@@ -74,6 +75,18 @@ export const ServerRack: React.FC<ServerRackProps> = ({
 
   const isRack1 = rackNumber === '01';
 
+  // Press Escape to retract any extended server in this rack
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedEquipment) {
+        if (onPlaySound) onPlaySound('slide');
+        onSelectEquipment(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedEquipment, onSelectEquipment, onPlaySound]);
+
   // Toggle Door Open/Close
   const handleToggleDoor = () => {
     if (doorOpen) {
@@ -110,21 +123,22 @@ export const ServerRack: React.FC<ServerRackProps> = ({
   // Equipment sorted from U42 down to U01
   const sortedEquipment = [...equipmentList].sort((a, b) => b.uStart - a.uStart);
 
-  return (
-    <div className="w-full flex flex-col items-center gap-3 font-mono">
-      {/* 1. TOP RACK STATUS & CAPACITY SUMMARY BAR */}
-      <RackStatusSummary
-        rackTitle={rackTitle}
-        rackNumber={rackNumber}
-        equipmentList={equipmentList}
-        servers={servers}
-        hoveredU={hoveredU}
-        onHoverU={setHoveredU}
-      />
+  // Exact vertical position calculation for beside-the-server details panel
+  const totalRackHeight = 42 * U_HEIGHT_PX; // 882px
+  const selectedTopOffset = selectedEquipment
+    ? (42 - (selectedEquipment.uStart + selectedEquipment.uHeight - 1)) * U_HEIGHT_PX
+    : 0;
+  // Clamped top position so details panel never overflows the 882px rack boundary
+  const clampedPanelTop = Math.max(8, Math.min(selectedTopOffset - 24, totalRackHeight - 400));
 
-      {/* 2. MAIN 42U PHYSICAL SERVER CABINET ENCLOSURE */}
+  return (
+    <div className="w-full flex flex-col items-center font-mono relative">
+      {/* =====================================================================
+          MAIN 42U COMPACT PHYSICAL SERVER CABINET ENCLOSURE
+          Reduced by 25% for realistic fit within 1080px desktop viewports.
+          ===================================================================== */}
       <div
-        className={`w-full max-w-[480px] relative transition-transform duration-500 ${
+        className={`w-full max-w-[420px] sm:max-w-[440px] relative transition-transform duration-500 ${
           viewMode === '3d'
             ? '[perspective:1400px] [transform:rotateY(-7deg)_rotateX(2deg)] shadow-[25px_25px_60px_rgba(0,0,0,0.9)]'
             : ''
@@ -264,14 +278,18 @@ export const ServerRack: React.FC<ServerRackProps> = ({
 
         {/* =================================================================
             CABINET CHASSIS FRAME & INTERNAL EQUIPMENT CHAMBER
+            Exact 882px (42 * 21px) vertical chamber. No overflow:hidden!
             ================================================================= */}
         <div className="w-full border-x border-zinc-800 bg-[#08090c] relative shadow-[0_20px_50px_rgba(0,0,0,0.9)] flex">
-          {/* Vertical 42U Rails on Left and Right */}
+          {/* Vertical 42U Rails on Left */}
           <RackRail side="left" units={42} />
 
-          {/* Center Equipment Column */}
-          <div className="flex-1 mx-6 sm:mx-7 bg-[#0b0c10] flex flex-col relative z-10 min-h-[600px] border-x border-zinc-800/80">
-            {/* RENDER ALL 42U EQUIPMENT (From U42 to U01) */}
+          {/* Center Equipment Column: Exact 882px (42 * 21px) */}
+          <div
+            style={{ height: `${totalRackHeight}px` }}
+            className="flex-1 mx-5 sm:mx-6 bg-[#0b0c10] flex flex-col relative z-10 border-x border-zinc-800/80"
+          >
+            {/* RENDER ALL 42U EQUIPMENT (From U42 down to U01) */}
             {sortedEquipment.map((eq) => {
               const isSelected = selectedEquipment?.id === eq.id;
               const isHovered = hoveredEquipmentId === eq.id;
@@ -319,7 +337,7 @@ export const ServerRack: React.FC<ServerRackProps> = ({
               return (
                 <div
                   key={eq.id}
-                  style={{ height: `${eq.uHeight * 28}px` }}
+                  style={{ height: `${eq.uHeight * U_HEIGHT_PX}px` }}
                   className="w-full relative px-1 py-0.5 border-b border-zinc-800/60 bg-[#0c0d12] flex items-center justify-center select-none"
                 >
                   <div className="w-full h-full rounded-[1px] bg-[#101116] border border-zinc-800/80 server-honeycomb-grill flex items-center justify-center opacity-70">
@@ -332,7 +350,7 @@ export const ServerRack: React.FC<ServerRackProps> = ({
             })}
           </div>
 
-          {/* Right Rail */}
+          {/* Vertical 42U Rails on Right */}
           <RackRail side="right" units={42} />
 
           {/* Slim Vertical Mini Occupancy Strip on far right */}
@@ -401,14 +419,48 @@ export const ServerRack: React.FC<ServerRackProps> = ({
             </div>
           </div>
         </div>
+
+        {/* ===================================================================
+            SERVER DETAILS PANEL: BESIDE THE EXTENDED SERVER (DESKTOP)
+            Appears at the exact same moment the server pulls out, anchored
+            directly beside the extended chassis at that specific U height!
+            =================================================================== */}
+        {selectedEquipment && (
+          <div
+            style={{ top: `${clampedPanelTop}px` }}
+            className={`hidden xl:block absolute z-50 w-[380px] sm:w-[420px] transition-all duration-300 ${
+              isRack1
+                ? 'left-full ml-4'
+                : 'right-full mr-4'
+            }`}
+          >
+            {/* Visual illuminated indicator tether pointing from rack to panel */}
+            <div
+              className={`absolute top-6 w-4 h-[2px] bg-gradient-to-r from-cyan-400 to-teal-400 shadow-[0_0_8px_#22d3ee] pointer-events-none ${
+                isRack1 ? '-left-4' : '-right-4'
+              }`}
+            />
+            <ServerDetailsPanel
+              equipment={selectedEquipment}
+              serverNode={selectedServerNode}
+              rackNumber={rackNumber}
+              rackTitle={rackTitle}
+              onClose={() => onSelectEquipment(null)}
+              onPingSingle={onPingSingle}
+              onCopyIp={onCopyIp}
+              copiedIp={copiedIp}
+              onPlaySound={onPlaySound}
+            />
+          </div>
+        )}
       </div>
 
       {/* ===================================================================
-          3. DOCKED SERVER DETAILS PANEL
-          Appears smoothly when any server is pulled out!
+          SERVER DETAILS PANEL: RESPONSIVE FALLBACK (< 1280px / MOBILE)
+          Docks cleanly adjacent to the rack on narrow viewports
           =================================================================== */}
       {selectedEquipment && (
-        <div className="w-full max-w-[480px]">
+        <div className="xl:hidden w-full max-w-[420px] sm:max-w-[440px] mt-4 z-50">
           <ServerDetailsPanel
             equipment={selectedEquipment}
             serverNode={selectedServerNode}

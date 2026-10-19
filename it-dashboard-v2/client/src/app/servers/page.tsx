@@ -263,6 +263,24 @@ export default function ServersPage() {
     return () => clearInterval(interval);
   }, [autoPing]);
 
+  // Global Escape key handler to retract any pulled-out server
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (selectedEquipmentR1) {
+          playSound('slide');
+          setSelectedEquipmentR1(null);
+        }
+        if (selectedEquipmentR2) {
+          playSound('slide');
+          setSelectedEquipmentR2(null);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedEquipmentR1, selectedEquipmentR2]);
+
   // Telemetry KPIs
   const stats = useMemo(() => {
     const total = servers.length;
@@ -495,48 +513,52 @@ export default function ServersPage() {
               <BrandLoading size="md" text="Syncing Datacenter Server Racks..." />
             </div>
           ) : (
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-10 items-start max-w-[1080px] mx-auto px-2 sm:px-4">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-start max-w-[1360px] mx-auto px-2 sm:px-4">
               {/* ITV RACK 01: Core Enterprise & Newsroom */}
-              <ServerRack
-                rackNumber="01"
-                rackTitle="ITV RACK 01 • CORE ENTERPRISE & NEWSROOM"
-                rackSub="Subnet: 172.19.4.x / 172.19.8.x • Power: 2.4 kW"
-                equipmentList={RACK_01_EQUIPMENT}
-                servers={servers}
-                selectedEquipment={selectedEquipmentR1}
-                onSelectEquipment={(eq) => {
-                  setSelectedEquipmentR1(eq);
-                  if (eq) setSelectedEquipmentR2(null);
-                }}
-                hoveredEquipmentId={hoveredEquipmentId}
-                onHoverEquipment={setHoveredEquipmentId}
-                onPingSingle={handlePingSingle}
-                onCopyIp={handleCopyIp}
-                copiedIp={copiedIp}
-                soundEnabled={soundEnabled}
-                onPlaySound={playSound}
-              />
+              <div className={`transition-opacity duration-300 w-full flex justify-center ${selectedEquipmentR2 ? 'opacity-35 pointer-events-none' : 'opacity-100'}`}>
+                <ServerRack
+                  rackNumber="01"
+                  rackTitle="ITV RACK 01 • CORE ENTERPRISE & NEWSROOM"
+                  rackSub="Subnet: 172.19.4.x / 172.19.8.x • Power: 2.4 kW"
+                  equipmentList={RACK_01_EQUIPMENT}
+                  servers={servers}
+                  selectedEquipment={selectedEquipmentR1}
+                  onSelectEquipment={(eq) => {
+                    setSelectedEquipmentR1(eq);
+                    if (eq) setSelectedEquipmentR2(null);
+                  }}
+                  hoveredEquipmentId={hoveredEquipmentId}
+                  onHoverEquipment={setHoveredEquipmentId}
+                  onPingSingle={handlePingSingle}
+                  onCopyIp={handleCopyIp}
+                  copiedIp={copiedIp}
+                  soundEnabled={soundEnabled}
+                  onPlaySound={playSound}
+                />
+              </div>
 
               {/* ITV RACK 02: Grass Valley Broadcast System */}
-              <ServerRack
-                rackNumber="02"
-                rackTitle="ITV RACK 02 • GRASS VALLEY BROADCAST SYSTEM"
-                rackSub="Subnet: 10.1.2.x / 10.1.4.x • Power: 3.1 kW"
-                equipmentList={RACK_02_EQUIPMENT}
-                servers={servers}
-                selectedEquipment={selectedEquipmentR2}
-                onSelectEquipment={(eq) => {
-                  setSelectedEquipmentR2(eq);
-                  if (eq) setSelectedEquipmentR1(null);
-                }}
-                hoveredEquipmentId={hoveredEquipmentId}
-                onHoverEquipment={setHoveredEquipmentId}
-                onPingSingle={handlePingSingle}
-                onCopyIp={handleCopyIp}
-                copiedIp={copiedIp}
-                soundEnabled={soundEnabled}
-                onPlaySound={playSound}
-              />
+              <div className={`transition-opacity duration-300 w-full flex justify-center ${selectedEquipmentR1 ? 'opacity-35 pointer-events-none' : 'opacity-100'}`}>
+                <ServerRack
+                  rackNumber="02"
+                  rackTitle="ITV RACK 02 • GRASS VALLEY BROADCAST SYSTEM"
+                  rackSub="Subnet: 10.1.2.x / 10.1.4.x • Power: 3.1 kW"
+                  equipmentList={RACK_02_EQUIPMENT}
+                  servers={servers}
+                  selectedEquipment={selectedEquipmentR2}
+                  onSelectEquipment={(eq) => {
+                    setSelectedEquipmentR2(eq);
+                    if (eq) setSelectedEquipmentR1(null);
+                  }}
+                  hoveredEquipmentId={hoveredEquipmentId}
+                  onHoverEquipment={setHoveredEquipmentId}
+                  onPingSingle={handlePingSingle}
+                  onCopyIp={handleCopyIp}
+                  copiedIp={copiedIp}
+                  soundEnabled={soundEnabled}
+                  onPlaySound={playSound}
+                />
+              </div>
             </div>
           )
         ) : (

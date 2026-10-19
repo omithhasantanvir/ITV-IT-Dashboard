@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { RackEquipment } from './RackTypes';
+import { RackEquipment, U_HEIGHT_PX } from './RackTypes';
 
 interface PatchPanelProps {
   equipment: RackEquipment;
@@ -12,7 +12,7 @@ export const PatchPanel: React.FC<PatchPanelProps> = ({ equipment }) => {
 
   return (
     <div
-      style={{ height: `${equipment.uHeight * 28}px` }}
+      style={{ height: `${equipment.uHeight * U_HEIGHT_PX}px` }}
       className="w-full relative px-1 py-0.5 border-b border-zinc-800/80 transition-all select-none"
     >
       <div className="w-full h-full rounded-[2px] bg-gradient-to-r from-[#14151a] via-[#0d0e12] to-[#14151a] border border-zinc-700/80 flex items-center justify-between px-1.5 shadow-inner">

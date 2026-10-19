@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { RackEquipment } from './RackTypes';
+import { RackEquipment, U_HEIGHT_PX } from './RackTypes';
 import { Database, HardDrive } from 'lucide-react';
 
 interface StorageArrayProps {
@@ -9,7 +9,7 @@ interface StorageArrayProps {
 }
 
 export const StorageArray: React.FC<StorageArrayProps> = ({ equipment }) => {
-  const heightPx = equipment.uHeight * 28;
+  const heightPx = equipment.uHeight * U_HEIGHT_PX;
   const is4U = equipment.uHeight >= 4;
   const driveCount = equipment.driveBayCount || (is4U ? 24 : 12);
   const rows = is4U ? 4 : 2;

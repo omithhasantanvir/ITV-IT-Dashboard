@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ServerNode,
   RackEquipment,
   RackViewMode,
+  U_HEIGHT_PX,
 } from './RackTypes';
 import {
   Server,
@@ -22,6 +23,7 @@ import {
   ChevronRight,
   Maximize2,
   ArrowRight,
+  RotateCcw,
   Sliders,
 } from 'lucide-react';
 
@@ -60,8 +62,8 @@ export const RackServer: React.FC<RackServerProps> = ({
   const isWarning = serverNode?.status === 'WARNING';
   const isOffline = serverNode ? !isOnline && !isWarning : false;
 
-  // Visual height in pixels (1U = 28px, 2U = 56px, 3U = 84px, 4U = 112px)
-  const heightPx = equipment.uHeight * 28;
+  // Visual height in pixels (1U = 21px, 2U = 42px, 3U = 63px, 4U = 84px)
+  const heightPx = equipment.uHeight * U_HEIGHT_PX;
   const uDisplay = equipment.uHeight > 1
     ? `U${equipment.uStart}-${equipment.uStart + equipment.uHeight - 1}`
     : `U${equipment.uStart}`;
@@ -71,6 +73,12 @@ export const RackServer: React.FC<RackServerProps> = ({
   const displayModel = equipment.model;
 
   const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onPlaySound) onPlaySound('slide');
+    onSelect(equipment);
+  };
+
+  const handleRetract = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (onPlaySound) onPlaySound('slide');
     onSelect(equipment);
@@ -94,7 +102,7 @@ export const RackServer: React.FC<RackServerProps> = ({
             {/* PSU 1 */}
             <div className="h-full py-0.5 px-1.5 rounded-[2px] bg-[#1b1c24] border border-zinc-700 flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_4px_#34d399]" />
-              <div className="flex flex-col text-[6.5px] leading-tight text-zinc-400">
+              <div className="flex flex-col text-[6px] leading-tight text-zinc-400">
                 <span className="text-zinc-200 font-bold">PSU 1</span>
                 <span>230V OK</span>
               </div>
@@ -106,7 +114,7 @@ export const RackServer: React.FC<RackServerProps> = ({
             {/* PSU 2 (Redundant) */}
             <div className="h-full py-0.5 px-1.5 rounded-[2px] bg-[#1b1c24] border border-zinc-700 flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_4px_#34d399]" />
-              <div className="flex flex-col text-[6.5px] leading-tight text-zinc-400">
+              <div className="flex flex-col text-[6px] leading-tight text-zinc-400">
                 <span className="text-zinc-200 font-bold">PSU 2</span>
                 <span>230V OK</span>
               </div>
@@ -118,8 +126,8 @@ export const RackServer: React.FC<RackServerProps> = ({
 
           {/* Center Info Tag */}
           <div className="flex flex-col items-center leading-none">
-            <span className="text-[7px] text-zinc-400 font-bold">{displayName} • REAR I/O</span>
-            <span className="text-[6.5px] text-zinc-500 font-mono">{displayIp}</span>
+            <span className="text-[6.5px] text-zinc-400 font-bold">{displayName} • REAR I/O</span>
+            <span className="text-[6px] text-zinc-500 font-mono">{displayIp}</span>
           </div>
 
           {/* Network Interfaces: 4x 1GbE RJ45 + Dual 10G SFP+ */}
@@ -129,7 +137,7 @@ export const RackServer: React.FC<RackServerProps> = ({
               {Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
-                  className="w-2 h-2.5 rounded-[1px] bg-[#111218] border border-zinc-700 flex flex-col justify-between p-[1px]"
+                  className="w-2 h-2 rounded-[1px] bg-[#111218] border border-zinc-700 flex flex-col justify-between p-[1px]"
                   title={`1GbE Port ${i + 1}`}
                 >
                   <div className="w-full h-0.5 bg-emerald-400 animate-pulse" />
@@ -141,13 +149,13 @@ export const RackServer: React.FC<RackServerProps> = ({
             {/* Dual 10G SFP+ Optical Cages */}
             <div className="flex items-center gap-0.5 bg-black/60 p-0.5 rounded border border-zinc-800">
               <div
-                className="w-3 h-3 rounded-[1px] bg-zinc-900 border border-cyan-500/50 flex items-center justify-center shadow-[0_0_3px_rgba(6,182,212,0.4)]"
+                className="w-2.5 h-2.5 rounded-[1px] bg-zinc-900 border border-cyan-500/50 flex items-center justify-center shadow-[0_0_3px_rgba(6,182,212,0.4)]"
                 title="10G SFP+ Optic 1"
               >
                 <div className="w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_4px_#22d3ee] animate-pulse" />
               </div>
               <div
-                className="w-3 h-3 rounded-[1px] bg-zinc-900 border border-cyan-500/50 flex items-center justify-center shadow-[0_0_3px_rgba(6,182,212,0.4)]"
+                className="w-2.5 h-2.5 rounded-[1px] bg-zinc-900 border border-cyan-500/50 flex items-center justify-center shadow-[0_0_3px_rgba(6,182,212,0.4)]"
                 title="10G SFP+ Optic 2"
               >
                 <div className="w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_4px_#22d3ee] animate-pulse" />
@@ -160,87 +168,217 @@ export const RackServer: React.FC<RackServerProps> = ({
   }
 
   // --------------------------------------------------------------------------
-  // FRONT / 3D VIEW: Physical Bezel, Drive Bays, Rails, Click-to-Pull-Out
+  // FRONT / 3D VIEW: Physical Bezel, Drive Bays, Rails, Drawer Pull-Out
   // --------------------------------------------------------------------------
   return (
     <div
-      style={{
-        height: `${heightPx}px`,
-        perspective: '1200px',
-      }}
-      className="w-full relative px-1 py-0.5 border-b border-zinc-800/80 transition-all select-none"
+      style={{ height: `${heightPx}px` }}
+      className="w-full relative px-1 py-0.5 border-b border-zinc-800/80 select-none group"
       onMouseEnter={() => onHover(equipment.id)}
       onMouseLeave={() => onHover(null)}
-      onClick={handleClick}
     >
       {/* --------------------------------------------------------------------
-          TELESCOPING STAINLESS STEEL BALL-BEARING SLIDE RAILS
-          (Physically slide out from rack rails when server is pulled out)
+          1. RECESSED EMPTY RACK BAY CAVITY
+          Remains fixed in place inside the rack when server is pulled out!
+          Reveals interior sheet metal, rail guides, and backplane connectors.
           -------------------------------------------------------------------- */}
-      <div
-        className={`absolute -left-3 sm:-left-4 top-1/2 -translate-y-1/2 h-2.5 rounded-l border border-zinc-400 transition-all duration-300 pointer-events-none z-30 ${
-          isSelected
-            ? 'w-4 sm:w-5 opacity-100 shadow-[0_3px_10px_rgba(0,0,0,0.85)]'
-            : 'w-0 opacity-0'
-        }`}
-        style={{
-          background: 'linear-gradient(180deg, #4b5563 0%, #9ca3af 35%, #e5e7eb 50%, #6b7280 65%, #374151 100%)',
-        }}
-      >
-        <div className="h-full flex items-center justify-around px-0.5">
-          <div className="h-1 w-1 rounded-full bg-zinc-200 border border-zinc-600 shadow-inner" />
-          <div className="h-1 w-1 rounded-full bg-zinc-200 border border-zinc-600 shadow-inner" />
-        </div>
-      </div>
+      {isSelected && (
+        <div className="absolute inset-x-1 inset-y-0.5 rounded-[1px] bg-[#07080b] border border-zinc-800/90 shadow-[inset_0_3px_10px_rgba(0,0,0,0.95),inset_0_0_20px_rgba(0,0,0,0.8)] flex items-center justify-between px-2 overflow-hidden pointer-events-none z-0">
+          {/* Left Stationary C-Channel Slide Rail inside rack */}
+          <div className="w-2.5 h-full bg-[#1b1c24] border-r border-zinc-700/80 flex flex-col justify-around py-0.5">
+            <div className="w-1.5 h-1 rounded-full bg-zinc-600/80 ml-0.5" />
+            <div className="w-1.5 h-1 rounded-full bg-zinc-600/80 ml-0.5" />
+          </div>
 
-      <div
-        className={`absolute -right-3 sm:-right-4 top-1/2 -translate-y-1/2 h-2.5 rounded-r border border-zinc-400 transition-all duration-300 pointer-events-none z-30 ${
-          isSelected
-            ? 'w-4 sm:w-5 opacity-100 shadow-[0_3px_10px_rgba(0,0,0,0.85)]'
-            : 'w-0 opacity-0'
-        }`}
-        style={{
-          background: 'linear-gradient(180deg, #4b5563 0%, #9ca3af 35%, #e5e7eb 50%, #6b7280 65%, #374151 100%)',
-        }}
-      >
-        <div className="h-full flex items-center justify-around px-0.5">
-          <div className="h-1 w-1 rounded-full bg-zinc-200 border border-zinc-600 shadow-inner" />
-          <div className="h-1 w-1 rounded-full bg-zinc-200 border border-zinc-600 shadow-inner" />
+          {/* Stenciled slot warning and backplane connectors */}
+          <div className="flex items-center gap-3 opacity-60">
+            <div className="flex items-center gap-1">
+              <div className="w-2.5 h-2 rounded-[1px] bg-black border border-zinc-700 flex items-center justify-center">
+                <div className="w-1 h-1 bg-amber-500/70 rounded-full" />
+              </div>
+              <span className="text-[6px] font-mono text-zinc-500 font-bold uppercase tracking-widest">
+                BACKPLANE SAS / POWER BUS
+              </span>
+            </div>
+            <span className="text-[6.5px] font-mono text-cyan-500/70 font-black tracking-widest uppercase">
+              {uDisplay} • CHASSIS EXTENDED
+            </span>
+          </div>
+
+          {/* Right Stationary C-Channel Slide Rail inside rack */}
+          <div className="w-2.5 h-full bg-[#1b1c24] border-l border-zinc-700/80 flex flex-col justify-around py-0.5">
+            <div className="w-1.5 h-1 rounded-full bg-zinc-600/80 ml-0.5" />
+            <div className="w-1.5 h-1 rounded-full bg-zinc-600/80 ml-0.5" />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* --------------------------------------------------------------------
-          SERVER CHASSIS CONTAINER
-          Applies 3D translation when pulled out
+          2. PHYSICAL SLIDING SERVER CHASSIS (DRAWER PULL-OUT)
+          When isSelected: Physically slides forward out of the cabinet plane
+          by ~200px, revealing the top galvanized cover and telescoping slide rails!
           -------------------------------------------------------------------- */}
       <div
-        className={`w-full h-full rounded-[2px] transition-all duration-300 ease-out cursor-pointer relative ${
-          isSelected
-            ? 'z-40 scale-[1.015] [transform:translateZ(42px)_translateY(-2px)] shadow-[0_18px_35px_rgba(0,0,0,0.95),0_0_24px_rgba(6,182,212,0.35)] ring-1 ring-cyan-400/90'
+        onClick={handleClick}
+        style={{
+          transform: isSelected
+            ? 'perspective(1100px) translate3d(0, 0, 180px) rotateX(8deg)'
             : isHovered
-            ? 'z-20 scale-[1.005] [transform:translateZ(12px)] shadow-lg shadow-black/80'
-            : 'z-10 [transform:translateZ(0px)]'
+            ? 'perspective(1100px) translate3d(0, 0, 12px)'
+            : 'perspective(1100px) translate3d(0, 0, 0px)',
+          transition: 'all 550ms cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+        className={`w-full h-full rounded-[2px] cursor-pointer relative ${
+          isSelected
+            ? 'z-40 shadow-[0_30px_70px_-10px_rgba(0,0,0,0.95),0_15px_35px_rgba(0,0,0,0.85),0_0_25px_rgba(6,182,212,0.3)] ring-1 ring-cyan-400'
+            : isHovered
+            ? 'z-20 shadow-md shadow-black/80 ring-1 ring-zinc-500/50'
+            : 'z-10'
         }`}
       >
-        {/* TOP GALVANIZED STEEL COVER LID (Revealed when pulled out!) */}
+        {/* ===================================================================
+            TOP GALVANIZED STEEL CHASSIS LID
+            (Visible when pulled out: 190px depth with authentic motherboard
+            diagrams, CPU sockets, memory slots, hazard stripes, and slide rails)
+            =================================================================== */}
         {isSelected && (
-          <div className="absolute -top-3 inset-x-2 h-3 bg-gradient-to-b from-[#2b2e38] via-[#1d1f27] to-[#121318] rounded-t border-t border-x border-zinc-600 text-[6px] font-mono text-zinc-400 flex items-center justify-between px-2 pointer-events-none shadow-md">
-            <span className="font-bold text-zinc-300 flex items-center gap-1">
-              <span className="w-1 h-1 rounded-full bg-cyan-400 animate-pulse" />
-              CHASSIS EXTENDED • {displayModel}
-            </span>
-            <span className="text-[5.5px] text-zinc-500 uppercase tracking-widest font-mono">
-              ASSET ID: {equipment.id.toUpperCase()}
-            </span>
+          <div
+            style={{
+              height: '190px',
+              top: '-190px',
+              background: 'linear-gradient(180deg, #1b1d25 0%, #252833 35%, #1d1f28 70%, #15161d 100%)',
+            }}
+            className="absolute inset-x-0 rounded-t-sm border-t border-x border-zinc-500 shadow-2xl flex flex-col justify-between p-2 font-mono overflow-hidden select-none cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Left & Right Telescoping Stainless Steel Slide Rails */}
+            <div
+              className="absolute left-0 inset-y-0 w-3.5 border-r border-zinc-500 flex flex-col justify-between items-center py-2 shadow-inner"
+              style={{
+                background: 'linear-gradient(90deg, #4b5563 0%, #9ca3af 35%, #e5e7eb 50%, #9ca3af 65%, #374151 100%)',
+              }}
+            >
+              <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 border border-zinc-700 shadow-sm" />
+              <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 border border-zinc-700 shadow-sm" />
+              <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 border border-zinc-700 shadow-sm" />
+              <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 border border-zinc-700 shadow-sm" />
+              <div className="w-2 h-4 rounded-sm bg-blue-600 border border-blue-400 shadow-sm text-[5px] text-white flex items-center justify-center font-bold">
+                ▼
+              </div>
+            </div>
+
+            <div
+              className="absolute right-0 inset-y-0 w-3.5 border-l border-zinc-500 flex flex-col justify-between items-center py-2 shadow-inner"
+              style={{
+                background: 'linear-gradient(90deg, #4b5563 0%, #9ca3af 35%, #e5e7eb 50%, #9ca3af 65%, #374151 100%)',
+              }}
+            >
+              <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 border border-zinc-700 shadow-sm" />
+              <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 border border-zinc-700 shadow-sm" />
+              <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 border border-zinc-700 shadow-sm" />
+              <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 border border-zinc-700 shadow-sm" />
+              <div className="w-2 h-4 rounded-sm bg-blue-600 border border-blue-400 shadow-sm text-[5px] text-white flex items-center justify-center font-bold">
+                ▼
+              </div>
+            </div>
+
+            {/* Top Header of Lid: Asset ID & Retract Button */}
+            <div className="mx-4 flex items-center justify-between pb-1 border-b border-zinc-700/80">
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#22d3ee]" />
+                <span className="text-[7.5px] font-black text-cyan-300 tracking-wider">
+                  CHASSIS EXTENDED • {uDisplay} • {displayModel}
+                </span>
+              </div>
+
+              {/* Retract / Slide Back Control */}
+              <button
+                type="button"
+                onClick={handleRetract}
+                className="px-2 py-0.5 rounded bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-600 text-[7px] font-bold flex items-center gap-1 transition active:scale-95 shadow cursor-pointer"
+                title="Slide server back into rack slot (Esc)"
+              >
+                <RotateCcw className="w-2.5 h-2.5 text-cyan-400" />
+                <span>RETRACT SERVER [ESC]</span>
+              </button>
+            </div>
+
+            {/* Middle Section of Lid: Stamped Motherboard Silk-Screen Diagram */}
+            <div className="mx-4 my-1 flex-1 grid grid-cols-3 gap-2 p-1.5 rounded bg-[#101217]/80 border border-zinc-800/80">
+              {/* Dual CPU Xeon Sockets */}
+              <div className="flex flex-col justify-center items-center p-1 rounded bg-[#161821] border border-zinc-700/60 text-center">
+                <span className="text-[6px] text-zinc-500 font-bold uppercase tracking-wider">DUAL XEON PLATINUM</span>
+                <div className="flex gap-1.5 my-1">
+                  <div className="w-5 h-5 rounded-[1px] bg-zinc-900 border border-cyan-500/60 flex items-center justify-center shadow-inner">
+                    <span className="text-[5px] text-cyan-300 font-bold">CPU 1</span>
+                  </div>
+                  <div className="w-5 h-5 rounded-[1px] bg-zinc-900 border border-cyan-500/60 flex items-center justify-center shadow-inner">
+                    <span className="text-[5px] text-cyan-300 font-bold">CPU 2</span>
+                  </div>
+                </div>
+                <span className="text-[5.5px] text-zinc-400">16 CORES • 32 THREADS</span>
+              </div>
+
+              {/* 16x DDR4 ECC DIMM Slot Array */}
+              <div className="flex flex-col justify-center items-center p-1 rounded bg-[#161821] border border-zinc-700/60 text-center">
+                <span className="text-[6px] text-zinc-500 font-bold uppercase tracking-wider">ECC MEMORY BANKS</span>
+                <div className="flex items-center gap-[1px] my-1">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div key={i} className="w-1 h-5 rounded-[0.5px] bg-emerald-500/40 border border-emerald-500/80" />
+                  ))}
+                  <div className="w-1 h-5" />
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div key={i} className="w-1 h-5 rounded-[0.5px] bg-emerald-500/40 border border-emerald-500/80" />
+                  ))}
+                </div>
+                <span className="text-[5.5px] text-zinc-400">64 GB ECC REGISTERED</span>
+              </div>
+
+              {/* Hot-Swap Cooling Fan Module Array */}
+              <div className="flex flex-col justify-center items-center p-1 rounded bg-[#161821] border border-zinc-700/60 text-center">
+                <span className="text-[6px] text-zinc-500 font-bold uppercase tracking-wider">6x REDUNDANT FANS</span>
+                <div className="grid grid-cols-3 gap-1 my-1">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-3.5 h-3.5 rounded-full bg-black border border-cyan-500/60 flex items-center justify-center shadow-inner"
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-spin" />
+                    </div>
+                  ))}
+                </div>
+                <span className="text-[5.5px] text-cyan-400 font-bold">12,500 RPM • NORMAL</span>
+              </div>
+            </div>
+
+            {/* Bottom Strip of Lid: Industrial Hazard Warning & Asset Barcode */}
+            <div className="mx-4 flex items-center justify-between pt-1 border-t border-zinc-700/80">
+              {/* Caution Warning Stripe */}
+              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 text-[6px] font-bold">
+                <span className="w-1 h-1 rounded-full bg-amber-400 animate-ping" />
+                <span>CAUTION: DUAL POWER SUPPLIES CONNECTED • STATIC SENSITIVE DEVICES</span>
+              </div>
+
+              {/* ITV Asset ID & Serial */}
+              <div className="flex items-center gap-2 text-[6px] text-zinc-400">
+                <span>INDEPENDENT TELEVISION ASSET: <strong className="text-zinc-200">{equipment.id.toUpperCase()}</strong></span>
+                <span className="text-zinc-600">•</span>
+                <span className="font-mono text-cyan-400">IP: {displayIp}</span>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* MAIN SERVER FRONT BEZEL */}
+        {/* ===================================================================
+            MAIN SERVER FRONT BEZEL
+            (Always visible at the front face; contains power button, LEDs,
+            drive bays, rack ears, and branding plate)
+            =================================================================== */}
         <div
           className={`w-full h-full rounded-[2px] border flex items-center justify-between px-1 sm:px-1.5 transition-colors overflow-hidden ${
             isOnline
               ? isSelected
-                ? 'bg-gradient-to-r from-[#171922] via-[#12131a] to-[#171922] border-cyan-500/80'
+                ? 'bg-gradient-to-r from-[#1b1e2a] via-[#12141c] to-[#1b1e2a] border-cyan-400'
                 : 'bg-gradient-to-r from-[#161820] via-[#0f1015] to-[#161820] border-zinc-700/80 hover:border-zinc-500'
               : isWarning
               ? 'bg-gradient-to-r from-[#201c13] via-[#14120a] to-[#201c13] border-amber-600/80'
@@ -250,9 +388,9 @@ export const RackServer: React.FC<RackServerProps> = ({
           {/* ===============================================================
               LEFT SECTION: RACK MOUNTING EAR + CAPTIVE SCREWS + CHASSIS HANDLE
               =============================================================== */}
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-1 shrink-0 h-full py-0.5">
             {/* Left Rack Ear with 2 Captive Screws */}
-            <div className="w-2.5 sm:w-3 h-full py-0.5 flex flex-col justify-between items-center bg-[#252833] rounded-[1px] border border-zinc-600 shadow-sm shrink-0">
+            <div className="w-2.5 sm:w-3 h-full flex flex-col justify-between items-center bg-[#252833] rounded-[1px] border border-zinc-600 shadow-sm shrink-0">
               <div
                 className="w-1.5 h-1.5 rounded-full bg-[#71717a] border border-zinc-900 flex items-center justify-center shadow-inner"
                 title="Captive Rack Mounting Screw"
@@ -267,7 +405,7 @@ export const RackServer: React.FC<RackServerProps> = ({
               </div>
             </div>
 
-            {/* Left Heavy Aluminum Chassis Handle */}
+            {/* Left Solid Aluminum Chassis Handle */}
             <div
               className="w-1.5 sm:w-2 h-full rounded-[1px] border border-zinc-600 shrink-0 shadow-sm"
               style={{
@@ -307,7 +445,7 @@ export const RackServer: React.FC<RackServerProps> = ({
               </div>
 
               {/* U Slot Stamp */}
-              <span className="text-[6.5px] font-mono text-zinc-400 font-bold tracking-tight">
+              <span className="text-[6px] font-mono text-zinc-400 font-bold tracking-tight">
                 {uDisplay}
               </span>
             </div>
@@ -317,12 +455,12 @@ export const RackServer: React.FC<RackServerProps> = ({
               CENTER SECTION: BRAND BADGE + SERVER LABEL + HONEYCOMB EXHAUST
               =============================================================== */}
           <div className="flex-1 mx-1.5 h-full flex items-center justify-between gap-1 overflow-hidden">
-            {/* Ventilation Honeycomb Texture with Professional Tape Label */}
+            {/* Ventilation Honeycomb Texture with Professional Server Badge */}
             <div className="flex-1 h-full rounded-[2px] border border-zinc-800/90 server-honeycomb-grill flex items-center justify-between px-2 overflow-hidden relative shadow-inner">
               {/* Server Name & IP Label Plate */}
               <div className="flex items-center gap-1.5 z-10">
                 <div
-                  className={`px-1.5 py-0.5 rounded-[2px] font-mono text-[8px] sm:text-[9px] font-extrabold tracking-wide flex items-center gap-1 shadow ${
+                  className={`px-1.5 py-0.2 rounded-[2px] font-mono text-[7.5px] sm:text-[8.5px] font-extrabold tracking-wide flex items-center gap-1 shadow ${
                     isOnline
                       ? 'bg-gradient-to-r from-emerald-600 to-teal-700 text-white'
                       : isWarning
@@ -331,21 +469,21 @@ export const RackServer: React.FC<RackServerProps> = ({
                   }`}
                 >
                   <Server className="w-2.5 h-2.5 stroke-[2.5]" />
-                  <span>{displayName}</span>
+                  <span className="truncate max-w-[110px] sm:max-w-[140px]">{displayName}</span>
                 </div>
 
                 {/* Subnet / IP Address */}
-                <div className="hidden sm:flex items-center gap-1 px-1 py-0.5 rounded bg-black/80 border border-zinc-700/80 text-[7.5px] font-mono text-zinc-300 font-bold">
+                <div className="hidden sm:flex items-center gap-1 px-1 py-0.2 rounded bg-black/80 border border-zinc-700/80 text-[7px] font-mono text-zinc-300 font-bold">
                   <span>{displayIp}</span>
                 </div>
               </div>
 
               {/* Vendor & Model Badge */}
-              <div className="hidden md:flex items-center gap-1 z-10 text-[7px] font-mono font-bold text-zinc-400">
+              <div className="hidden md:flex items-center gap-1 z-10 text-[6.5px] font-mono font-bold text-zinc-400">
                 <span className="px-1 py-0.2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
                   {equipment.vendor}
                 </span>
-                <span className="text-zinc-500 truncate max-w-[120px]">{displayModel}</span>
+                <span className="text-zinc-500 truncate max-w-[90px]">{displayModel}</span>
               </div>
             </div>
           </div>
@@ -353,7 +491,7 @@ export const RackServer: React.FC<RackServerProps> = ({
           {/* ===============================================================
               RIGHT SECTION: HOT-SWAP DRIVE CADDIES WITH ACTIVITY LEDS
               =============================================================== */}
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-1 shrink-0 h-full py-0.5">
             {/* Hot-Swap Drive Matrix (2 to 8 bays depending on 1U vs 2U/3U) */}
             <div className="flex items-center gap-0.5 bg-[#0a0b0e] p-0.5 rounded-[2px] border border-zinc-800">
               {Array.from({ length: Math.min(equipment.driveBayCount || 4, 8) }).map((_, i) => (
@@ -363,7 +501,7 @@ export const RackServer: React.FC<RackServerProps> = ({
                   title={`Drive Bay ${i + 1}: SAS 12G Hot-Swap`}
                 >
                   {/* Signature Blue Release Latch */}
-                  <div className="w-full h-1 server-caddy-latch-blue rounded-[0.5px]" />
+                  <div className="w-full h-0.5 server-caddy-latch-blue rounded-[0.5px]" />
                   {/* Drive Activity LED */}
                   <div
                     className={`w-1 h-0.5 rounded-full ${
@@ -376,7 +514,7 @@ export const RackServer: React.FC<RackServerProps> = ({
               ))}
             </div>
 
-            {/* Right Heavy Aluminum Chassis Handle */}
+            {/* Right Solid Aluminum Chassis Handle */}
             <div
               className="w-1.5 sm:w-2 h-full rounded-[1px] border border-zinc-600 shrink-0 shadow-sm"
               style={{
@@ -385,7 +523,7 @@ export const RackServer: React.FC<RackServerProps> = ({
             />
 
             {/* Right Rack Ear with 2 Captive Screws */}
-            <div className="w-2.5 sm:w-3 h-full py-0.5 flex flex-col justify-between items-center bg-[#252833] rounded-[1px] border border-zinc-600 shadow-sm shrink-0">
+            <div className="w-2.5 sm:w-3 h-full flex flex-col justify-between items-center bg-[#252833] rounded-[1px] border border-zinc-600 shadow-sm shrink-0">
               <div
                 className="w-1.5 h-1.5 rounded-full bg-[#71717a] border border-zinc-900 flex items-center justify-center shadow-inner"
                 title="Captive Rack Mounting Screw"
@@ -402,6 +540,22 @@ export const RackServer: React.FC<RackServerProps> = ({
           </div>
         </div>
       </div>
+
+      {/* --------------------------------------------------------------------
+          3. HOVER HUD TOOLTIP (Only when not selected)
+          -------------------------------------------------------------------- */}
+      {isHovered && !isSelected && (
+        <div className="absolute left-1/2 -translate-x-1/2 -top-9 z-50 px-2.5 py-1 rounded bg-[#0b0c12]/95 border border-cyan-500/80 text-[8px] font-mono text-zinc-200 shadow-xl pointer-events-none flex items-center gap-2 whitespace-nowrap backdrop-blur-sm animate-in fade-in zoom-in-95 duration-150">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+          <span className="font-bold text-white">{displayName}</span>
+          <span className="text-zinc-500">•</span>
+          <span className="text-zinc-400">{uDisplay}</span>
+          <span className="text-zinc-500">•</span>
+          <span className="text-cyan-300">{displayIp}</span>
+          <span className="text-zinc-500">•</span>
+          <span className="text-emerald-400 font-bold">CLICK TO PULL OUT</span>
+        </div>
+      )}
     </div>
   );
 };

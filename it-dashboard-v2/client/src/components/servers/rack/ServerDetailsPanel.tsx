@@ -154,14 +154,24 @@ export const ServerDetailsPanel: React.FC<ServerDetailsPanelProps> = ({
             </button>
           )}
 
-          {/* Slide Back / Close */}
+          {/* Slide Back / Retract */}
           <button
             onClick={handleClose}
-            className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-600 text-[10px] font-bold flex items-center gap-1.5 transition active:scale-95"
-            title="Slide server back into cabinet slot"
+            className="px-2.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-600 text-[10px] font-bold flex items-center gap-1.5 transition active:scale-95 shadow cursor-pointer"
+            title="Slide server back into cabinet slot (Esc)"
           >
             <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
             <span>Slide Back</span>
+            <kbd className="hidden sm:inline px-1 rounded bg-black/60 text-[8px] text-zinc-400 font-mono">Esc</kbd>
+          </button>
+
+          {/* Close X */}
+          <button
+            onClick={handleClose}
+            className="p-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-700 transition active:scale-95 shadow cursor-pointer"
+            title="Close details (Esc)"
+          >
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
