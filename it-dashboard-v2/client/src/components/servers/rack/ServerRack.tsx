@@ -14,22 +14,12 @@ import { PatchPanel } from './PatchPanel';
 import { StorageArray } from './StorageArray';
 import { PowerEquipment } from './PowerEquipment';
 import { ServerDetailsPanel } from './ServerDetailsPanel';
-import { VerticalOccupancyStrip } from './RackStatusSummary';
 import {
   Server,
-  Layers,
-  Box,
-  Cable,
   DoorOpen,
   DoorClosed,
-  Unlock,
   Lock,
   RotateCcw,
-  RefreshCw,
-  Eye,
-  Sliders,
-  ChevronDown,
-  ChevronUp,
 } from 'lucide-react';
 
 interface ServerRackProps {
@@ -71,9 +61,9 @@ export const ServerRack: React.FC<ServerRackProps> = ({
   const [viewMode, setViewMode] = useState<RackViewMode>('front');
   // Front Glass / Mesh Door: Open or Closed
   const [doorOpen, setDoorOpen] = useState(false);
-  const [hoveredU, setHoveredU] = useState<number | null>(null);
 
   const isRack1 = rackNumber === '01';
+  const totalRackHeight = 42 * U_HEIGHT_PX; // 42 * 24px = 1008px
 
   // Press Escape to retract any extended server in this rack
   useEffect(() => {
@@ -120,25 +110,112 @@ export const ServerRack: React.FC<ServerRackProps> = ({
     ? servers.find((s) => s.serverName.toUpperCase() === selectedEquipment.name.toUpperCase())
     : undefined;
 
-  // Equipment sorted from U42 down to U01
-  const sortedEquipment = [...equipmentList].sort((a, b) => b.uStart - a.uStart);
-
   // Exact vertical position calculation for beside-the-server details panel
-  const totalRackHeight = 42 * U_HEIGHT_PX; // 882px
   const selectedTopOffset = selectedEquipment
     ? (42 - (selectedEquipment.uStart + selectedEquipment.uHeight - 1)) * U_HEIGHT_PX
     : 0;
-  // Clamped top position so details panel never overflows the 882px rack boundary
-  const clampedPanelTop = Math.max(8, Math.min(selectedTopOffset - 24, totalRackHeight - 400));
+  // Clamped top position so details panel never overflows the 42U rack boundary
+  const clampedPanelTop = Math.max(8, Math.min(selectedTopOffset - 24, totalRackHeight - 420));
+
+  // =========================================================================
+  // 42U SEQUENTIAL RACK SLOT RENDERER
+  // Iterates from U42 down to U01:
+  // - Real hardware renders at its exact physical U position.
+  // - Unoccupied units render as clean, compact, realistic empty rack spaces
+  //   without fake placeholder labels or oversized black blocks.
+  // =========================================================================
+  const render42USlots = () => {
+    const slotElements: React.ReactNode[] = [];
+    let currentU = 42;
+
+    while (currentU >= 1) {
+      // Find equipment whose topmost rack unit matches currentU
+      // (An equipment with uStart and uHeight occupies units from uStart to uStart + uHeight - 1)
+      const eq = equipmentList.find((e) => e.uStart + e.uHeight - 1 === currentU);
+
+      if (eq) {
+        const isSelected = selectedEquipment?.id === eq.id;
+        const isHovered = hoveredEquipmentId === eq.id;
+        const serverNode = eq.serverNodeId
+          ? servers.find((s) => s.id === eq.serverNodeId)
+          : servers.find((s) => s.serverName.toUpperCase() === eq.name.toUpperCase());
+
+        if (eq.category === 'server') {
+          slotElements.push(
+            <RackServer
+              key={eq.id}
+              equipment={eq}
+              serverNode={serverNode}
+              isSelected={isSelected}
+              isHovered={isHovered}
+              doorOpen={doorOpen}
+              viewMode={viewMode}
+              onSelect={handleEquipmentClick}
+              onHover={onHoverEquipment}
+              onPingSingle={onPingSingle}
+              onCopyIp={onCopyIp}
+              copiedIp={copiedIp}
+              onPlaySound={onPlaySound}
+            />
+          );
+        } else if (eq.category === 'switch') {
+          slotElements.push(<NetworkSwitch key={eq.id} equipment={eq} />);
+        } else if (eq.category === 'patch_panel') {
+          slotElements.push(<PatchPanel key={eq.id} equipment={eq} />);
+        } else if (eq.category === 'storage_array') {
+          slotElements.push(<StorageArray key={eq.id} equipment={eq} />);
+        } else if (eq.category === 'ups' || eq.category === 'pdu') {
+          slotElements.push(<PowerEquipment key={eq.id} equipment={eq} />);
+        }
+
+        currentU -= eq.uHeight;
+      } else {
+        // Genuinely unoccupied 1U rack slot: clean, compact, authentic empty rail space
+        const uNum = currentU;
+        slotElements.push(
+          <div
+            key={`unoccupied-u${uNum}`}
+            style={{ height: `${U_HEIGHT_PX}px` }}
+            className="w-full relative px-2 border-b border-zinc-800/40 bg-[#08090d] flex items-center justify-between select-none group/empty hover:bg-[#0c0e14] transition-colors"
+          >
+            {/* Left rail cage nut thread marker */}
+            <div className="flex items-center gap-1.5 opacity-30 group-hover/empty:opacity-60 transition-opacity">
+              <div className="w-1.5 h-1.5 rounded-[1px] bg-zinc-800 border border-zinc-700/60 shadow-inner" />
+              <span className="text-[6.5px] font-mono text-zinc-600 font-medium">U{uNum}</span>
+            </div>
+
+            {/* Subtle clean empty bay guideline (NO fake text) */}
+            <div className="flex items-center gap-2 opacity-20 group-hover/empty:opacity-40 transition-opacity">
+              <div className="h-[1px] w-6 sm:w-12 bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
+              <span className="text-[6px] font-mono text-zinc-600 tracking-widest uppercase">
+                AVAILABLE 1U
+              </span>
+              <div className="h-[1px] w-6 sm:w-12 bg-gradient-to-r from-transparent via-zinc-700 to-transparent" />
+            </div>
+
+            {/* Right rail cage nut thread marker */}
+            <div className="flex items-center gap-1.5 opacity-30 group-hover/empty:opacity-60 transition-opacity">
+              <span className="text-[6.5px] font-mono text-zinc-600 font-medium">U{uNum}</span>
+              <div className="w-1.5 h-1.5 rounded-[1px] bg-zinc-800 border border-zinc-700/60 shadow-inner" />
+            </div>
+          </div>
+        );
+
+        currentU -= 1;
+      }
+    }
+
+    return slotElements;
+  };
 
   return (
     <div className="w-full flex flex-col items-center font-mono relative">
       {/* =====================================================================
-          MAIN 42U COMPACT PHYSICAL SERVER CABINET ENCLOSURE
-          Reduced by 25% for realistic fit within 1080px desktop viewports.
+          MAIN 42U PHYSICAL SERVER CABINET ENCLOSURE
+          Full width for equipment, realistic 19" EIA-310 proportions.
           ===================================================================== */}
       <div
-        className={`w-full max-w-[420px] sm:max-w-[440px] relative transition-transform duration-500 ${
+        className={`w-full max-w-[460px] sm:max-w-[480px] relative transition-transform duration-500 ${
           viewMode === '3d'
             ? '[perspective:1400px] [transform:rotateY(-7deg)_rotateX(2deg)] shadow-[25px_25px_60px_rgba(0,0,0,0.9)]'
             : ''
@@ -278,89 +355,23 @@ export const ServerRack: React.FC<ServerRackProps> = ({
 
         {/* =================================================================
             CABINET CHASSIS FRAME & INTERNAL EQUIPMENT CHAMBER
-            Exact 882px (42 * 21px) vertical chamber. No overflow:hidden!
+            Clean, balanced cabinet frame with left & right mounting rails.
+            Equipment occupies the full usable width. NO right-side extension!
             ================================================================= */}
         <div className="w-full border-x border-zinc-800 bg-[#08090c] relative shadow-[0_20px_50px_rgba(0,0,0,0.9)] flex">
           {/* Vertical 42U Rails on Left */}
           <RackRail side="left" units={42} />
 
-          {/* Center Equipment Column: Exact 882px (42 * 21px) */}
+          {/* Center Equipment Column: Exact 1008px (42 * 24px) */}
           <div
             style={{ height: `${totalRackHeight}px` }}
-            className="flex-1 mx-5 sm:mx-6 bg-[#0b0c10] flex flex-col relative z-10 border-x border-zinc-800/80"
+            className="flex-1 mx-5 sm:mx-6 bg-[#090a0e] flex flex-col relative z-10 border-x border-zinc-800/90"
           >
-            {/* RENDER ALL 42U EQUIPMENT (From U42 down to U01) */}
-            {sortedEquipment.map((eq) => {
-              const isSelected = selectedEquipment?.id === eq.id;
-              const isHovered = hoveredEquipmentId === eq.id;
-              const serverNode = eq.serverNodeId
-                ? servers.find((s) => s.id === eq.serverNodeId)
-                : servers.find((s) => s.serverName.toUpperCase() === eq.name.toUpperCase());
-
-              if (eq.category === 'server') {
-                return (
-                  <RackServer
-                    key={eq.id}
-                    equipment={eq}
-                    serverNode={serverNode}
-                    isSelected={isSelected}
-                    isHovered={isHovered}
-                    doorOpen={doorOpen}
-                    viewMode={viewMode}
-                    onSelect={handleEquipmentClick}
-                    onHover={onHoverEquipment}
-                    onPingSingle={onPingSingle}
-                    onCopyIp={onCopyIp}
-                    copiedIp={copiedIp}
-                    onPlaySound={onPlaySound}
-                  />
-                );
-              }
-
-              if (eq.category === 'switch') {
-                return <NetworkSwitch key={eq.id} equipment={eq} />;
-              }
-
-              if (eq.category === 'patch_panel') {
-                return <PatchPanel key={eq.id} equipment={eq} />;
-              }
-
-              if (eq.category === 'storage_array') {
-                return <StorageArray key={eq.id} equipment={eq} />;
-              }
-
-              if (eq.category === 'ups' || eq.category === 'pdu') {
-                return <PowerEquipment key={eq.id} equipment={eq} />;
-              }
-
-              // Default: Filler Panel / Airflow Baffle
-              return (
-                <div
-                  key={eq.id}
-                  style={{ height: `${eq.uHeight * U_HEIGHT_PX}px` }}
-                  className="w-full relative px-1 py-0.5 border-b border-zinc-800/60 bg-[#0c0d12] flex items-center justify-center select-none"
-                >
-                  <div className="w-full h-full rounded-[1px] bg-[#101116] border border-zinc-800/80 server-honeycomb-grill flex items-center justify-center opacity-70">
-                    <span className="text-[6.5px] font-mono text-zinc-600 font-bold tracking-widest uppercase">
-                      {eq.name}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+            {render42USlots()}
           </div>
 
           {/* Vertical 42U Rails on Right */}
           <RackRail side="right" units={42} />
-
-          {/* Slim Vertical Mini Occupancy Strip on far right */}
-          <div className="absolute -right-3 top-0 bottom-0 pointer-events-auto">
-            <VerticalOccupancyStrip
-              equipmentList={equipmentList}
-              servers={servers}
-              onHoverU={setHoveredU}
-            />
-          </div>
 
           {/* ===============================================================
               OPTIONAL GLASS / MESH FRONT DOOR OVERLAY
@@ -460,7 +471,7 @@ export const ServerRack: React.FC<ServerRackProps> = ({
           Docks cleanly adjacent to the rack on narrow viewports
           =================================================================== */}
       {selectedEquipment && (
-        <div className="xl:hidden w-full max-w-[420px] sm:max-w-[440px] mt-4 z-50">
+        <div className="xl:hidden w-full max-w-[460px] sm:max-w-[480px] mt-4 z-50">
           <ServerDetailsPanel
             equipment={selectedEquipment}
             serverNode={selectedServerNode}

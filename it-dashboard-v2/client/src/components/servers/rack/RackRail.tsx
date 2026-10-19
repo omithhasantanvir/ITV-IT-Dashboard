@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { U_HEIGHT_PX } from './RackTypes';
+
 interface RackRailProps {
   side: 'left' | 'right';
   units?: number;
@@ -24,7 +26,7 @@ export const RackRail: React.FC<RackRailProps> = ({
     <div
       className={`absolute inset-y-0 ${
         isLeft ? 'left-0 border-r' : 'right-0 border-l'
-      } w-6 sm:w-7 z-20 pointer-events-none select-none flex flex-col bg-gradient-to-b from-[#272932] via-[#1a1b22] to-[#14151a] border-zinc-700/80 shadow-[inset_0_0_4px_rgba(0,0,0,0.8)]`}
+      } w-5 sm:w-6 z-20 pointer-events-none select-none flex flex-col bg-gradient-to-b from-[#272932] via-[#1a1b22] to-[#14151a] border-zinc-700/80 shadow-[inset_0_0_4px_rgba(0,0,0,0.8)]`}
     >
       {/* 42U Unit Markings & Cage Nut Holes */}
       {Array.from({ length: units }).map((_, idx) => {
@@ -34,8 +36,8 @@ export const RackRail: React.FC<RackRailProps> = ({
         return (
           <div
             key={uNum}
-            style={{ height: '21px' }}
-            className={`w-full h-[21px] flex items-center justify-between px-0.5 sm:px-1 border-b border-zinc-800/80 relative select-none transition-colors duration-150 ${
+            style={{ height: `${U_HEIGHT_PX}px` }}
+            className={`w-full flex items-center justify-between px-0.5 sm:px-1 border-b border-zinc-800/80 relative select-none transition-colors duration-150 ${
               isHighlighted ? 'bg-cyan-500/20 text-cyan-300' : 'text-zinc-500'
             }`}
           >

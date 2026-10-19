@@ -7,16 +7,6 @@ import { RackEquipment } from './RackTypes';
  */
 export const RACK_01_EQUIPMENT: RackEquipment[] = [
   {
-    id: 'r1-u42',
-    uStart: 42,
-    uHeight: 1,
-    category: 'filler',
-    name: 'Top Cable Management Duct',
-    model: '1U High-Density Brush Strip',
-    vendor: 'Generic',
-    description: 'Horizontal cable entry with protective nylon brush grommet',
-  },
-  {
     id: 'r1-u41',
     uStart: 41,
     uHeight: 1,
@@ -38,17 +28,6 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
     vendor: 'Generic',
     portCount: 24,
     description: 'Datacenter category 6A patch field terminated to production newsroom drops',
-  },
-  {
-    id: 'r1-u39',
-    uStart: 39,
-    uHeight: 1,
-    category: 'kvm',
-    name: 'Datacenter KVM Console',
-    model: '1U 17.3" FHD Slide-out Drawer',
-    vendor: 'Generic',
-    hasLcd: true,
-    description: 'Heavy-duty dual-rail KVM drawer with integrated trackball & 8-port DVI/USB matrix switch',
   },
   {
     id: 'r1-dc1',
@@ -167,17 +146,6 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
     description: 'Octopus X Newsroom Computer System (NRCS) Core Engine — Production Rundowns, Scripting & Wire Feeds',
   },
   {
-    id: 'r1-u25',
-    uStart: 25,
-    uHeight: 2,
-    category: 'sdi_converter',
-    name: 'Broadcast SDI/IP Gateway',
-    model: 'Teranex Mini IP Video 12G',
-    vendor: 'Blackmagic',
-    dualPsu: true,
-    description: 'Dual redundant 12G-SDI to SMPTE 2110 IP video encapsulation gateway',
-  },
-  {
     id: 'r1-u24',
     uStart: 24,
     uHeight: 1,
@@ -200,26 +168,6 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
     driveFormFactor: '3.5',
     dualPsu: true,
     description: 'High-capacity direct-attached serial storage array for raw footage and station archives',
-  },
-  {
-    id: 'r1-u19',
-    uStart: 19,
-    uHeight: 3,
-    category: 'filler',
-    name: 'Airflow Baffle Panel (3U)',
-    model: 'Perforated Blanking Plate',
-    vendor: 'Generic',
-    description: 'Optimized cold-aisle thermal containment plate preventing internal hot air recirculation',
-  },
-  {
-    id: 'r1-u17',
-    uStart: 17,
-    uHeight: 2,
-    category: 'filler',
-    name: 'Airflow Baffle Panel (2U)',
-    model: 'Perforated Blanking Plate',
-    vendor: 'Generic',
-    description: 'Thermal blanking plate with integrated cable pass-through rings',
   },
   {
     id: 'r1-u03',
@@ -255,16 +203,6 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
  * Standard 19" rack, EIA-310 standard mounting
  */
 export const RACK_02_EQUIPMENT: RackEquipment[] = [
-  {
-    id: 'r2-u42',
-    uStart: 42,
-    uHeight: 1,
-    category: 'filler',
-    name: 'Fiber Trunk Cable Manager',
-    model: '1U Optical Splice & Slack Bay',
-    vendor: 'Generic',
-    description: 'Enclosed optical fiber slack storage tray protecting backbone OM4/OS2 trunk splices',
-  },
   {
     id: 'r2-u41',
     uStart: 41,
@@ -432,27 +370,6 @@ export const RACK_02_EQUIPMENT: RackEquipment[] = [
     driveFormFactor: '3.5',
     dualPsu: true,
     description: '12-bay hot-swappable JBOD expansion enclosure supporting instant replay and continuous ingest storage',
-  },
-  {
-    id: 'r2-u17',
-    uStart: 17,
-    uHeight: 2,
-    category: 'sdi_converter',
-    name: 'Master Sync & Clock Generator',
-    model: 'Tektronix SPG8000A Master Clock',
-    vendor: 'Generic',
-    dualPsu: true,
-    description: 'Broadcast Master Genlock, Black Burst, Tri-level Sync, and PTP Precision Time Protocol Generator',
-  },
-  {
-    id: 'r2-u15',
-    uStart: 15,
-    uHeight: 2,
-    category: 'filler',
-    name: 'Perforated Airflow Plate (2U)',
-    model: 'Cold-Aisle Thermal Barrier',
-    vendor: 'Generic',
-    description: 'High-density cold-aisle thermal barrier baffle ensuring directed laminar airflow through render nodes',
   },
   {
     id: 'r2-u03',

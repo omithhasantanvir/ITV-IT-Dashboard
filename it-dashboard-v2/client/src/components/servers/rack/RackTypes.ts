@@ -2,7 +2,7 @@ export type ServerStatusType = 'ONLINE' | 'OFFLINE' | 'WARNING' | 'MAINTENANCE' 
 
 export type SoundType = 'beep' | 'alert' | 'slide' | 'door' | 'key' | 'grant' | 'deny' | 'click';
 
-export const U_HEIGHT_PX = 21; // 21px per 1U (42U = 882px, 25% height reduction for compact fit)
+export const U_HEIGHT_PX = 24; // 24px per 1U (proportional EIA-310 rack unit, clear visibility of server hardware)
 
 export interface ServerNode {
   id: string;
