@@ -74,22 +74,31 @@ export const createSlip = async (req: AuthRequest, res: Response) => {
 
     const parsedDate = date ? new Date(date) : new Date();
 
+    const isIntern = employeeType === 'Intern';
+    const isDistrict = employeeType === 'District Correspondent';
+
+    const cleanEmail = !isIntern && emailId ? String(emailId).trim() : null;
+    const cleanDomain = !isDistrict && domainId ? String(domainId).trim() : null;
+    const cleanFood = !isDistrict && foodUsername ? String(foodUsername).trim() : (!isDistrict && !isIntern && cleanEmail ? cleanEmail : null);
+    const cleanHrmsUser = !isIntern && (hrmsUsername ? String(hrmsUsername).trim() : (pin ? String(pin).trim() : null));
+    const cleanHrmsPass = !isIntern && (hrmsPassword ? String(hrmsPassword).trim() : (pin ? String(pin).trim() : null));
+
     const slip = await prisma.userSlip.create({
       data: {
         slipNumber,
         employeeType: employeeType || 'Permanent',
-        pin: pin ? String(pin).trim() : null,
+        pin: !isIntern && pin ? String(pin).trim() : null,
         name: name ? String(name).trim() : null,
         designation: designation ? String(designation).trim() : null,
         department: department ? String(department).trim() : null,
-        emailId: emailId ? String(emailId).trim() : null,
-        emailPassword: emailPassword || 'Itv4312',
-        domainId: domainId ? String(domainId).trim() : null,
-        domainPassword: domainPassword || 'Itv4312',
-        hrmsUsername: hrmsUsername || pin || null,
-        hrmsPassword: hrmsPassword || pin || null,
-        foodUsername: foodUsername || emailId || null,
-        foodPassword: foodPassword || '123456',
+        emailId: cleanEmail,
+        emailPassword: cleanEmail ? (emailPassword || 'Itv4312') : null,
+        domainId: cleanDomain,
+        domainPassword: cleanDomain ? (domainPassword || 'Itv4312') : null,
+        hrmsUsername: cleanHrmsUser,
+        hrmsPassword: cleanHrmsPass,
+        foodUsername: cleanFood,
+        foodPassword: cleanFood ? (foodPassword || '123456') : null,
         createdBy: createdBy || req.user?.name || 'IT Engineer',
         creatorDesignation: creatorDesignation || 'IT Support Engineer',
         issuedBy: createdBy || req.user?.name || 'IT Admin',

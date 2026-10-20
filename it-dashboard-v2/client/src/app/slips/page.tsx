@@ -69,11 +69,8 @@ const QUICK_DESIGNATIONS = [
 
 const EMPLOYEE_TYPES = [
   'Permanent',
-  'Contractual',
-  'Probationary',
   'Intern',
-  'Freelance',
-  'Part-Time',
+  'District Correspondent',
 ];
 
 type ViewMode = 'HUB' | 'FORM' | 'LIST';
@@ -218,34 +215,59 @@ export default function SlipsPage() {
     }
   };
 
-  // Intelligent auto-sync handlers as seen in Image 1:
+  // Intelligent auto-sync handlers:
   // 1. PIN auto-syncs to X-Factor HRMS Username & Password
   const handlePinChange = (val: string) => {
     setPin(val);
-    setHrmsUsername(val);
-    setHrmsPassword(val);
+    if (employeeType !== 'Intern') {
+      setHrmsUsername(val);
+      setHrmsPassword(val);
+    }
   };
 
   // 2. Email ID auto-syncs to Food Requisition Username
   const handleEmailChange = (val: string) => {
     setEmailId(val);
-    setFoodUsername(val);
+    if (!foodUsername || foodUsername.includes('@')) {
+      setFoodUsername(val);
+    }
   };
 
-  // 3. Name auto-suggests Domain ID and Email ID if empty
+  // 3. Name auto-suggests Domain ID and Email ID / Food Requisition
   const handleNameChange = (val: string) => {
     setName(val);
-    if (!domainId && val.trim().length > 2) {
+    if (val.trim().length > 2) {
       const parts = val.trim().toLowerCase().split(/\s+/);
       if (parts.length >= 2) {
-        setDomainId(`${parts[0]}.${parts[parts.length - 1]}`);
-        if (!emailId) {
-          const suggestedEmail = `${parts[0]}.${parts[parts.length - 1]}@independent24.tv`;
-          setEmailId(suggestedEmail);
-          setFoodUsername(suggestedEmail);
+        const username = `${parts[0]}.${parts[parts.length - 1]}`;
+        if (employeeType === 'District Correspondent') {
+          if (!emailId) {
+            setEmailId(`${username}@independent24.tv`);
+          }
+        } else if (employeeType === 'Intern') {
+          if (!domainId) setDomainId(username);
+          if (!foodUsername || foodUsername.includes('@')) {
+            setFoodUsername(username);
+          }
+        } else {
+          if (!domainId) setDomainId(username);
+          if (!emailId) {
+            const suggestedEmail = `${username}@independent24.tv`;
+            setEmailId(suggestedEmail);
+            if (!foodUsername || foodUsername.includes('@')) {
+              setFoodUsername(suggestedEmail);
+            }
+          }
         }
       } else {
-        setDomainId(parts[0]);
+        if (employeeType === 'District Correspondent') {
+          if (!emailId) setEmailId(`${parts[0]}@independent24.tv`);
+        } else if (employeeType === 'Intern') {
+          if (!domainId) setDomainId(parts[0]);
+          if (!foodUsername || foodUsername.includes('@')) setFoodUsername(parts[0]);
+        } else {
+          if (!domainId) setDomainId(parts[0]);
+        }
       }
     }
   };
@@ -276,19 +298,43 @@ export default function SlipsPage() {
   const fillSampleData = () => {
     const today = new Date().toISOString().split('T')[0];
     setFormDate(today);
-    setEmployeeType('Permanent');
-    setPin('5042');
-    setName('Tanvir Hasan Omith');
-    setDesignation('Broadcast Systems Specialist');
-    setDepartment('Broadcast Engineering');
-    setEmailId('tanvir.hasan@independent24.tv');
-    setEmailPassword('Itv4312');
-    setDomainId('tanvir.hasan');
-    setDomainPassword('Itv4312');
-    setHrmsUsername('5042');
-    setHrmsPassword('5042');
-    setFoodUsername('tanvir.hasan@independent24.tv');
-    setFoodPassword('123456');
+    if (employeeType === 'Intern') {
+      setName('Sadia Rahman');
+      setDesignation('Intern - News & IT');
+      setDepartment('Digital Media');
+      setDomainId('sadia.rahman');
+      setDomainPassword('Itv4312');
+      setFoodUsername('sadia.rahman');
+      setFoodPassword('123456');
+      setEmailId('');
+      setPin('');
+      setHrmsUsername('');
+      setHrmsPassword('');
+    } else if (employeeType === 'District Correspondent') {
+      setPin('6120');
+      setName('Md. Jahangir Alam');
+      setDesignation('Staff Reporter / District Correspondent');
+      setDepartment('Chittagong Bureau / News');
+      setEmailId('jahangir.ctg@independent24.tv');
+      setEmailPassword('Itv4312');
+      setHrmsUsername('6120');
+      setHrmsPassword('6120');
+      setDomainId('');
+      setFoodUsername('');
+    } else {
+      setPin('5042');
+      setName('Tanvir Hasan Omith');
+      setDesignation('Broadcast Systems Specialist');
+      setDepartment('Broadcast Engineering');
+      setEmailId('tanvir.hasan@independent24.tv');
+      setEmailPassword('Itv4312');
+      setDomainId('tanvir.hasan');
+      setDomainPassword('Itv4312');
+      setHrmsUsername('5042');
+      setHrmsPassword('5042');
+      setFoodUsername('tanvir.hasan@independent24.tv');
+      setFoodPassword('123456');
+    }
     setCreatedBy(user?.name || 'IT Operations Admin');
     setCreatorDesignation(user?.designation || 'Senior IT Support Engineer');
     setError(null);
@@ -301,8 +347,8 @@ export default function SlipsPage() {
       setError('Please enter Employee Name.');
       return;
     }
-    if (!pin.trim()) {
-      setError('Please enter Employee PIN.');
+    if (employeeType === 'Permanent' && !pin.trim()) {
+      setError('Please enter Employee PIN for Permanent staff.');
       return;
     }
 
@@ -310,23 +356,26 @@ export default function SlipsPage() {
     setError(null);
 
     try {
+      const isIntern = employeeType === 'Intern';
+      const isDistrict = employeeType === 'District Correspondent';
+
       const payload = {
         date: formDate,
         employeeType,
-        pin,
-        name,
-        designation,
-        department,
-        emailId,
-        emailPassword,
-        domainId,
-        domainPassword,
-        hrmsUsername: hrmsUsername || pin,
-        hrmsPassword: hrmsPassword || pin,
-        foodUsername: foodUsername || emailId,
-        foodPassword,
-        createdBy,
-        creatorDesignation,
+        pin: !isIntern && pin.trim() ? pin.trim() : null,
+        name: name.trim(),
+        designation: designation.trim() || null,
+        department: department.trim() || null,
+        emailId: !isIntern && emailId.trim() ? emailId.trim() : null,
+        emailPassword: !isIntern && emailId.trim() ? (emailPassword || 'Itv4312') : null,
+        domainId: !isDistrict && domainId.trim() ? domainId.trim() : null,
+        domainPassword: !isDistrict && domainId.trim() ? (domainPassword || 'Itv4312') : null,
+        hrmsUsername: !isIntern ? (hrmsUsername.trim() || pin.trim() || null) : null,
+        hrmsPassword: !isIntern ? (hrmsPassword.trim() || pin.trim() || null) : null,
+        foodUsername: !isDistrict ? (foodUsername.trim() || (!isIntern && emailId.trim() ? emailId.trim() : null)) : null,
+        foodPassword: !isDistrict && (foodUsername.trim() || emailId.trim()) ? (foodPassword || '123456') : null,
+        createdBy: createdBy.trim() || null,
+        creatorDesignation: creatorDesignation.trim() || null,
       };
 
       const res = await api.post('/api/slips', payload);
@@ -398,11 +447,58 @@ export default function SlipsPage() {
   // Copy full credential block to clipboard
   const handleCopyAllCredentials = () => {
     if (!activeSlip) return;
-    const block = `INDEPENDENT TELEVISION LIMITED
+    const isIntern = activeSlip.employeeType === 'Intern';
+    const isDistrict = activeSlip.employeeType === 'District Correspondent';
+
+    const block = isIntern
+      ? `INDEPENDENT TELEVISION LIMITED
+Intern Credential Slip
+========================================
+Employee Type: Intern
+Name: ${activeSlip.name || 'N/A'}
+Designation: ${activeSlip.designation || 'Intern'}
+Department: ${activeSlip.department || 'N/A'}
+
+[LOGIN CREDENTIALS]
+Domain ID: ${activeSlip.domainId || 'N/A'}
+Domain Password: ${activeSlip.domainPassword || 'Itv4312'}
+
+Food Requisition Username: ${activeSlip.foodUsername || 'N/A'}
+Food Requisition Password: ${activeSlip.foodPassword || '123456'}
+
+Portal Links:
+- Food Requisition: http://202.84.45.1:50765
+
+IT Support: Ext. 30555 or 01730701335
+========================================`
+      : isDistrict
+      ? `INDEPENDENT TELEVISION LIMITED
+District Correspondent Credential Slip
+========================================
+${activeSlip.pin ? `PIN: ${activeSlip.pin}\n` : ''}Name: ${activeSlip.name || 'N/A'}
+Employee Type: District Correspondent
+Designation: ${activeSlip.designation || 'District Correspondent'}
+Department: ${activeSlip.department || 'N/A'}
+
+[LOGIN CREDENTIALS]
+E-Mail ID: ${activeSlip.emailId || 'N/A'}
+E-Mail Password: ${activeSlip.emailPassword || 'Itv4312'}
+
+X-Factor HRMS Username: ${activeSlip.hrmsUsername || activeSlip.pin || 'N/A'}
+X-Factor HRMS Password: ${activeSlip.hrmsPassword || activeSlip.pin || 'N/A'}
+
+Portal Links:
+- E-Mail: https://mail.independent24.tv
+- HRMS: http://202.84.45.240:2023/xfactor/
+
+IT Support: Ext. 30555 or 01730701335
+========================================`
+      : `INDEPENDENT TELEVISION LIMITED
 Employee Credential Slip
 ========================================
 PIN: ${activeSlip.pin || 'N/A'}
 Name: ${activeSlip.name || 'N/A'}
+Employee Type: ${activeSlip.employeeType || 'Permanent'}
 Designation: ${activeSlip.designation || 'N/A'}
 Department: ${activeSlip.department || 'N/A'}
 
@@ -655,469 +751,694 @@ IT Support: Ext. 30555 or 01730701335
               <div className="xl:col-span-7 space-y-6">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   
-                  {/* ======================================================== */}
-                  {/* CARD 1: GENERAL INFORMATION                              */}
-                  {/* ======================================================== */}
-                  <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
-                    <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
-                      <div className="flex items-center gap-2.5">
-                        <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
-                          <User className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <h3 className="text-xs font-black tracking-wider uppercase text-foreground">
-                            01. General Information
+                  {employeeType === 'Intern' ? (
+                    /* ======================================================== */
+                    /* INTERN REGISTRATION FORM (EXACT MATCH TO USER'S IMAGE)   */
+                    /* ======================================================== */
+                    <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-card p-6 sm:p-8 shadow-sm space-y-7 text-left">
+                      {/* Section 1: GENERAL INFORMATION */}
+                      <div>
+                        <div className="border-b border-sky-100 dark:border-sky-900/60 pb-2.5 mb-5 flex items-center justify-between">
+                          <h3 className="text-xs font-bold text-[#0070ba] dark:text-sky-400 tracking-wider uppercase">
+                            GENERAL INFORMATION
                           </h3>
-                          <p className="text-[11px] text-muted-foreground">
-                            Personal &amp; organizational designation records
-                          </p>
-                        </div>
-                      </div>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-muted text-muted-foreground">
-                        Step 1 / 3
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Issue Date */}
-                      <div>
-                        <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5 mb-1.5">
-                          <Calendar className="h-3.5 w-3.5 text-primary" />
-                          <span>Issue Date</span>
-                        </label>
-                        <input
-                          type="date"
-                          value={formDate}
-                          onChange={(e) => setFormDate(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs font-mono"
-                        />
-                      </div>
-
-                      {/* Employee Type */}
-                      <div>
-                        <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5 mb-1.5">
-                          <UserCheck className="h-3.5 w-3.5 text-primary" />
-                          <span>Employee Type</span>
-                        </label>
-                        <select
-                          value={employeeType}
-                          onChange={(e) => setEmployeeType(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs font-medium"
-                        >
-                          {EMPLOYEE_TYPES.map((type) => (
-                            <option key={type} value={type}>
-                              {type}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      {/* PIN */}
-                      <div>
-                        <label className="text-[11px] font-bold text-foreground flex items-center justify-between mb-1.5">
-                          <span className="flex items-center gap-1.5">
-                            <Hash className="h-3.5 w-3.5 text-primary" />
-                            <span>Employee PIN <span className="text-primary">*</span></span>
-                          </span>
-                          <span className="text-[10px] text-emerald-500 font-mono font-medium flex items-center gap-0.5">
-                            <Sparkles className="h-2.5 w-2.5" /> Syncs HRMS
-                          </span>
-                        </label>
-                        <input
-                          type="text"
-                          value={pin}
-                          onChange={(e) => handlePinChange(e.target.value)}
-                          placeholder="e.g. 5042"
-                          required
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
-                        />
-                      </div>
-
-                      {/* Full Name */}
-                      <div>
-                        <label className="text-[11px] font-bold text-foreground flex items-center justify-between mb-1.5">
-                          <span className="flex items-center gap-1.5">
-                            <User className="h-3.5 w-3.5 text-primary" />
-                            <span>Full Name <span className="text-primary">*</span></span>
-                          </span>
-                          <span className="text-[10px] text-muted-foreground font-mono flex items-center gap-0.5">
-                            Auto-suggests Email
-                          </span>
-                        </label>
-                        <input
-                          type="text"
-                          value={name}
-                          onChange={(e) => handleNameChange(e.target.value)}
-                          placeholder="e.g. Tanvir Hasan Omith"
-                          required
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
-                        />
-                      </div>
-
-                      {/* Designation */}
-                      <div className="sm:col-span-2">
-                        <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5 mb-1.5">
-                          <Briefcase className="h-3.5 w-3.5 text-primary" />
-                          <span>Designation</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={designation}
-                          onChange={(e) => setDesignation(e.target.value)}
-                          placeholder="e.g. Broadcast Systems Specialist"
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs mb-2"
-                        />
-                        {/* Quick Designation Chips */}
-                        <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                          <span className="text-[10px] text-muted-foreground font-medium mr-1">Quick:</span>
-                          {QUICK_DESIGNATIONS.slice(0, 5).map((d) => (
-                            <button
-                              key={d}
-                              type="button"
-                              onClick={() => setDesignation(d)}
-                              className="px-2 py-0.5 rounded-lg border border-border/70 bg-muted/40 hover:bg-muted text-[10px] text-muted-foreground hover:text-foreground transition"
-                            >
-                              {d}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Department */}
-                      <div className="sm:col-span-2">
-                        <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5 mb-1.5">
-                          <Building className="h-3.5 w-3.5 text-primary" />
-                          <span>Department</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={department}
-                          onChange={(e) => setDepartment(e.target.value)}
-                          placeholder="e.g. Broadcast Engineering"
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs mb-2"
-                        />
-                        {/* Quick Department Chips */}
-                        <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                          <span className="text-[10px] text-muted-foreground font-medium mr-1">Quick:</span>
-                          {QUICK_DEPARTMENTS.slice(0, 5).map((dept) => (
-                            <button
-                              key={dept}
-                              type="button"
-                              onClick={() => setDepartment(dept)}
-                              className="px-2 py-0.5 rounded-lg border border-border/70 bg-muted/40 hover:bg-muted text-[10px] text-muted-foreground hover:text-foreground transition"
-                            >
-                              {dept}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* ======================================================== */}
-                  {/* CARD 2: ACCOUNT CREDENTIALS                              */}
-                  {/* ======================================================== */}
-                  <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
-                    <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
-                      <div className="flex items-center gap-2.5">
-                        <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
-                          <KeyRound className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <h3 className="text-xs font-black tracking-wider uppercase text-foreground">
-                            02. Account Credentials &amp; Portals
-                          </h3>
-                          <p className="text-[11px] text-muted-foreground">
-                            Corporate Single Sign-On and portal access credentials
-                          </p>
-                        </div>
-                      </div>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-muted text-muted-foreground">
-                        Step 2 / 3
-                      </span>
-                    </div>
-
-                    <div className="space-y-4">
-                      {/* Credential 1: Corporate E-Mail */}
-                      <div className="p-3.5 rounded-lg border border-border/80 bg-muted/20 hover:border-primary/40 transition space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-xs font-bold text-foreground">
-                            <Mail className="h-4 w-4 text-primary" />
-                            <span>1. Corporate E-Mail Portal</span>
-                          </div>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                            mail.independent24.tv
-                          </span>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {/* Date */}
                           <div>
-                            <label className="text-[10px] font-bold text-muted-foreground block mb-1">
-                              Email ID
+                            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              Date
                             </label>
                             <input
-                              type="email"
-                              value={emailId}
-                              onChange={(e) => handleEmailChange(e.target.value)}
-                              placeholder="e.g. user@independent24.tv"
-                              className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
+                              type="date"
+                              value={formDate}
+                              onChange={(e) => setFormDate(e.target.value)}
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
                             />
                           </div>
 
+                          {/* Employee Type */}
                           <div>
-                            <label className="text-[10px] font-bold text-muted-foreground block mb-1">
-                              E-Mail Password
+                            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              Employee Type
                             </label>
-                            <div className="relative">
-                              <input
-                                type={showEmailPass ? 'text' : 'password'}
-                                value={emailPassword}
-                                onChange={(e) => setEmailPassword(e.target.value)}
-                                placeholder="Itv4312"
-                                className="w-full px-3 py-2 pr-9 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setShowEmailPass(!showEmailPass)}
-                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
-                                title={showEmailPass ? 'Hide password' : 'Show password'}
-                              >
-                                {showEmailPass ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                              </button>
-                            </div>
+                            <select
+                              value={employeeType}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEmployeeType(val);
+                                if (val === 'Intern' && foodUsername.includes('@')) {
+                                  setFoodUsername(domainId || '');
+                                }
+                              }}
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs font-medium cursor-pointer"
+                            >
+                              {EMPLOYEE_TYPES.map((type) => (
+                                <option key={type} value={type}>
+                                  {type}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Name */}
+                          <div>
+                            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              Name
+                            </label>
+                            <input
+                              type="text"
+                              value={name}
+                              onChange={(e) => handleNameChange(e.target.value)}
+                              placeholder="Enter Full Name"
+                              required
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                            />
+                          </div>
+
+                          {/* Empty placeholder column for exact visual alignment with screenshot */}
+                          <div className="hidden sm:block" />
+
+                          {/* Designation */}
+                          <div>
+                            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              Designation
+                            </label>
+                            <input
+                              type="text"
+                              value={designation}
+                              onChange={(e) => setDesignation(e.target.value)}
+                              placeholder="Enter Designation"
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                            />
+                          </div>
+
+                          {/* Department */}
+                          <div>
+                            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              Department
+                            </label>
+                            <input
+                              type="text"
+                              value={department}
+                              onChange={(e) => setDepartment(e.target.value)}
+                              placeholder="Enter Department"
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                            />
                           </div>
                         </div>
                       </div>
 
-                      {/* Credential 2: Active Directory Domain */}
-                      <div className="p-3.5 rounded-lg border border-border/80 bg-muted/20 hover:border-primary/40 transition space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-xs font-bold text-foreground">
-                            <Laptop className="h-4 w-4 text-primary" />
-                            <span>2. Active Directory / PC Domain</span>
-                          </div>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
-                            LAN Workstation
-                          </span>
+                      {/* Section 2: ACCOUNT CREDENTIALS */}
+                      <div>
+                        <div className="border-b border-sky-100 dark:border-sky-900/60 pb-2.5 mb-5 flex items-center justify-between">
+                          <h3 className="text-xs font-bold text-[#0070ba] dark:text-sky-400 tracking-wider uppercase">
+                            ACCOUNT CREDENTIALS
+                          </h3>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {/* Domain ID */}
                           <div>
-                            <label className="text-[10px] font-bold text-muted-foreground block mb-1">
+                            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
                               Domain ID
                             </label>
                             <input
                               type="text"
                               value={domainId}
                               onChange={(e) => setDomainId(e.target.value)}
-                              placeholder="e.g. firstname.lastname"
-                              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
+                              placeholder="Enter Domain ID"
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs font-mono"
                             />
                           </div>
 
+                          {/* Domain Password */}
                           <div>
-                            <label className="text-[10px] font-bold text-muted-foreground block mb-1">
+                            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
                               Domain Password
-                            </label>
-                            <div className="relative">
-                              <input
-                                type={showDomainPass ? 'text' : 'password'}
-                                value={domainPassword}
-                                onChange={(e) => setDomainPassword(e.target.value)}
-                                placeholder="Itv4312"
-                                className="w-full px-3 py-2 pr-9 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setShowDomainPass(!showDomainPass)}
-                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
-                                title={showDomainPass ? 'Hide password' : 'Show password'}
-                              >
-                                {showDomainPass ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Credential 3: X-Factor HRMS */}
-                      <div className="p-3.5 rounded-lg border border-border/80 bg-muted/20 hover:border-emerald-500/40 transition space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-xs font-bold text-foreground">
-                            <UserCheck className="h-4 w-4 text-emerald-500" />
-                            <span>3. X-Factor HRMS Portal</span>
-                          </div>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-1 font-semibold">
-                            <Sparkles className="h-2.5 w-2.5" /> Synced with PIN
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <label className="text-[10px] font-bold text-muted-foreground block mb-1">
-                              HRMS Username
                             </label>
                             <input
                               type="text"
-                              value={hrmsUsername}
-                              onChange={(e) => setHrmsUsername(e.target.value)}
-                              placeholder="Auto-synced from PIN"
-                              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition shadow-xs"
+                              value={domainPassword}
+                              onChange={(e) => setDomainPassword(e.target.value)}
+                              placeholder="Itv4312"
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs font-mono"
                             />
                           </div>
 
+                          {/* Food Requisition Username */}
                           <div>
-                            <label className="text-[10px] font-bold text-muted-foreground block mb-1">
-                              HRMS Password
-                            </label>
-                            <div className="relative">
-                              <input
-                                type={showHrmsPass ? 'text' : 'password'}
-                                value={hrmsPassword}
-                                onChange={(e) => setHrmsPassword(e.target.value)}
-                                placeholder="Auto-synced from PIN"
-                                className="w-full px-3 py-2 pr-9 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition shadow-xs"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setShowHrmsPass(!showHrmsPass)}
-                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
-                                title={showHrmsPass ? 'Hide password' : 'Show password'}
-                              >
-                                {showHrmsPass ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Credential 4: Food Requisition System */}
-                      <div className="p-3.5 rounded-lg border border-border/80 bg-muted/20 hover:border-amber-500/40 transition space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-xs font-bold text-foreground">
-                            <FileText className="h-4 w-4 text-amber-500" />
-                            <span>4. Food Requisition System</span>
-                          </div>
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1 font-semibold">
-                            <Sparkles className="h-2.5 w-2.5" /> Synced with Email
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <label className="text-[10px] font-bold text-muted-foreground block mb-1">
-                              Requisition Username
+                            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              Food Requisition Username
                             </label>
                             <input
                               type="text"
                               value={foodUsername}
                               onChange={(e) => setFoodUsername(e.target.value)}
-                              placeholder="Auto-synced from Email"
-                              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition shadow-xs"
+                              placeholder="Enter Food Req Username"
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs font-mono"
                             />
                           </div>
 
+                          {/* Food Requisition Password */}
                           <div>
-                            <label className="text-[10px] font-bold text-muted-foreground block mb-1">
-                              Requisition Password
+                            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              Food Requisition Password
                             </label>
-                            <div className="relative">
-                              <input
-                                type={showFoodPass ? 'text' : 'password'}
-                                value={foodPassword}
-                                onChange={(e) => setFoodPassword(e.target.value)}
-                                placeholder="123456"
-                                className="w-full px-3 py-2 pr-9 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition shadow-xs"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setShowFoodPass(!showFoodPass)}
-                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
-                                title={showFoodPass ? 'Hide password' : 'Show password'}
-                              >
-                                {showFoodPass ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                              </button>
+                            <input
+                              type="text"
+                              value={foodPassword}
+                              onChange={(e) => setFoodPassword(e.target.value)}
+                              placeholder="123456"
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs font-mono"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Section 3: SLIP AUTHORIZATION */}
+                      <div>
+                        <div className="border-b border-sky-100 dark:border-sky-900/60 pb-2.5 mb-5 flex items-center justify-between">
+                          <h3 className="text-xs font-bold text-[#0070ba] dark:text-sky-400 tracking-wider uppercase">
+                            SLIP AUTHORIZATION
+                          </h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {/* Created By */}
+                          <div>
+                            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              Created By
+                            </label>
+                            <input
+                              type="text"
+                              value={createdBy}
+                              onChange={(e) => setCreatedBy(e.target.value)}
+                              placeholder="Creator Name"
+                              required
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                            />
+                          </div>
+
+                          {/* Creator Designation */}
+                          <div>
+                            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
+                              Creator Designation
+                            </label>
+                            <input
+                              type="text"
+                              value={creatorDesignation}
+                              onChange={(e) => setCreatorDesignation(e.target.value)}
+                              placeholder="Creator Designation"
+                              required
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Submit Registration Button */}
+                      <div className="pt-2">
+                        <button
+                          type="submit"
+                          disabled={submitting}
+                          className="w-full py-3 px-6 rounded-lg bg-[#0070ba] hover:bg-[#005fa3] text-white font-bold text-sm shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                        >
+                          <span>{submitting ? 'Submitting Registration...' : 'Submit Registration'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* ======================================================== */
+                    /* STANDARD (PERMANENT / DISTRICT CORRESPONDENT) FORM        */
+                    /* ======================================================== */
+                    <>
+                      {/* CARD 1: GENERAL INFORMATION */}
+                      <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
+                        <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
+                          <div className="flex items-center gap-2.5">
+                            <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+                              <User className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <h3 className="text-xs font-black tracking-wider uppercase text-foreground">
+                                01. General Information
+                              </h3>
+                              <p className="text-[11px] text-muted-foreground">
+                                Personal &amp; organizational designation records
+                              </p>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-muted text-muted-foreground">
+                            Step 1 / 3
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {/* Issue Date */}
+                          <div>
+                            <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5 mb-1.5">
+                              <Calendar className="h-3.5 w-3.5 text-primary" />
+                              <span>Issue Date</span>
+                            </label>
+                            <input
+                              type="date"
+                              value={formDate}
+                              onChange={(e) => setFormDate(e.target.value)}
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs font-mono"
+                            />
+                          </div>
+
+                          {/* Employee Type */}
+                          <div>
+                            <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5 mb-1.5">
+                              <UserCheck className="h-3.5 w-3.5 text-primary" />
+                              <span>Employee Type</span>
+                            </label>
+                            <select
+                              value={employeeType}
+                              onChange={(e) => setEmployeeType(e.target.value)}
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs font-medium"
+                            >
+                              {EMPLOYEE_TYPES.map((type) => (
+                                <option key={type} value={type}>
+                                  {type}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* PIN */}
+                          <div>
+                            <label className="text-[11px] font-bold text-foreground flex items-center justify-between mb-1.5">
+                              <span className="flex items-center gap-1.5">
+                                <Hash className="h-3.5 w-3.5 text-primary" />
+                                <span>Employee PIN {employeeType === 'Permanent' && <span className="text-primary">*</span>}</span>
+                              </span>
+                              <span className="text-[10px] text-emerald-500 font-mono font-medium flex items-center gap-0.5">
+                                <Sparkles className="h-2.5 w-2.5" /> Syncs HRMS
+                              </span>
+                            </label>
+                            <input
+                              type="text"
+                              value={pin}
+                              onChange={(e) => handlePinChange(e.target.value)}
+                              placeholder="e.g. 5042"
+                              required={employeeType === 'Permanent'}
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
+                            />
+                          </div>
+
+                          {/* Full Name */}
+                          <div>
+                            <label className="text-[11px] font-bold text-foreground flex items-center justify-between mb-1.5">
+                              <span className="flex items-center gap-1.5">
+                                <User className="h-3.5 w-3.5 text-primary" />
+                                <span>Full Name <span className="text-primary">*</span></span>
+                              </span>
+                              <span className="text-[10px] text-muted-foreground font-mono flex items-center gap-0.5">
+                                Auto-suggests Email
+                              </span>
+                            </label>
+                            <input
+                              type="text"
+                              value={name}
+                              onChange={(e) => handleNameChange(e.target.value)}
+                              placeholder="e.g. Tanvir Hasan Omith"
+                              required
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
+                            />
+                          </div>
+
+                          {/* Designation */}
+                          <div className="sm:col-span-2">
+                            <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5 mb-1.5">
+                              <Briefcase className="h-3.5 w-3.5 text-primary" />
+                              <span>Designation</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={designation}
+                              onChange={(e) => setDesignation(e.target.value)}
+                              placeholder="e.g. Broadcast Systems Specialist"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs mb-2"
+                            />
+                            {/* Quick Designation Chips */}
+                            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                              <span className="text-[10px] text-muted-foreground font-medium mr-1">Quick:</span>
+                              {QUICK_DESIGNATIONS.slice(0, 5).map((d) => (
+                                <button
+                                  key={d}
+                                  type="button"
+                                  onClick={() => setDesignation(d)}
+                                  className="px-2 py-0.5 rounded-lg border border-border/70 bg-muted/40 hover:bg-muted text-[10px] text-muted-foreground hover:text-foreground transition cursor-pointer"
+                                >
+                                  {d}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Department */}
+                          <div className="sm:col-span-2">
+                            <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5 mb-1.5">
+                              <Building className="h-3.5 w-3.5 text-primary" />
+                              <span>Department</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={department}
+                              onChange={(e) => setDepartment(e.target.value)}
+                              placeholder="e.g. Broadcast Engineering"
+                              className="w-full px-3.5 py-2.5 rounded-xl border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs mb-2"
+                            />
+                            {/* Quick Department Chips */}
+                            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                              <span className="text-[10px] text-muted-foreground font-medium mr-1">Quick:</span>
+                              {QUICK_DEPARTMENTS.slice(0, 5).map((dept) => (
+                                <button
+                                  key={dept}
+                                  type="button"
+                                  onClick={() => setDepartment(dept)}
+                                  className="px-2 py-0.5 rounded-lg border border-border/70 bg-muted/40 hover:bg-muted text-[10px] text-muted-foreground hover:text-foreground transition cursor-pointer"
+                                >
+                                  {dept}
+                                </button>
+                              ))}
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
 
-                  {/* ======================================================== */}
-                  {/* CARD 3: SLIP AUTHORIZATION                               */}
-                  {/* ======================================================== */}
-                  <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
-                    <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
-                      <div className="flex items-center gap-2.5">
-                        <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
-                          <ShieldCheck className="h-4 w-4" />
+                      {/* CARD 2: ACCOUNT CREDENTIALS */}
+                      <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
+                        <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
+                          <div className="flex items-center gap-2.5">
+                            <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+                              <KeyRound className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <h3 className="text-xs font-black tracking-wider uppercase text-foreground">
+                                02. Account Credentials &amp; Portals
+                              </h3>
+                              <p className="text-[11px] text-muted-foreground">
+                                {employeeType === 'District Correspondent'
+                                  ? 'Corporate E-Mail and X-Factor HRMS credentials'
+                                  : 'Corporate Single Sign-On and portal access credentials'}
+                              </p>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-muted text-muted-foreground">
+                            Step 2 / 3
+                          </span>
                         </div>
-                        <div>
-                          <h3 className="text-xs font-black tracking-wider uppercase text-foreground">
-                            03. Slip Authorization &amp; Issuer
-                          </h3>
-                          <p className="text-[11px] text-muted-foreground">
-                            Recorded signatory for this official ITV employee credential document
-                          </p>
+
+                        <div className="space-y-4">
+                          {/* Credential 1: Corporate E-Mail */}
+                          <div className="p-3.5 rounded-lg border border-border/80 bg-muted/20 hover:border-primary/40 transition space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2 text-xs font-bold text-foreground">
+                                <Mail className="h-4 w-4 text-primary" />
+                                <span>1. Corporate E-Mail Portal</span>
+                              </div>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                                mail.independent24.tv
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div>
+                                <label className="text-[10px] font-bold text-muted-foreground block mb-1">
+                                  Email ID
+                                </label>
+                                <input
+                                  type="email"
+                                  value={emailId}
+                                  onChange={(e) => handleEmailChange(e.target.value)}
+                                  placeholder="e.g. user@independent24.tv"
+                                  className="w-full px-3 py-2 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="text-[10px] font-bold text-muted-foreground block mb-1">
+                                  E-Mail Password
+                                </label>
+                                <div className="relative">
+                                  <input
+                                    type={showEmailPass ? 'text' : 'password'}
+                                    value={emailPassword}
+                                    onChange={(e) => setEmailPassword(e.target.value)}
+                                    placeholder="Itv4312"
+                                    className="w-full px-3 py-2 pr-9 rounded-xl border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => setShowEmailPass(!showEmailPass)}
+                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition cursor-pointer"
+                                    title={showEmailPass ? 'Hide password' : 'Show password'}
+                                  >
+                                    {showEmailPass ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Credential 2: Active Directory Domain (Hidden for District Correspondent) */}
+                          {employeeType !== 'District Correspondent' && (
+                            <div className="p-3.5 rounded-lg border border-border/80 bg-muted/20 hover:border-primary/40 transition space-y-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-xs font-bold text-foreground">
+                                  <Laptop className="h-4 w-4 text-primary" />
+                                  <span>2. Active Directory / PC Domain</span>
+                                </div>
+                                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+                                  LAN Workstation
+                                </span>
+                              </div>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                  <label className="text-[10px] font-bold text-muted-foreground block mb-1">
+                                    Domain ID
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={domainId}
+                                    onChange={(e) => setDomainId(e.target.value)}
+                                    placeholder="e.g. firstname.lastname"
+                                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="text-[10px] font-bold text-muted-foreground block mb-1">
+                                    Domain Password
+                                  </label>
+                                  <div className="relative">
+                                    <input
+                                      type={showDomainPass ? 'text' : 'password'}
+                                      value={domainPassword}
+                                      onChange={(e) => setDomainPassword(e.target.value)}
+                                      placeholder="Itv4312"
+                                      className="w-full px-3 py-2 pr-9 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-primary/40 transition shadow-xs"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => setShowDomainPass(!showDomainPass)}
+                                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition cursor-pointer"
+                                      title={showDomainPass ? 'Hide password' : 'Show password'}
+                                    >
+                                      {showDomainPass ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Credential 3: X-Factor HRMS */}
+                          <div className="p-3.5 rounded-lg border border-border/80 bg-muted/20 hover:border-emerald-500/40 transition space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2 text-xs font-bold text-foreground">
+                                <UserCheck className="h-4 w-4 text-emerald-500" />
+                                <span>{employeeType === 'District Correspondent' ? '2. X-Factor HRMS Portal' : '3. X-Factor HRMS Portal'}</span>
+                              </div>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-1 font-semibold">
+                                <Sparkles className="h-2.5 w-2.5" /> Synced with PIN
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <div>
+                                <label className="text-[10px] font-bold text-muted-foreground block mb-1">
+                                  HRMS Username
+                                </label>
+                                <input
+                                  type="text"
+                                  value={hrmsUsername}
+                                  onChange={(e) => setHrmsUsername(e.target.value)}
+                                  placeholder="Auto-synced from PIN"
+                                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition shadow-xs"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="text-[10px] font-bold text-muted-foreground block mb-1">
+                                  HRMS Password
+                                </label>
+                                <div className="relative">
+                                  <input
+                                    type={showHrmsPass ? 'text' : 'password'}
+                                    value={hrmsPassword}
+                                    onChange={(e) => setHrmsPassword(e.target.value)}
+                                    placeholder="Auto-synced from PIN"
+                                    className="w-full px-3 py-2 pr-9 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition shadow-xs"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => setShowHrmsPass(!showHrmsPass)}
+                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition cursor-pointer"
+                                    title={showHrmsPass ? 'Hide password' : 'Show password'}
+                                  >
+                                    {showHrmsPass ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Credential 4: Food Requisition System (Hidden for District Correspondent) */}
+                          {employeeType !== 'District Correspondent' && (
+                            <div className="p-3.5 rounded-lg border border-border/80 bg-muted/20 hover:border-amber-500/40 transition space-y-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-xs font-bold text-foreground">
+                                  <FileText className="h-4 w-4 text-amber-500" />
+                                  <span>4. Food Requisition System</span>
+                                </div>
+                                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-1 font-semibold">
+                                  <Sparkles className="h-2.5 w-2.5" /> Synced with Email
+                                </span>
+                              </div>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                  <label className="text-[10px] font-bold text-muted-foreground block mb-1">
+                                    Requisition Username
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={foodUsername}
+                                    onChange={(e) => setFoodUsername(e.target.value)}
+                                    placeholder="Auto-synced from Email"
+                                    className="w-full px-3 py-2 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition shadow-xs"
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="text-[10px] font-bold text-muted-foreground block mb-1">
+                                    Requisition Password
+                                  </label>
+                                  <div className="relative">
+                                    <input
+                                      type={showFoodPass ? 'text' : 'password'}
+                                      value={foodPassword}
+                                      onChange={(e) => setFoodPassword(e.target.value)}
+                                      placeholder="123456"
+                                      className="w-full px-3 py-2 pr-9 rounded-lg border border-border bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-amber-500/40 transition shadow-xs"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => setShowFoodPass(!showFoodPass)}
+                                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition cursor-pointer"
+                                      title={showFoodPass ? 'Hide password' : 'Show password'}
+                                    >
+                                      {showFoodPass ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-muted text-muted-foreground">
-                        Step 3 / 3
-                      </span>
-                    </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Created By */}
-                      <div>
-                        <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5 mb-1.5">
-                          <User className="h-3.5 w-3.5 text-primary" />
-                          <span>Created By <span className="text-primary">*</span></span>
-                        </label>
-                        <input
-                          type="text"
-                          value={createdBy}
-                          onChange={(e) => setCreatedBy(e.target.value)}
-                          placeholder="Creator Name"
-                          required
-                          className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary transition shadow-xs"
-                        />
+                      {/* CARD 3: SLIP AUTHORIZATION */}
+                      <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
+                        <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
+                          <div className="flex items-center gap-2.5">
+                            <div className="h-8 w-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+                              <ShieldCheck className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <h3 className="text-xs font-black tracking-wider uppercase text-foreground">
+                                03. Slip Authorization &amp; Issuer
+                              </h3>
+                              <p className="text-[11px] text-muted-foreground">
+                                Recorded signatory for this official ITV employee credential document
+                              </p>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-muted text-muted-foreground">
+                            Step 3 / 3
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {/* Created By */}
+                          <div>
+                            <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5 mb-1.5">
+                              <User className="h-3.5 w-3.5 text-primary" />
+                              <span>Created By <span className="text-primary">*</span></span>
+                            </label>
+                            <input
+                              type="text"
+                              value={createdBy}
+                              onChange={(e) => setCreatedBy(e.target.value)}
+                              placeholder="Creator Name"
+                              required
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary transition shadow-xs"
+                            />
+                          </div>
+
+                          {/* Creator Designation */}
+                          <div>
+                            <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5 mb-1.5">
+                              <Briefcase className="h-3.5 w-3.5 text-primary" />
+                              <span>Creator Designation <span className="text-primary">*</span></span>
+                            </label>
+                            <input
+                              type="text"
+                              value={creatorDesignation}
+                              onChange={(e) => setCreatorDesignation(e.target.value)}
+                              placeholder="e.g. IT Support Engineer"
+                              required
+                              className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary transition shadow-xs"
+                            />
+                          </div>
+                        </div>
                       </div>
 
-                      {/* Creator Designation */}
-                      <div>
-                        <label className="text-[11px] font-bold text-foreground flex items-center gap-1.5 mb-1.5">
-                          <Briefcase className="h-3.5 w-3.5 text-primary" />
-                          <span>Creator Designation <span className="text-primary">*</span></span>
-                        </label>
-                        <input
-                          type="text"
-                          value={creatorDesignation}
-                          onChange={(e) => setCreatorDesignation(e.target.value)}
-                          placeholder="e.g. IT Support Engineer"
-                          required
-                          className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-muted/30 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary transition shadow-xs"
-                        />
+                      {/* Submit Actions */}
+                      <div className="pt-2 space-y-3">
+                        <button
+                          type="submit"
+                          disabled={submitting}
+                          className="w-full py-3 px-6 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm shadow-md shadow-primary/20 hover:shadow-lg transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
+                        >
+                          <CheckCircle2 className="h-4 w-4" />
+                          <span>{submitting ? 'Generating Official Slip...' : 'Submit Registration & Generate Slip'}</span>
+                        </button>
+
+                        <p className="text-[11px] text-center text-muted-foreground flex items-center justify-center gap-1.5">
+                          <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+                          <span>Submitting will record the employee and produce the official single-page A4 credential slip.</span>
+                        </p>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Submit Actions */}
-                  <div className="pt-2 space-y-3">
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full py-3 px-6 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm shadow-md shadow-primary/20 hover:shadow-lg transition-all flex items-center justify-center gap-2.5 disabled:opacity-50"
-                    >
-                      <CheckCircle2 className="h-4 w-4" />
-                      <span>{submitting ? 'Generating Official Slip...' : 'Submit Registration & Generate Slip'}</span>
-                    </button>
-
-                    <p className="text-[11px] text-center text-muted-foreground flex items-center justify-center gap-1.5">
-                      <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-                      <span>Submitting will record the employee and produce the official single-page A4 credential slip.</span>
-                    </p>
-                  </div>
+                    </>
+                  )}
                 </form>
               </div>
 
@@ -1188,48 +1509,56 @@ IT Support: Ext. 30555 or 01730701335
                       </div>
                       <div className="text-right shrink-0">
                         <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-background border border-border text-foreground">
-                          PIN: {pin.trim() || '—'}
+                          {employeeType === 'Intern' ? 'INTERN' : (pin.trim() ? `PIN: ${pin.trim()}` : 'PIN: —')}
                         </span>
                       </div>
                     </div>
 
                     {/* Compact Credentials Grid */}
                     <div className="space-y-2 text-[11px]">
-                      <div className="p-2.5 rounded-lg bg-muted/20 border border-border/50 flex items-center justify-between">
-                        <span className="font-semibold text-muted-foreground flex items-center gap-1.5">
-                          <Mail className="h-3 w-3 text-primary" /> E-Mail:
-                        </span>
-                        <span className="font-mono font-bold text-foreground text-right truncate max-w-[190px]">
-                          {emailId || '—'}
-                        </span>
-                      </div>
+                      {employeeType !== 'Intern' && (
+                        <div className="p-2.5 rounded-lg bg-muted/20 border border-border/50 flex items-center justify-between">
+                          <span className="font-semibold text-muted-foreground flex items-center gap-1.5">
+                            <Mail className="h-3 w-3 text-primary" /> E-Mail:
+                          </span>
+                          <span className="font-mono font-bold text-foreground text-right truncate max-w-[190px]">
+                            {emailId || '—'}
+                          </span>
+                        </div>
+                      )}
 
-                      <div className="p-2.5 rounded-lg bg-muted/20 border border-border/50 flex items-center justify-between">
-                        <span className="font-semibold text-muted-foreground flex items-center gap-1.5">
-                          <Laptop className="h-3 w-3 text-primary" /> Domain ID:
-                        </span>
-                        <span className="font-mono font-bold text-foreground text-right truncate max-w-[190px]">
-                          {domainId || '—'}
-                        </span>
-                      </div>
+                      {employeeType !== 'District Correspondent' && (
+                        <div className="p-2.5 rounded-lg bg-muted/20 border border-border/50 flex items-center justify-between">
+                          <span className="font-semibold text-muted-foreground flex items-center gap-1.5">
+                            <Laptop className="h-3 w-3 text-primary" /> Domain ID:
+                          </span>
+                          <span className="font-mono font-bold text-foreground text-right truncate max-w-[190px]">
+                            {domainId || '—'}
+                          </span>
+                        </div>
+                      )}
 
-                      <div className="p-2.5 rounded-lg bg-muted/20 border border-border/50 flex items-center justify-between">
-                        <span className="font-semibold text-muted-foreground flex items-center gap-1.5">
-                          <UserCheck className="h-3 w-3 text-emerald-500" /> HRMS Login:
-                        </span>
-                        <span className="font-mono font-bold text-emerald-500 text-right truncate max-w-[190px]">
-                          {hrmsUsername || pin || '—'}
-                        </span>
-                      </div>
+                      {employeeType !== 'Intern' && (
+                        <div className="p-2.5 rounded-lg bg-muted/20 border border-border/50 flex items-center justify-between">
+                          <span className="font-semibold text-muted-foreground flex items-center gap-1.5">
+                            <UserCheck className="h-3 w-3 text-emerald-500" /> HRMS Login:
+                          </span>
+                          <span className="font-mono font-bold text-emerald-500 text-right truncate max-w-[190px]">
+                            {hrmsUsername || pin || '—'}
+                          </span>
+                        </div>
+                      )}
 
-                      <div className="p-2.5 rounded-lg bg-muted/20 border border-border/50 flex items-center justify-between">
-                        <span className="font-semibold text-muted-foreground flex items-center gap-1.5">
-                          <FileText className="h-3 w-3 text-amber-500" /> Requisition:
-                        </span>
-                        <span className="font-mono font-bold text-amber-500 text-right truncate max-w-[190px]">
-                          {foodUsername || emailId || '—'}
-                        </span>
-                      </div>
+                      {employeeType !== 'District Correspondent' && (
+                        <div className="p-2.5 rounded-lg bg-muted/20 border border-border/50 flex items-center justify-between">
+                          <span className="font-semibold text-muted-foreground flex items-center gap-1.5">
+                            <FileText className="h-3 w-3 text-amber-500" /> Requisition:
+                          </span>
+                          <span className="font-mono font-bold text-amber-500 text-right truncate max-w-[190px]">
+                            {foodUsername || (employeeType !== 'Intern' ? emailId : '') || '—'}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     {/* QR Code Scannable Badges Mini Row */}
@@ -1238,37 +1567,77 @@ IT Support: Ext. 30555 or 01730701335
                         <span className="font-bold flex items-center gap-1">
                           <QrCode className="h-3 w-3 text-primary" /> Offline QR Portals
                         </span>
-                        <span className="font-mono text-[9px]">3 Portals Linked</span>
+                        <span className="font-mono text-[9px]">
+                          {employeeType === 'Intern'
+                            ? 'Food Portal'
+                            : employeeType === 'District Correspondent'
+                            ? 'E-Mail & HRMS'
+                            : '3 Portals Linked'}
+                        </span>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="p-1.5 rounded-lg border border-border/60 bg-muted/30 text-center">
-                          {emailQr ? (
-                            <img src={emailQr} alt="Email QR" className="h-10 w-10 mx-auto object-contain rounded" />
-                          ) : (
-                            <div className="h-10 w-10 mx-auto bg-muted rounded flex items-center justify-center text-[8px]">QR</div>
-                          )}
-                          <span className="text-[8px] font-bold text-foreground block mt-1">E-Mail</span>
-                        </div>
-
-                        <div className="p-1.5 rounded-lg border border-border/60 bg-muted/30 text-center">
-                          {hrmsQr ? (
-                            <img src={hrmsQr} alt="HRMS QR" className="h-10 w-10 mx-auto object-contain rounded" />
-                          ) : (
-                            <div className="h-10 w-10 mx-auto bg-muted rounded flex items-center justify-center text-[8px]">QR</div>
-                          )}
-                          <span className="text-[8px] font-bold text-foreground block mt-1">X-Factor</span>
-                        </div>
-
-                        <div className="p-1.5 rounded-lg border border-border/60 bg-muted/30 text-center">
+                      {employeeType === 'Intern' ? (
+                        <div className="p-2 rounded-lg border border-border/60 bg-muted/30 text-center flex items-center justify-center gap-3">
                           {foodQr ? (
-                            <img src={foodQr} alt="Food QR" className="h-10 w-10 mx-auto object-contain rounded" />
+                            <img src={foodQr} alt="Food QR" className="h-11 w-11 object-contain rounded" />
                           ) : (
-                            <div className="h-10 w-10 mx-auto bg-muted rounded flex items-center justify-center text-[8px]">QR</div>
+                            <div className="h-11 w-11 bg-muted rounded flex items-center justify-center text-[8px]">QR</div>
                           )}
-                          <span className="text-[8px] font-bold text-foreground block mt-1">Food Req</span>
+                          <div className="text-left">
+                            <span className="text-[10px] font-bold text-foreground block">Food Requisition Portal</span>
+                            <span className="text-[9px] text-muted-foreground font-mono">http://202.84.45.1:50765</span>
+                          </div>
                         </div>
-                      </div>
+                      ) : employeeType === 'District Correspondent' ? (
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="p-1.5 rounded-lg border border-border/60 bg-muted/30 text-center">
+                            {emailQr ? (
+                              <img src={emailQr} alt="Email QR" className="h-10 w-10 mx-auto object-contain rounded" />
+                            ) : (
+                              <div className="h-10 w-10 mx-auto bg-muted rounded flex items-center justify-center text-[8px]">QR</div>
+                            )}
+                            <span className="text-[8px] font-bold text-foreground block mt-1">E-Mail</span>
+                          </div>
+
+                          <div className="p-1.5 rounded-lg border border-border/60 bg-muted/30 text-center">
+                            {hrmsQr ? (
+                              <img src={hrmsQr} alt="HRMS QR" className="h-10 w-10 mx-auto object-contain rounded" />
+                            ) : (
+                              <div className="h-10 w-10 mx-auto bg-muted rounded flex items-center justify-center text-[8px]">QR</div>
+                            )}
+                            <span className="text-[8px] font-bold text-foreground block mt-1">X-Factor</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="p-1.5 rounded-lg border border-border/60 bg-muted/30 text-center">
+                            {emailQr ? (
+                              <img src={emailQr} alt="Email QR" className="h-10 w-10 mx-auto object-contain rounded" />
+                            ) : (
+                              <div className="h-10 w-10 mx-auto bg-muted rounded flex items-center justify-center text-[8px]">QR</div>
+                            )}
+                            <span className="text-[8px] font-bold text-foreground block mt-1">E-Mail</span>
+                          </div>
+
+                          <div className="p-1.5 rounded-lg border border-border/60 bg-muted/30 text-center">
+                            {hrmsQr ? (
+                              <img src={hrmsQr} alt="HRMS QR" className="h-10 w-10 mx-auto object-contain rounded" />
+                            ) : (
+                              <div className="h-10 w-10 mx-auto bg-muted rounded flex items-center justify-center text-[8px]">QR</div>
+                            )}
+                            <span className="text-[8px] font-bold text-foreground block mt-1">X-Factor</span>
+                          </div>
+
+                          <div className="p-1.5 rounded-lg border border-border/60 bg-muted/30 text-center">
+                            {foodQr ? (
+                              <img src={foodQr} alt="Food QR" className="h-10 w-10 mx-auto object-contain rounded" />
+                            ) : (
+                              <div className="h-10 w-10 mx-auto bg-muted rounded flex items-center justify-center text-[8px]">QR</div>
+                            )}
+                            <span className="text-[8px] font-bold text-foreground block mt-1">Food Req</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Authorized Signatory Footnote */}
@@ -1485,7 +1854,7 @@ IT Support: Ext. 30555 or 01730701335
                       Employee Info Slip &bull; {activeSlip.name || 'Staff'}
                     </h3>
                     <p className="text-[10px] text-muted-foreground font-mono">
-                      Slip Ref: {activeSlip.slipNumber} &bull; PIN: {activeSlip.pin}
+                      Slip Ref: {activeSlip.slipNumber} &bull; Type: {activeSlip.employeeType || 'Permanent'}{activeSlip.pin ? ` &bull; PIN: ${activeSlip.pin}` : ''}
                     </p>
                   </div>
                 </div>
@@ -1597,82 +1966,102 @@ IT Support: Ext. 30555 or 01730701335
                   </div>
 
                   {/* -------------------------------------------------- */}
-                  {/* MAIN 12-ROW CREDENTIALS TABLE (COMPACT 1-PAGE)     */}
+                  {/* MAIN CREDENTIALS TABLE (COMPACT 1-PAGE)            */}
                   {/* -------------------------------------------------- */}
                   <div className="border border-slate-300 rounded-lg overflow-hidden">
                     <table className="w-full text-[10.5px] text-left border-collapse">
                       <tbody className="divide-y divide-slate-300">
-                        {/* Row 1: PIN */}
+                        {/* Employee Type */}
                         <tr className="hover:bg-slate-50">
-                          <th className="py-1 px-2.5 font-bold text-slate-900 w-2/5 bg-slate-50/80 border-r border-slate-300">PIN</th>
-                          <td className="py-1 px-2.5 font-bold text-slate-950 font-mono">{activeSlip.pin || 'N/A'}</td>
+                          <th className="py-1 px-2.5 font-bold text-slate-900 w-2/5 bg-slate-50/80 border-r border-slate-300">Employee Type</th>
+                          <td className="py-1 px-2.5 font-bold text-slate-950 uppercase">{activeSlip.employeeType || 'Permanent'}</td>
                         </tr>
 
-                        {/* Row 2: Name */}
+                        {/* Row: PIN (shown for non-interns or when available) */}
+                        {activeSlip.employeeType !== 'Intern' && (
+                          <tr className="hover:bg-slate-50">
+                            <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">PIN</th>
+                            <td className="py-1 px-2.5 font-bold text-slate-950 font-mono">{activeSlip.pin || 'N/A'}</td>
+                          </tr>
+                        )}
+
+                        {/* Row: Name */}
                         <tr className="hover:bg-slate-50">
                           <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Name</th>
                           <td className="py-1 px-2.5 font-bold text-slate-950">{activeSlip.name || 'N/A'}</td>
                         </tr>
 
-                        {/* Row 3: Designation */}
+                        {/* Row: Designation */}
                         <tr className="hover:bg-slate-50">
                           <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Designation</th>
                           <td className="py-1 px-2.5 text-slate-800">{activeSlip.designation || 'Staff'}</td>
                         </tr>
 
-                        {/* Row 4: Department */}
+                        {/* Row: Department */}
                         <tr className="hover:bg-slate-50">
                           <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Department</th>
                           <td className="py-1 px-2.5 text-slate-800">{activeSlip.department || 'N/A'}</td>
                         </tr>
 
-                        {/* Row 5: E-mail ID */}
-                        <tr className="hover:bg-slate-50">
-                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">E-mail ID</th>
-                          <td className="py-1 px-2.5 text-slate-900 font-mono">{activeSlip.emailId || 'N/A'}</td>
-                        </tr>
+                        {/* Row: E-mail (for non-interns) */}
+                        {activeSlip.employeeType !== 'Intern' && (
+                          <>
+                            <tr className="hover:bg-slate-50">
+                              <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">E-mail ID</th>
+                              <td className="py-1 px-2.5 text-slate-900 font-mono">{activeSlip.emailId || 'N/A'}</td>
+                            </tr>
 
-                        {/* Row 6: E-mail Password */}
-                        <tr className="hover:bg-slate-50">
-                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">E-mail Password</th>
-                          <td className="py-1 px-2.5 font-mono font-bold text-slate-900">{activeSlip.emailPassword || 'Itv4312'}</td>
-                        </tr>
+                            <tr className="hover:bg-slate-50">
+                              <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">E-mail Password</th>
+                              <td className="py-1 px-2.5 font-mono font-bold text-slate-900">{activeSlip.emailPassword || 'Itv4312'}</td>
+                            </tr>
+                          </>
+                        )}
 
-                        {/* Row 7: Domain ID */}
-                        <tr className="hover:bg-slate-50">
-                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Domain ID</th>
-                          <td className="py-1 px-2.5 text-slate-900 font-mono">{activeSlip.domainId || 'N/A'}</td>
-                        </tr>
+                        {/* Row: Domain ID (hidden for District Correspondent) */}
+                        {activeSlip.employeeType !== 'District Correspondent' && (
+                          <>
+                            <tr className="hover:bg-slate-50">
+                              <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Domain ID</th>
+                              <td className="py-1 px-2.5 text-slate-900 font-mono">{activeSlip.domainId || 'N/A'}</td>
+                            </tr>
 
-                        {/* Row 8: Domain Password */}
-                        <tr className="hover:bg-slate-50">
-                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Domain Password</th>
-                          <td className="py-1 px-2.5 font-mono font-bold text-slate-900">{activeSlip.domainPassword || 'Itv4312'}</td>
-                        </tr>
+                            <tr className="hover:bg-slate-50">
+                              <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Domain Password</th>
+                              <td className="py-1 px-2.5 font-mono font-bold text-slate-900">{activeSlip.domainPassword || 'Itv4312'}</td>
+                            </tr>
+                          </>
+                        )}
 
-                        {/* Row 9: X-Factor HRMS Username */}
-                        <tr className="hover:bg-slate-50">
-                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">X-Factor HRMS Username</th>
-                          <td className="py-1 px-2.5 text-slate-900 font-mono">{activeSlip.hrmsUsername || activeSlip.pin || 'N/A'}</td>
-                        </tr>
+                        {/* Row: HRMS (for non-interns) */}
+                        {activeSlip.employeeType !== 'Intern' && (
+                          <>
+                            <tr className="hover:bg-slate-50">
+                              <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">X-Factor HRMS Username</th>
+                              <td className="py-1 px-2.5 text-slate-900 font-mono">{activeSlip.hrmsUsername || activeSlip.pin || 'N/A'}</td>
+                            </tr>
 
-                        {/* Row 10: X-Factor HRMS Password */}
-                        <tr className="hover:bg-slate-50">
-                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">X-Factor HRMS Password</th>
-                          <td className="py-1 px-2.5 font-mono font-bold text-slate-900">{activeSlip.hrmsPassword || activeSlip.pin || 'N/A'}</td>
-                        </tr>
+                            <tr className="hover:bg-slate-50">
+                              <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">X-Factor HRMS Password</th>
+                              <td className="py-1 px-2.5 font-mono font-bold text-slate-900">{activeSlip.hrmsPassword || activeSlip.pin || 'N/A'}</td>
+                            </tr>
+                          </>
+                        )}
 
-                        {/* Row 11: Food Requisition Portal Username */}
-                        <tr className="hover:bg-slate-50">
-                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Food Requisition Portal Username</th>
-                          <td className="py-1 px-2.5 text-slate-900 font-mono">{activeSlip.foodUsername || activeSlip.emailId || 'N/A'}</td>
-                        </tr>
+                        {/* Row: Food Requisition Portal Username & Password (hidden for District Correspondent) */}
+                        {activeSlip.employeeType !== 'District Correspondent' && (
+                          <>
+                            <tr className="hover:bg-slate-50">
+                              <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Food Requisition Portal Username</th>
+                              <td className="py-1 px-2.5 text-slate-900 font-mono">{activeSlip.foodUsername || activeSlip.emailId || 'N/A'}</td>
+                            </tr>
 
-                        {/* Row 12: Food Requisition Portal Password */}
-                        <tr className="hover:bg-slate-50">
-                          <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Food Requisition Portal Password</th>
-                          <td className="py-1 px-2.5 font-mono font-bold text-slate-900">{activeSlip.foodPassword || '123456'}</td>
-                        </tr>
+                            <tr className="hover:bg-slate-50">
+                              <th className="py-1 px-2.5 font-bold text-slate-900 bg-slate-50/80 border-r border-slate-300">Food Requisition Portal Password</th>
+                              <td className="py-1 px-2.5 font-mono font-bold text-slate-900">{activeSlip.foodPassword || '123456'}</td>
+                            </tr>
+                          </>
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -1683,20 +2072,26 @@ IT Support: Ext. 30555 or 01730701335
                   <div className="text-[10px] space-y-1 text-slate-800">
                     <p className="font-bold text-slate-950">Important:</p>
                     <div className="pl-1 space-y-0.5 leading-tight text-[9.5px]">
-                      <p className="font-medium">1. Your Domain password must meet the following requirements:</p>
-                      <ul className="list-disc pl-4 space-y-0.5 text-slate-700">
-                        <li>At least 8 characters long.</li>
-                        <li>Password Can not contain any part of your Domain ID.</li>
-                        <li>Include at least one uppercase letter (A-Z), at least one lowercase letter (a-z), at least one number (0-9), and at least one special character (e.g., !, @, #, $, etc.).</li>
-                      </ul>
-                      <p className="font-medium pt-0.5">
-                        2. For E-Mail Password, use any complex password combinations.
-                      </p>
+                      {activeSlip.employeeType !== 'District Correspondent' && (
+                        <>
+                          <p className="font-medium">1. Your Domain password must meet the following requirements:</p>
+                          <ul className="list-disc pl-4 space-y-0.5 text-slate-700">
+                            <li>At least 8 characters long.</li>
+                            <li>Password Can not contain any part of your Domain ID.</li>
+                            <li>Include at least one uppercase letter (A-Z), at least one lowercase letter (a-z), at least one number (0-9), and at least one special character (e.g., !, @, #, $, etc.).</li>
+                          </ul>
+                        </>
+                      )}
+                      {activeSlip.employeeType !== 'Intern' && (
+                        <p className="font-medium pt-0.5">
+                          {activeSlip.employeeType === 'District Correspondent' ? '1.' : '2.'} For E-Mail Password, use any complex password combinations.
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   {/* -------------------------------------------------- */}
-                  {/* QUICK ACCESS QR CODES (3 QR CODES)                 */}
+                  {/* QUICK ACCESS QR CODES                              */}
                   {/* -------------------------------------------------- */}
                   <div className="pt-1 text-center">
                     <div className="relative flex items-center justify-center mb-2">
@@ -1708,94 +2103,156 @@ IT Support: Ext. 30555 or 01730701335
                     </div>
 
                     {/* QR Code Cards Grid */}
-                    <div className="grid grid-cols-3 gap-2.5 sm:gap-5 justify-items-center max-w-md mx-auto">
-                      {/* QR 1: E-Mail Portal */}
-                      <div className="border border-slate-300 rounded-lg p-1.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
-                        <div className="w-18 h-18 sm:w-20 sm:h-20 flex items-center justify-center overflow-hidden">
-                          {emailQr ? (
-                            <img src={emailQr} alt="E-Mail Portal QR" className="w-full h-full object-contain" />
-                          ) : (
-                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400">
-                              QR Code
-                            </div>
-                          )}
+                    {activeSlip.employeeType === 'Intern' ? (
+                      <div className="flex justify-center max-w-xs mx-auto">
+                        <div className="border border-slate-300 rounded-lg p-2 bg-white text-center flex flex-col items-center w-36 shadow-xs">
+                          <div className="w-20 h-20 flex items-center justify-center overflow-hidden">
+                            {foodQr ? (
+                              <img src={foodQr} alt="Food Requisition QR" className="w-full h-full object-contain" />
+                            ) : (
+                              <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400">
+                                QR Code
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-[9.5px] font-bold text-slate-800 mt-1 block">
+                            Food Requisition
+                          </span>
                         </div>
-                        <span className="text-[9.5px] font-bold text-slate-800 mt-0.5 block">
-                          E-Mail Portal
-                        </span>
                       </div>
+                    ) : activeSlip.employeeType === 'District Correspondent' ? (
+                      <div className="grid grid-cols-2 gap-4 justify-items-center max-w-xs mx-auto">
+                        {/* QR 1: E-Mail Portal */}
+                        <div className="border border-slate-300 rounded-lg p-1.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
+                          <div className="w-18 h-18 sm:w-20 sm:h-20 flex items-center justify-center overflow-hidden">
+                            {emailQr ? (
+                              <img src={emailQr} alt="E-Mail Portal QR" className="w-full h-full object-contain" />
+                            ) : (
+                              <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400">
+                                QR Code
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-[9.5px] font-bold text-slate-800 mt-0.5 block">
+                            E-Mail Portal
+                          </span>
+                        </div>
 
-                      {/* QR 2: X-Factor HRMS */}
-                      <div className="border border-slate-300 rounded-lg p-1.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
-                        <div className="w-18 h-18 sm:w-20 sm:h-20 flex items-center justify-center overflow-hidden">
-                          {hrmsQr ? (
-                            <img src={hrmsQr} alt="X-Factor HRMS QR" className="w-full h-full object-contain" />
-                          ) : (
-                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400">
-                              QR Code
-                            </div>
-                          )}
+                        {/* QR 2: X-Factor HRMS */}
+                        <div className="border border-slate-300 rounded-lg p-1.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
+                          <div className="w-18 h-18 sm:w-20 sm:h-20 flex items-center justify-center overflow-hidden">
+                            {hrmsQr ? (
+                              <img src={hrmsQr} alt="X-Factor HRMS QR" className="w-full h-full object-contain" />
+                            ) : (
+                              <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400">
+                                QR Code
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-[9.5px] font-bold text-slate-800 mt-0.5 block">
+                            X-Factor HRMS
+                          </span>
                         </div>
-                        <span className="text-[9.5px] font-bold text-slate-800 mt-0.5 block">
-                          X-Factor HRMS
-                        </span>
                       </div>
+                    ) : (
+                      <div className="grid grid-cols-3 gap-2.5 sm:gap-5 justify-items-center max-w-md mx-auto">
+                        {/* QR 1: E-Mail Portal */}
+                        <div className="border border-slate-300 rounded-lg p-1.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
+                          <div className="w-18 h-18 sm:w-20 sm:h-20 flex items-center justify-center overflow-hidden">
+                            {emailQr ? (
+                              <img src={emailQr} alt="E-Mail Portal QR" className="w-full h-full object-contain" />
+                            ) : (
+                              <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400">
+                                QR Code
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-[9.5px] font-bold text-slate-800 mt-0.5 block">
+                            E-Mail Portal
+                          </span>
+                        </div>
 
-                      {/* QR 3: Food Requisition */}
-                      <div className="border border-slate-300 rounded-lg p-1.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
-                        <div className="w-18 h-18 sm:w-20 sm:h-20 flex items-center justify-center overflow-hidden">
-                          {foodQr ? (
-                            <img src={foodQr} alt="Food Requisition QR" className="w-full h-full object-contain" />
-                          ) : (
-                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400">
-                              QR Code
-                            </div>
-                          )}
+                        {/* QR 2: X-Factor HRMS */}
+                        <div className="border border-slate-300 rounded-lg p-1.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
+                          <div className="w-18 h-18 sm:w-20 sm:h-20 flex items-center justify-center overflow-hidden">
+                            {hrmsQr ? (
+                              <img src={hrmsQr} alt="X-Factor HRMS QR" className="w-full h-full object-contain" />
+                            ) : (
+                              <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400">
+                                QR Code
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-[9.5px] font-bold text-slate-800 mt-0.5 block">
+                            X-Factor HRMS
+                          </span>
                         </div>
-                        <span className="text-[9.5px] font-bold text-slate-800 mt-0.5 block">
-                          Food Requisition
-                        </span>
+
+                        {/* QR 3: Food Requisition */}
+                        <div className="border border-slate-300 rounded-lg p-1.5 bg-white text-center flex flex-col items-center w-full shadow-xs">
+                          <div className="w-18 h-18 sm:w-20 sm:h-20 flex items-center justify-center overflow-hidden">
+                            {foodQr ? (
+                              <img src={foodQr} alt="Food Requisition QR" className="w-full h-full object-contain" />
+                            ) : (
+                              <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[9px] text-slate-400">
+                                QR Code
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-[9.5px] font-bold text-slate-800 mt-0.5 block">
+                            Food Requisition
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* Portal URLs Instruction */}
                   <div className="text-[9.5px] text-slate-800 leading-snug pt-1 space-y-0.5">
-                    <p className="font-semibold">3. Scan the QR codes above to quickly access portals:</p>
+                    <p className="font-semibold">
+                      {activeSlip.employeeType === 'District Correspondent' ? '2.' : '3.'} Scan the QR code
+                      {activeSlip.employeeType === 'Intern' ? '' : 's'} above to quickly access portals:
+                    </p>
                     <ul className="list-disc pl-4 space-y-0.5 text-slate-700">
-                      <li>
-                        <strong>E-Mail Portal:</strong> Scan the QR code or visit:{' '}
-                        <a
-                          href="https://mail.independent24.tv"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-blue-700 underline font-mono text-[9px]"
-                        >
-                          https://mail.independent24.tv
-                        </a>
-                      </li>
-                      <li>
-                        <strong>X-Factor HRMS Portal:</strong> Scan the QR code or visit:{' '}
-                        <a
-                          href="http://202.84.45.240:2023/xfactor/"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-blue-700 underline font-mono text-[9px]"
-                        >
-                          http://202.84.45.240:2023/xfactor/
-                        </a>
-                      </li>
-                      <li>
-                        <strong>Food Requisition Portal:</strong> Scan the QR code or visit:{' '}
-                        <a
-                          href="http://202.84.45.1:50765"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-blue-700 underline font-mono text-[9px]"
-                        >
-                          http://202.84.45.1:50765
-                        </a>
-                      </li>
+                      {activeSlip.employeeType !== 'Intern' && (
+                        <>
+                          <li>
+                            <strong>E-Mail Portal:</strong> Scan the QR code or visit:{' '}
+                            <a
+                              href="https://mail.independent24.tv"
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-blue-700 underline font-mono text-[9px]"
+                            >
+                              https://mail.independent24.tv
+                            </a>
+                          </li>
+                          <li>
+                            <strong>X-Factor HRMS Portal:</strong> Scan the QR code or visit:{' '}
+                            <a
+                              href="http://202.84.45.240:2023/xfactor/"
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-blue-700 underline font-mono text-[9px]"
+                            >
+                              http://202.84.45.240:2023/xfactor/
+                            </a>
+                          </li>
+                        </>
+                      )}
+                      {activeSlip.employeeType !== 'District Correspondent' && (
+                        <li>
+                          <strong>Food Requisition Portal:</strong> Scan the QR code or visit:{' '}
+                          <a
+                            href="http://202.84.45.1:50765"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-blue-700 underline font-mono text-[9px]"
+                          >
+                            http://202.84.45.1:50765
+                          </a>
+                        </li>
+                      )}
                     </ul>
                   </div>
 
@@ -1810,7 +2267,13 @@ IT Support: Ext. 30555 or 01730701335
                   {/* Security Warnings & Instructions */}
                   <div className="text-center pt-1.5 text-[9px] text-slate-700 space-y-0.5 font-medium">
                     <p>** Please change all of your given default login passwords after receiving this slip.</p>
-                    <p>** Always log off from your E-Mail/domain session before leaving your computer.</p>
+                    {activeSlip.employeeType === 'District Correspondent' ? (
+                      <p>** Always log off from your E-Mail session before leaving your computer.</p>
+                    ) : activeSlip.employeeType === 'Intern' ? (
+                      <p>** Always log off from your domain session before leaving your computer.</p>
+                    ) : (
+                      <p>** Always log off from your E-Mail/domain session before leaving your computer.</p>
+                    )}
                   </div>
 
                   {/* Bottom Computer-Generated Notice */}
