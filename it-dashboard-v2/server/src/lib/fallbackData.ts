@@ -1108,53 +1108,8 @@ function loadPersistedSSDs(): any[] {
 export const fallbackComputers: any[] = loadPersistedComputers();
 export const fallbackSSDs: any[] = loadPersistedSSDs();
 
-export function saveFallbackData(): void {
-  try {
-    const dir = path.dirname(STORE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(
-      STORE_PATH,
-      JSON.stringify(
-        {
-          users: fallbackUsers,
-          servers: fallbackServers,
-          computers: fallbackComputers,
-          ssds: fallbackSSDs,
-        },
-        null,
-        2
-      ),
-      'utf-8'
-    );
-  } catch (err: any) {
-    console.error('Failed to save fallbackStore.json:', err.message);
-  }
-}
-
-// Ensure store is written on first run or updated if arrays are missing
-if (!fs.existsSync(STORE_PATH)) {
-  saveFallbackData();
-} else {
-  try {
-    const raw = fs.readFileSync(STORE_PATH, 'utf-8');
-    const parsed = JSON.parse(raw);
-    if (
-      !parsed.servers ||
-      !Array.isArray(parsed.servers) ||
-      !parsed.computers ||
-      !Array.isArray(parsed.computers) ||
-      !parsed.ssds ||
-      !Array.isArray(parsed.ssds)
-    ) {
-      saveFallbackData();
-    }
-  } catch {}
-}
-
 // --- 6. ITV Extensions (PABX Directory matching authentic ITV staff) ---
-export const fallbackExtensions: any[] = [
+const initialExtensions: any[] = [
   {
     id: 'ext-1',
     extensionNumber: '1101',
@@ -1287,6 +1242,75 @@ export const fallbackExtensions: any[] = [
     status: 'AVAILABLE',
   },
 ];
+
+function loadPersistedExtensions(): any[] {
+  try {
+    if (fs.existsSync(STORE_PATH)) {
+      const raw = fs.readFileSync(STORE_PATH, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed.extensions) && parsed.extensions.length > 0) {
+        return parsed.extensions.map((e: any) => ({
+          ...e,
+          createdAt: e.createdAt ? new Date(e.createdAt) : new Date(),
+          updatedAt: e.updatedAt ? new Date(e.updatedAt) : new Date(),
+        }));
+      }
+    }
+  } catch (err: any) {
+    console.warn('Could not read extensions from fallbackStore.json:', err.message);
+  }
+  return initialExtensions;
+}
+
+export const fallbackExtensions: any[] = loadPersistedExtensions();
+
+export function saveFallbackData(): void {
+  try {
+    const dir = path.dirname(STORE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(
+      STORE_PATH,
+      JSON.stringify(
+        {
+          users: fallbackUsers,
+          servers: fallbackServers,
+          computers: fallbackComputers,
+          ssds: fallbackSSDs,
+          extensions: fallbackExtensions,
+        },
+        null,
+        2
+      ),
+      'utf-8'
+    );
+  } catch (err: any) {
+    console.error('Failed to save fallbackStore.json:', err.message);
+  }
+}
+
+// Ensure store is written on first run or updated if arrays are missing
+if (!fs.existsSync(STORE_PATH)) {
+  saveFallbackData();
+} else {
+  try {
+    const raw = fs.readFileSync(STORE_PATH, 'utf-8');
+    const parsed = JSON.parse(raw);
+    if (
+      !parsed.servers ||
+      !Array.isArray(parsed.servers) ||
+      !parsed.computers ||
+      !Array.isArray(parsed.computers) ||
+      !parsed.ssds ||
+      !Array.isArray(parsed.ssds) ||
+      !parsed.extensions ||
+      !Array.isArray(parsed.extensions)
+    ) {
+      saveFallbackData();
+    }
+  } catch {}
+}
 
 // --- 7. Activity Logs ---
 export const fallbackActivityLogs: any[] = [

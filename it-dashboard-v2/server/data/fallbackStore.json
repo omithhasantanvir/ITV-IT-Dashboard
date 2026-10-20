@@ -2463,5 +2463,160 @@
       "createdAt": "2022-01-15T00:00:00.000Z",
       "updatedAt": "2026-10-20T12:35:55.546Z"
     }
+  ],
+  "extensions": [
+    {
+      "id": "ext-1792502878212",
+      "extensionNumber": "0",
+      "holderName": "Reception Desk",
+      "designation": "Main Front Desk",
+      "customEmployeeId": null,
+      "mobile": "",
+      "department": "General Operations",
+      "location": "",
+      "deskRoom": "Floor 1 Reception",
+      "status": "ASSIGNED",
+      "remarks": "",
+      "employeeId": null,
+      "employee": null,
+      "createdAt": "2026-10-20T13:27:58.212Z",
+      "updatedAt": "2026-10-20T13:27:58.212Z"
+    },
+    {
+      "id": "ext-1",
+      "extensionNumber": "1101",
+      "holderName": "Omith Hasan",
+      "designation": "Lead IT Systems Administrator",
+      "department": "Information Technology",
+      "customEmployeeId": "ITV-IT-08",
+      "mobile": "01713288652",
+      "deskRoom": "Room 401 - IT Operations",
+      "status": "ASSIGNED",
+      "employee": {
+        "id": "usr-itv-08",
+        "name": "Omith Hasan",
+        "employeeId": "ITV-IT-08",
+        "email": "omith.hasan@independent24.tv",
+        "department": "Information Technology",
+        "designation": "Lead IT Systems Administrator"
+      },
+      "createdAt": "2026-10-20T13:25:36.040Z",
+      "updatedAt": "2026-10-20T13:25:36.040Z"
+    },
+    {
+      "id": "ext-2",
+      "extensionNumber": "30303",
+      "holderName": "Abu Toha Md. Anowarul Azim",
+      "designation": "Head of Broadcast Technology and IT",
+      "department": "Information Technology",
+      "customEmployeeId": "ITV-IT-01",
+      "mobile": "01730701303",
+      "deskRoom": "Room 402 - Head of IT",
+      "status": "ASSIGNED",
+      "employee": {
+        "id": "usr-itv-01",
+        "name": "Abu Toha Md. Anowarul Azim",
+        "employeeId": "ITV-IT-01",
+        "email": "anowarul.azim@independent24.tv",
+        "department": "Information Technology",
+        "designation": "Head of Broadcast Technology and IT"
+      },
+      "createdAt": "2026-10-20T13:25:36.040Z",
+      "updatedAt": "2026-10-20T13:25:36.040Z"
+    },
+    {
+      "id": "ext-3",
+      "extensionNumber": "30351",
+      "holderName": "Apu Roy",
+      "designation": "Manager",
+      "department": "Information Technology",
+      "customEmployeeId": "ITV-IT-02",
+      "mobile": "01730701382",
+      "deskRoom": "Room 403 - IT Manager",
+      "status": "ASSIGNED",
+      "employee": {
+        "id": "usr-itv-02",
+        "name": "Apu Roy",
+        "employeeId": "ITV-IT-02",
+        "email": "apu.roy@independent24.tv",
+        "department": "Information Technology",
+        "designation": "Manager"
+      },
+      "createdAt": "2026-10-20T13:25:36.040Z",
+      "updatedAt": "2026-10-20T13:25:36.040Z"
+    },
+    {
+      "id": "ext-4",
+      "extensionNumber": "30354",
+      "holderName": "Md. Asaduzzaman",
+      "designation": "Assistant Manager",
+      "department": "Information Technology",
+      "customEmployeeId": "ITV-IT-04",
+      "mobile": "01755515294",
+      "deskRoom": "HQ Server Room Desk",
+      "status": "ASSIGNED",
+      "employee": {
+        "id": "usr-itv-04",
+        "name": "Md. Asaduzzaman",
+        "employeeId": "ITV-IT-04",
+        "email": "asad.zaman@independent24.tv",
+        "department": "Information Technology",
+        "designation": "Assistant Manager"
+      },
+      "createdAt": "2026-10-20T13:25:36.040Z",
+      "updatedAt": "2026-10-20T13:25:36.040Z"
+    },
+    {
+      "id": "ext-5",
+      "extensionNumber": "30101",
+      "holderName": "Shamin Abdullah Zahedy",
+      "designation": "Executive Director",
+      "department": "News / Broadcast Operations",
+      "customEmployeeId": "ITV-KP-01",
+      "mobile": "01755533707",
+      "deskRoom": "Executive Suite Floor 3",
+      "status": "ASSIGNED",
+      "createdAt": "2026-10-20T13:25:36.040Z",
+      "updatedAt": "2026-10-20T13:25:36.040Z"
+    },
+    {
+      "id": "ext-6",
+      "extensionNumber": "30104",
+      "holderName": "Mamun Abdullah",
+      "designation": "Head of News",
+      "department": "News",
+      "customEmployeeId": "ITV-KP-02",
+      "mobile": "01755515231",
+      "deskRoom": "Newsroom Lead Desk",
+      "status": "ASSIGNED",
+      "createdAt": "2026-10-20T13:25:36.040Z",
+      "updatedAt": "2026-10-20T13:25:36.040Z"
+    },
+    {
+      "id": "ext-7",
+      "extensionNumber": "30480",
+      "holderName": "Md. Shajjad Hossain",
+      "designation": "Head of Finance & Accounts",
+      "department": "Finance and Accounts",
+      "customEmployeeId": "ITV-KP-17",
+      "mobile": "01714170014",
+      "deskRoom": "Room 205",
+      "status": "ASSIGNED",
+      "createdAt": "2026-10-20T13:25:36.040Z",
+      "updatedAt": "2026-10-20T13:25:36.040Z"
+    },
+    {
+      "id": "ext-8",
+      "extensionNumber": "30460",
+      "holderName": "Mahbubur Rahman",
+      "designation": "Head of Human Resources",
+      "department": "Human Resources",
+      "customEmployeeId": "ITV-KP-19",
+      "mobile": "01755533597",
+      "deskRoom": "Room 304",
+      "status": "ASSIGNED",
+      "createdAt": "2026-10-20T13:25:36.040Z",
+      "updatedAt": "2026-10-20T13:25:36.040Z"
+    }
   ]
 }
