@@ -13,9 +13,9 @@ export const NetworkSwitch: React.FC<NetworkSwitchProps> = ({ equipment }) => {
   return (
     <div
       style={{ height: `${equipment.uHeight * U_HEIGHT_PX}px` }}
-      className="w-full relative px-1 py-0.5 border-b border-zinc-800/80 transition-all select-none"
+      className="w-full relative px-1 py-0.5 border-b border-zinc-800/80 transition-all select-none overflow-hidden min-w-0"
     >
-      <div className="w-full h-full rounded-[2px] bg-gradient-to-r from-[#171a22] via-[#101217] to-[#171a22] border border-zinc-700/80 flex items-center justify-between px-1.5 shadow-inner">
+      <div className="w-full h-full rounded-[2px] bg-gradient-to-r from-[#171a22] via-[#101217] to-[#171a22] border border-zinc-700/80 flex items-center justify-between px-1.5 shadow-inner overflow-hidden">
         {/* Left Rack Ear */}
         <div className="flex items-center gap-1 shrink-0">
           <div className="w-2.5 h-full py-0.5 flex flex-col justify-between items-center bg-[#242730] rounded-[1px] border border-zinc-600 shadow-sm shrink-0">
@@ -28,15 +28,15 @@ export const NetworkSwitch: React.FC<NetworkSwitchProps> = ({ equipment }) => {
             <span className="text-[8px] font-mono font-black text-cyan-400 tracking-wider">
               {isCisco ? 'CISCO' : 'ARISTA'}
             </span>
-            <span className="text-[6.5px] font-mono text-zinc-400 font-bold truncate max-w-[80px]">
+            <span className="text-[6.5px] font-mono text-zinc-400 font-bold truncate max-w-[70px] sm:max-w-[85px]">
               {equipment.model}
             </span>
           </div>
         </div>
 
         {/* 48x RJ45 Switch Ports Array (arranged in 2 rows of 24) */}
-        <div className="flex-1 mx-2 h-full py-0.5 flex items-center justify-center">
-          <div className="bg-[#08090c] p-0.5 rounded border border-zinc-800 flex items-center gap-1 shadow-inner">
+        <div className="flex-1 min-w-0 mx-1 sm:mx-2 h-full py-0.5 flex items-center justify-center overflow-hidden">
+          <div className="bg-[#08090c] p-0.5 rounded border border-zinc-800 flex items-center gap-1 shadow-inner overflow-hidden">
             {/* Block 1 (Ports 1-24) */}
             <div className="flex flex-col gap-[2px]">
               <div className="flex items-center gap-[2px]">

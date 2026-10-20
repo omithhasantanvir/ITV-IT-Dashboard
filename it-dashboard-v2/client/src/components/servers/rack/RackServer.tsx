@@ -28,7 +28,6 @@ interface RackServerProps {
   serverNode?: ServerNode;
   isSelected: boolean;
   isHovered: boolean;
-  doorOpen: boolean;
   viewMode: RackViewMode;
   onSelect: (equipment: RackEquipment) => void;
   onHover: (id: string | null) => void;
@@ -43,7 +42,6 @@ export const RackServer: React.FC<RackServerProps> = ({
   serverNode,
   isSelected,
   isHovered,
-  doorOpen,
   viewMode,
   onSelect,
   onHover,
@@ -172,7 +170,7 @@ export const RackServer: React.FC<RackServerProps> = ({
   return (
     <div
       style={{ height: `${heightPx}px` }}
-      className="w-full relative px-0.5 py-0.5 border-b border-zinc-800/80 select-none group"
+      className="w-full relative px-0.5 py-0.5 border-b border-zinc-800/80 select-none group min-w-0 overflow-x-clip"
       onMouseEnter={() => onHover(equipment.id)}
       onMouseLeave={() => onHover(null)}
     >
@@ -371,7 +369,7 @@ export const RackServer: React.FC<RackServerProps> = ({
             heavy handles, and clear status LEDs
             =================================================================== */}
         <div
-          className={`w-full h-full rounded-[2px] border flex items-center justify-between px-1.5 sm:px-2 transition-colors overflow-hidden ${
+          className={`w-full h-full rounded-[2px] border flex items-center justify-between px-1 sm:px-1.5 transition-colors overflow-hidden ${
             isOnline
               ? isSelected
                 ? 'bg-gradient-to-r from-[#1d202d] via-[#141620] to-[#1d202d] border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
@@ -384,17 +382,17 @@ export const RackServer: React.FC<RackServerProps> = ({
           {/* ===============================================================
               LEFT SECTION: RACK MOUNTING EAR + CAPTIVE SCREWS + CHASSIS HANDLE
               =============================================================== */}
-          <div className="flex items-center gap-1.5 shrink-0 h-full py-0.5">
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 h-full py-0.5">
             {/* Left Rack Mounting Ear with 2 Captive Screws */}
-            <div className={`w-3 sm:w-3.5 h-full flex flex-col justify-between items-center bg-[#252833] rounded-[1px] border border-zinc-600 shadow-sm shrink-0 py-0.5`}>
+            <div className="w-2.5 sm:w-3 h-full flex flex-col justify-between items-center bg-[#252833] rounded-[1px] border border-zinc-600 shadow-sm shrink-0 py-0.5">
               <div
-                className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#71717a] border border-zinc-900 flex items-center justify-center shadow-inner"
+                className="w-1.5 h-1.5 rounded-full bg-[#71717a] border border-zinc-900 flex items-center justify-center shadow-inner"
                 title="Captive Rack Mounting Screw"
               >
                 <div className="w-1 h-[0.5px] bg-zinc-400 rotate-45" />
               </div>
               <div
-                className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#71717a] border border-zinc-900 flex items-center justify-center shadow-inner"
+                className="w-1.5 h-1.5 rounded-full bg-[#71717a] border border-zinc-900 flex items-center justify-center shadow-inner"
                 title="Captive Rack Mounting Screw"
               >
                 <div className="w-1 h-[0.5px] bg-zinc-400 -rotate-45" />
@@ -403,19 +401,19 @@ export const RackServer: React.FC<RackServerProps> = ({
 
             {/* Left Solid Aluminum Chassis Handle */}
             <div
-              className={`w-2 sm:w-2.5 h-full rounded-[1px] border border-zinc-500 shrink-0 shadow-sm`}
+              className="w-1.5 sm:w-2 h-full rounded-[1px] border border-zinc-500 shrink-0 shadow-sm"
               style={{
                 background: 'linear-gradient(90deg, #9ca3af 0%, #f3f4f6 35%, #e5e7eb 65%, #6b7280 100%)',
               }}
             />
 
             {/* Power Button & Diagnostic Status Cluster */}
-            <div className="flex flex-col justify-between py-0.5 px-1 h-full bg-[#0c0d12] rounded-[2px] border border-zinc-800 shrink-0 leading-none">
-              <div className="flex items-center gap-1.5">
+            <div className="flex flex-col justify-between py-0.5 px-0.5 sm:px-1 h-full bg-[#0c0d12] rounded-[2px] border border-zinc-800 shrink-0 leading-none">
+              <div className="flex items-center gap-1 sm:gap-1.5">
                 {/* Power Button with LED Ring */}
                 <button
                   type="button"
-                  className={`w-3 h-3 rounded-full flex items-center justify-center border transition-all ${
+                  className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full flex items-center justify-center border transition-all ${
                     isOnline
                       ? 'bg-emerald-500/20 border-emerald-400 shadow-[0_0_6px_#34d399]'
                       : isWarning
@@ -425,7 +423,7 @@ export const RackServer: React.FC<RackServerProps> = ({
                   title={`Power Status: ${serverNode?.status || 'ONLINE'}`}
                 >
                   <div
-                    className={`w-1.5 h-1.5 rounded-full ${
+                    className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${
                       isOnline ? 'bg-emerald-400' : isWarning ? 'bg-amber-400' : 'bg-rose-500'
                     }`}
                   />
@@ -433,7 +431,7 @@ export const RackServer: React.FC<RackServerProps> = ({
 
                 {/* Network Traffic Activity LED */}
                 <div
-                  className={`w-1.5 h-1.5 rounded-full ${
+                  className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full ${
                     isOnline ? 'bg-amber-400 shadow-[0_0_4px_#fbbf24] animate-nic-flicker' : 'bg-zinc-700'
                   }`}
                   title="NIC Network Traffic"
@@ -441,7 +439,7 @@ export const RackServer: React.FC<RackServerProps> = ({
               </div>
 
               {/* U Slot Stamp */}
-              <span className="text-[7px] font-mono text-zinc-400 font-bold tracking-tight">
+              <span className="text-[6.5px] sm:text-[7px] font-mono text-zinc-400 font-bold tracking-tight">
                 {uDisplay}
               </span>
             </div>
@@ -450,15 +448,15 @@ export const RackServer: React.FC<RackServerProps> = ({
           {/* ===============================================================
               CENTER SECTION: BRAND BADGE + SERVER LABEL + HONEYCOMB EXHAUST
               =============================================================== */}
-          <div className="flex-1 mx-2 h-full flex items-center justify-between gap-2 overflow-hidden">
+          <div className="flex-1 min-w-0 mx-1 sm:mx-1.5 h-full flex items-center justify-between gap-1 overflow-hidden">
             {/* Ventilation Honeycomb Texture with Professional Server Badge */}
-            <div className="flex-1 h-full rounded-[2px] border border-zinc-800/90 server-honeycomb-grill flex items-center justify-between px-2.5 overflow-hidden relative shadow-inner">
+            <div className="flex-1 min-w-0 h-full rounded-[2px] border border-zinc-800/90 server-honeycomb-grill flex items-center justify-between px-1.5 sm:px-2 overflow-hidden relative shadow-inner">
               {/* Server Name & IP Label Plate */}
-              <div className="flex items-center gap-2 z-10">
+              <div className="flex items-center gap-1 sm:gap-1.5 min-w-0 shrink">
                 <div
-                  className={`px-2 py-0.5 rounded-[2px] font-mono ${
-                    is2U ? 'text-[10px] sm:text-[11.5px]' : 'text-[8.5px] sm:text-[9.5px]'
-                  } font-black tracking-wide flex items-center gap-1.5 shadow ${
+                  className={`px-1.5 sm:px-2 py-0.5 rounded-[2px] font-mono ${
+                    is2U ? 'text-[9.5px] sm:text-[11px]' : 'text-[8px] sm:text-[9px]'
+                  } font-black tracking-wide flex items-center gap-1 shadow shrink-0 ${
                     isOnline
                       ? 'bg-gradient-to-r from-emerald-600 to-teal-700 text-white'
                       : isWarning
@@ -466,22 +464,22 @@ export const RackServer: React.FC<RackServerProps> = ({
                       : 'bg-gradient-to-r from-rose-700 to-red-800 text-white'
                   }`}
                 >
-                  <Server className={`${is2U ? 'w-3 h-3' : 'w-2.5 h-2.5'} stroke-[2.5]`} />
-                  <span className="truncate max-w-[130px] sm:max-w-[160px]">{displayName}</span>
+                  <Server className={`${is2U ? 'w-3 h-3' : 'w-2.5 h-2.5'} stroke-[2.5] shrink-0`} />
+                  <span className="truncate max-w-[85px] sm:max-w-[125px]">{displayName}</span>
                 </div>
 
                 {/* Subnet / IP Address */}
-                <div className="hidden sm:flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/85 border border-zinc-700/80 text-[8px] sm:text-[9px] font-mono text-zinc-200 font-bold">
+                <div className="hidden sm:flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/85 border border-zinc-700/80 text-[7.5px] sm:text-[8.5px] font-mono text-zinc-200 font-bold shrink-0">
                   <span>{displayIp}</span>
                 </div>
               </div>
 
               {/* Vendor & Model Badge */}
-              <div className="hidden md:flex items-center gap-1.5 z-10 text-[7.5px] sm:text-[8px] font-mono font-bold text-zinc-400">
-                <span className="px-1.5 py-0.2 rounded bg-zinc-900/95 border border-zinc-800 text-zinc-300">
+              <div className="hidden md:flex items-center gap-1 min-w-0 shrink-0 text-[7px] sm:text-[7.5px] font-mono font-bold text-zinc-400 pl-1">
+                <span className="px-1 py-0.2 rounded bg-zinc-900/95 border border-zinc-800 text-zinc-300 shrink-0">
                   {equipment.vendor}
                 </span>
-                <span className="text-zinc-400 truncate max-w-[110px]">{displayModel}</span>
+                <span className="text-zinc-400 truncate max-w-[70px] sm:max-w-[95px]">{displayModel}</span>
               </div>
             </div>
           </div>
@@ -489,14 +487,14 @@ export const RackServer: React.FC<RackServerProps> = ({
           {/* ===============================================================
               RIGHT SECTION: HOT-SWAP DRIVE CADDIES WITH ACTIVITY LEDS
               =============================================================== */}
-          <div className="flex items-center gap-1.5 shrink-0 h-full py-0.5">
-            {/* Hot-Swap Drive Matrix */}
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 h-full py-0.5">
+            {/* Hot-Swap Drive Matrix (Up to 4 bays on compact, 6 on wider) */}
             <div className="flex items-center gap-0.5 bg-[#090a0e] p-0.5 rounded-[2px] border border-zinc-800">
-              {Array.from({ length: Math.min(equipment.driveBayCount || 4, 8) }).map((_, i) => (
+              {Array.from({ length: Math.min(equipment.driveBayCount || 4, 6) }).map((_, i) => (
                 <div
                   key={i}
                   className={`${
-                    is2U ? 'w-2 sm:w-2.5' : 'w-1.5 sm:w-2'
+                    is2U ? 'w-1.5 sm:w-2' : 'w-1.5'
                   } h-full py-0.5 bg-[#171922] rounded-[1px] border border-zinc-700 flex flex-col justify-between items-center`}
                   title={`Drive Bay ${i + 1}: SAS 12G Hot-Swap`}
                 >
@@ -516,22 +514,22 @@ export const RackServer: React.FC<RackServerProps> = ({
 
             {/* Right Solid Aluminum Chassis Handle */}
             <div
-              className={`w-2 sm:w-2.5 h-full rounded-[1px] border border-zinc-500 shrink-0 shadow-sm`}
+              className="w-1.5 sm:w-2 h-full rounded-[1px] border border-zinc-500 shrink-0 shadow-sm"
               style={{
                 background: 'linear-gradient(90deg, #9ca3af 0%, #f3f4f6 35%, #e5e7eb 65%, #6b7280 100%)',
               }}
             />
 
             {/* Right Rack Mounting Ear with 2 Captive Screws */}
-            <div className={`w-3 sm:w-3.5 h-full flex flex-col justify-between items-center bg-[#252833] rounded-[1px] border border-zinc-600 shadow-sm shrink-0 py-0.5`}>
+            <div className="w-2.5 sm:w-3 h-full flex flex-col justify-between items-center bg-[#252833] rounded-[1px] border border-zinc-600 shadow-sm shrink-0 py-0.5">
               <div
-                className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#71717a] border border-zinc-900 flex items-center justify-center shadow-inner"
+                className="w-1.5 h-1.5 rounded-full bg-[#71717a] border border-zinc-900 flex items-center justify-center shadow-inner"
                 title="Captive Rack Mounting Screw"
               >
                 <div className="w-1 h-[0.5px] bg-zinc-400 rotate-45" />
               </div>
               <div
-                className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#71717a] border border-zinc-900 flex items-center justify-center shadow-inner"
+                className="w-1.5 h-1.5 rounded-full bg-[#71717a] border border-zinc-900 flex items-center justify-center shadow-inner"
                 title="Captive Rack Mounting Screw"
               >
                 <div className="w-1 h-[0.5px] bg-zinc-400 -rotate-45" />

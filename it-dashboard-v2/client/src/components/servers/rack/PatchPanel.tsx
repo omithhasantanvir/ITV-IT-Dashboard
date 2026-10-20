@@ -13,9 +13,9 @@ export const PatchPanel: React.FC<PatchPanelProps> = ({ equipment }) => {
   return (
     <div
       style={{ height: `${equipment.uHeight * U_HEIGHT_PX}px` }}
-      className="w-full relative px-1 py-0.5 border-b border-zinc-800/80 transition-all select-none"
+      className="w-full relative px-1 py-0.5 border-b border-zinc-800/80 transition-all select-none overflow-hidden min-w-0"
     >
-      <div className="w-full h-full rounded-[2px] bg-gradient-to-r from-[#14151a] via-[#0d0e12] to-[#14151a] border border-zinc-700/80 flex items-center justify-between px-1.5 shadow-inner">
+      <div className="w-full h-full rounded-[2px] bg-gradient-to-r from-[#14151a] via-[#0d0e12] to-[#14151a] border border-zinc-700/80 flex items-center justify-between px-1.5 shadow-inner overflow-hidden">
         {/* Left Rack Ear */}
         <div className="flex items-center gap-1 shrink-0">
           <div className="w-2.5 h-full py-0.5 flex flex-col justify-between items-center bg-[#242730] rounded-[1px] border border-zinc-600 shadow-sm shrink-0">
@@ -28,7 +28,7 @@ export const PatchPanel: React.FC<PatchPanelProps> = ({ equipment }) => {
         </div>
 
         {/* 24x Port Matrix with Draped Patch Leads */}
-        <div className="flex-1 mx-2 h-full py-0.5 flex items-center justify-center relative overflow-hidden">
+        <div className="flex-1 min-w-0 mx-1 sm:mx-2 h-full py-0.5 flex items-center justify-center relative overflow-hidden">
           <div className="flex items-center gap-1 bg-[#08080b] p-0.5 rounded border border-zinc-800/90 shadow-inner">
             {Array.from({ length: 4 }).map((_, blockIdx) => (
               <div key={blockIdx} className="flex items-center gap-[2px] px-1 border-r border-zinc-800 last:border-0">

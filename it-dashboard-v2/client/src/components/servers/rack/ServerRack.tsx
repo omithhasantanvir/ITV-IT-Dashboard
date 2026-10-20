@@ -16,9 +16,6 @@ import { PowerEquipment } from './PowerEquipment';
 import { ServerDetailsPanel } from './ServerDetailsPanel';
 import {
   Server,
-  DoorOpen,
-  DoorClosed,
-  Lock,
   RotateCcw,
 } from 'lucide-react';
 
@@ -37,7 +34,6 @@ interface ServerRackProps {
   copiedIp?: string | null;
   soundEnabled?: boolean;
   onPlaySound?: (type: 'beep' | 'slide' | 'door' | 'alert' | 'click') => void;
-  onRequestDoorAuth?: () => void;
   totalUnits?: number;
 }
 
@@ -56,13 +52,10 @@ export const ServerRack: React.FC<ServerRackProps> = ({
   copiedIp,
   soundEnabled,
   onPlaySound,
-  onRequestDoorAuth,
   totalUnits = 27,
 }) => {
   // View mode inside this cabinet: 'front' | 'rear' | '3d'
   const [viewMode, setViewMode] = useState<RackViewMode>('front');
-  // Front Glass / Mesh Door: Open or Closed
-  const [doorOpen, setDoorOpen] = useState(false);
 
   const isRack1 = rackNumber === '01';
   const totalRackHeight = totalUnits * U_HEIGHT_PX; // 27 * 24px = 648px
@@ -78,21 +71,6 @@ export const ServerRack: React.FC<ServerRackProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedEquipment, onSelectEquipment, onPlaySound]);
-
-  // Toggle Door Open/Close
-  const handleToggleDoor = () => {
-    if (doorOpen) {
-      setDoorOpen(false);
-      if (onPlaySound) onPlaySound('door');
-    } else {
-      if (onRequestDoorAuth) {
-        onRequestDoorAuth();
-      } else {
-        setDoorOpen(true);
-        if (onPlaySound) onPlaySound('door');
-      }
-    }
-  };
 
   // Handle Equipment Click (Pull Out Server or Toggle Selection)
   const handleEquipmentClick = (eq: RackEquipment) => {
@@ -149,7 +127,6 @@ export const ServerRack: React.FC<ServerRackProps> = ({
               serverNode={serverNode}
               isSelected={isSelected}
               isHovered={isHovered}
-              doorOpen={doorOpen}
               viewMode={viewMode}
               onSelect={handleEquipmentClick}
               onHover={onHoverEquipment}
@@ -212,11 +189,11 @@ export const ServerRack: React.FC<ServerRackProps> = ({
   return (
     <div className="w-full flex flex-col items-center font-mono relative">
       {/* =====================================================================
-          MAIN 42U PHYSICAL SERVER CABINET ENCLOSURE
+          MAIN PHYSICAL SERVER CABINET ENCLOSURE
           Full width for equipment, realistic 19" EIA-310 proportions.
           ===================================================================== */}
       <div
-        className={`w-full max-w-[460px] sm:max-w-[480px] relative transition-transform duration-500 ${
+        className={`w-full max-w-[480px] sm:max-w-[500px] lg:max-w-[520px] relative transition-transform duration-500 ${
           viewMode === '3d'
             ? '[perspective:1400px] [transform:rotateY(-7deg)_rotateX(2deg)] shadow-[25px_25px_60px_rgba(0,0,0,0.9)]'
             : ''
@@ -290,13 +267,12 @@ export const ServerRack: React.FC<ServerRackProps> = ({
             </div>
           </div>
 
-          {/* View Selector Controls (Front / Rear / 3D) & Door Lock */}
+          {/* View Selector Controls (Front / Rear / 3D) */}
           <div className="flex items-center gap-1.5">
-            {/* View Mode Switcher */}
             <div className="flex items-center p-0.5 rounded-lg bg-black/80 border border-zinc-800 text-[8px] font-bold">
               <button
                 onClick={() => setViewMode('front')}
-                className={`px-2 py-0.5 rounded transition ${
+                className={`px-2.5 py-1 rounded transition ${
                   viewMode === 'front'
                     ? 'bg-zinc-800 text-white shadow-sm'
                     : 'text-zinc-400 hover:text-white'
@@ -307,7 +283,7 @@ export const ServerRack: React.FC<ServerRackProps> = ({
               </button>
               <button
                 onClick={() => setViewMode('rear')}
-                className={`px-2 py-0.5 rounded transition ${
+                className={`px-2.5 py-1 rounded transition ${
                   viewMode === 'rear'
                     ? 'bg-cyan-600/30 text-cyan-300 border border-cyan-500/50 shadow-sm'
                     : 'text-zinc-400 hover:text-white'
@@ -318,7 +294,7 @@ export const ServerRack: React.FC<ServerRackProps> = ({
               </button>
               <button
                 onClick={() => setViewMode('3d')}
-                className={`px-2 py-0.5 rounded transition ${
+                className={`px-2.5 py-1 rounded transition ${
                   viewMode === '3d'
                     ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
                     : 'text-zinc-400 hover:text-white'
@@ -328,29 +304,6 @@ export const ServerRack: React.FC<ServerRackProps> = ({
                 3D
               </button>
             </div>
-
-            {/* Cabinet Door Open/Close Button */}
-            <button
-              onClick={handleToggleDoor}
-              className={`px-2 py-1 rounded-lg text-[8px] font-bold flex items-center gap-1 border transition-all cursor-pointer ${
-                doorOpen
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50 hover:bg-emerald-500/30'
-                  : 'bg-zinc-900 text-zinc-300 border-zinc-700 hover:bg-zinc-800'
-              }`}
-              title={doorOpen ? 'Click to close cabinet glass door' : 'Click to open cabinet glass door'}
-            >
-              {doorOpen ? (
-                <>
-                  <DoorOpen className="w-2.5 h-2.5 text-emerald-400" />
-                  <span>DOOR OPEN</span>
-                </>
-              ) : (
-                <>
-                  <DoorClosed className="w-2.5 h-2.5 text-zinc-400" />
-                  <span>DOOR CLOSED</span>
-                </>
-              )}
-            </button>
           </div>
         </div>
 
@@ -359,52 +312,20 @@ export const ServerRack: React.FC<ServerRackProps> = ({
             Clean, balanced cabinet frame with left & right mounting rails.
             Equipment occupies the full usable width. NO right-side extension!
             ================================================================= */}
-        <div className="w-full border-x border-zinc-800 bg-[#08090c] relative shadow-[0_20px_50px_rgba(0,0,0,0.9)] flex">
+        <div className="w-full border-x border-zinc-800 bg-[#08090c] relative shadow-[0_20px_50px_rgba(0,0,0,0.9)] flex overflow-x-clip">
           {/* Vertical Rails on Left */}
           <RackRail side="left" units={totalUnits} />
 
-          {/* Center Equipment Column: Exact totalRackHeight */}
+          {/* Center Equipment Column: Exact totalRackHeight & strict containment */}
           <div
             style={{ height: `${totalRackHeight}px` }}
-            className="flex-1 mx-5 sm:mx-6 bg-[#090a0e] flex flex-col relative z-10 border-x border-zinc-800/90"
+            className="flex-1 min-w-0 mx-5 sm:mx-6 bg-[#090a0e] flex flex-col relative z-10 border-x border-zinc-800/90 overflow-x-clip"
           >
             {renderSlots()}
           </div>
 
           {/* Vertical Rails on Right */}
           <RackRail side="right" units={totalUnits} />
-
-          {/* ===============================================================
-              OPTIONAL GLASS / MESH FRONT DOOR OVERLAY
-              When closed, displays realistic tinted glass with reflection.
-              When clicked or toggled, swings smoothly open on left hinge.
-              =============================================================== */}
-          {!doorOpen && (
-            <div
-              onClick={handleToggleDoor}
-              className="absolute inset-0 z-30 bg-cyan-950/20 backdrop-blur-[0.5px] border-2 border-zinc-700/60 rounded-[2px] transition-all cursor-pointer group flex flex-col justify-between p-3 select-none"
-              style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(6,182,212,0.04) 40%, rgba(0,0,0,0.4) 100%)',
-              }}
-              title="Cabinet Glass Door is Locked. Click to open and inspect servers."
-            >
-              {/* Glass Diagonal Reflection Sheen */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.04] to-transparent pointer-events-none" />
-
-              {/* Top Door Warning Label */}
-              <div className="self-center px-3 py-1 rounded bg-black/80 border border-zinc-700 text-[8px] font-mono font-bold text-zinc-300 flex items-center gap-1.5 shadow-lg opacity-80 group-hover:opacity-100 transition">
-                <Lock className="w-2.5 h-2.5 text-cyan-400" />
-                <span>CABINET DOOR CLOSED • CLICK TO UNLOCK & PULL OUT SERVERS</span>
-              </div>
-
-              {/* Right Chrome Door Swing Handle & Cylinder Lock */}
-              <div className="self-end mr-2 w-4 h-24 rounded bg-gradient-to-b from-zinc-400 via-zinc-200 to-zinc-500 border border-zinc-700 flex flex-col items-center justify-between py-2 shadow-2xl">
-                <div className="w-2 h-2 rounded-full bg-zinc-800 border border-zinc-600 shadow-inner" />
-                <div className="w-1 h-8 rounded-full bg-zinc-600" />
-                <div className="w-2 h-2 rounded-full bg-zinc-800 border border-zinc-600 shadow-inner" />
-              </div>
-            </div>
-          )}
         </div>
 
         {/* =================================================================

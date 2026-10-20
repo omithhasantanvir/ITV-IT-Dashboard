@@ -18,7 +18,7 @@ export const StorageArray: React.FC<StorageArrayProps> = ({ equipment }) => {
   return (
     <div
       style={{ height: `${heightPx}px` }}
-      className="w-full relative px-1 py-0.5 border-b border-zinc-800/80 transition-all select-none"
+      className="w-full relative px-1 py-0.5 border-b border-zinc-800/80 transition-all select-none overflow-hidden min-w-0"
     >
       <div className="w-full h-full rounded-[2px] bg-gradient-to-r from-[#171922] via-[#0f1015] to-[#171922] border border-zinc-700/80 flex items-center justify-between px-1.5 shadow-inner overflow-hidden">
         {/* Left Mounting Ear & Handle */}
@@ -41,27 +41,27 @@ export const StorageArray: React.FC<StorageArrayProps> = ({ equipment }) => {
               <Database className="w-2 h-2" />
               SAN ARRAY
             </span>
-            <span className="text-zinc-400 font-semibold truncate max-w-[70px]">
+            <span className="text-zinc-400 font-semibold truncate max-w-[65px]">
               {equipment.vendor}
             </span>
             <div className="flex items-center gap-1">
               <span className="w-1 h-1 rounded-full bg-emerald-400 shadow-[0_0_3px_#34d399]" />
-              <span className="text-[5.5px] text-zinc-500">CTRL A+B OK</span>
+              <span className="text-[5.5px] text-zinc-500">CTRL OK</span>
             </div>
           </div>
         </div>
 
         {/* High-Density Drive Caddy Matrix */}
-        <div className="flex-1 mx-2 h-full py-1 flex items-center justify-center">
-          <div className="w-full h-full bg-[#07080a] p-1 rounded border border-zinc-800 flex flex-col justify-between shadow-inner">
+        <div className="flex-1 min-w-0 mx-1 sm:mx-2 h-full py-1 flex items-center justify-center overflow-hidden">
+          <div className="w-full h-full bg-[#07080a] p-1 rounded border border-zinc-800 flex flex-col justify-between shadow-inner overflow-hidden">
             {Array.from({ length: rows }).map((_, rIdx) => (
-              <div key={rIdx} className="flex-1 flex items-center gap-1 justify-between my-[1px]">
+              <div key={rIdx} className="flex-1 min-w-0 flex items-center gap-1 justify-between my-[1px] overflow-hidden">
                 {Array.from({ length: cols }).map((_, cIdx) => {
                   const bayNum = rIdx * cols + cIdx + 1;
                   return (
                     <div
                       key={bayNum}
-                      className="flex-1 h-full min-h-[10px] rounded-[1px] bg-[#161822] border border-zinc-700/80 flex items-center justify-between px-1 shadow-sm"
+                      className="flex-1 min-w-0 h-full min-h-[10px] rounded-[1px] bg-[#161822] border border-zinc-700/80 flex items-center justify-between px-0.5 sm:px-1 shadow-sm overflow-hidden"
                       title={`SAS Hot-Swap Drive ${bayNum}: Online • RAID-6`}
                     >
                       {/* Release Latch */}
