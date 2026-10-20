@@ -719,15 +719,59 @@ IT Support: Ext. 30555 or 01730701335
               {/* Form Column */}
               <div className={showSidePreview ? "xl:col-span-7" : "w-full"}>
                 {/* Clean ITV Employee Form Card */}
-                <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-card p-6 sm:p-8 shadow-sm text-left">
+                <div className="rounded-2xl border border-red-500/20 dark:border-red-900/40 bg-white dark:bg-card p-6 sm:p-8 shadow-[0_4px_25px_rgba(227,30,36,0.06)] dark:shadow-[0_4px_25px_rgba(227,30,36,0.12)] text-left relative overflow-hidden">
+                  
+                  {/* ITV Signature Top Brand Accent */}
+                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#E31E24] via-rose-600 to-red-500" />
+
+                  {/* Form Letterhead & Logo Banner */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-border/80">
+                    <div className="flex items-center gap-3.5">
+                      <div className="p-2.5 rounded-xl bg-gradient-to-br from-red-500/10 via-red-500/5 to-transparent border border-red-500/20 shadow-xs shrink-0">
+                        <img
+                          src="/itv-logo.png"
+                          alt="Independent Television Logo"
+                          className="h-10 w-auto object-contain drop-shadow-[0_2px_8px_rgba(227,30,36,0.4)] select-none"
+                        />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-black tracking-widest text-[#E31E24] uppercase font-sans">
+                            INDEPENDENT
+                          </span>
+                          <span className="text-[8px] px-1 py-0.2 rounded bg-[#E31E24] text-white font-mono font-extrabold">
+                            24
+                          </span>
+                        </div>
+                        <h2 className="text-base sm:text-lg font-black tracking-tight text-foreground">
+                          Employee IT Credential Slip
+                        </h2>
+                        <p className="text-[11px] text-muted-foreground font-medium">
+                          IT Broadcast Operations &bull; Access &amp; Provisioning Form
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1">
+                      <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-red-50 dark:bg-red-950/40 text-[#E31E24] dark:text-red-400 font-bold border border-red-200 dark:border-red-900/60 uppercase tracking-wide">
+                        {employeeType} Employee
+                      </span>
+                      <span className="text-[10px] font-mono text-muted-foreground">
+                        Form Ref: ITV-SLIP-REG
+                      </span>
+                    </div>
+                  </div>
+
                   <form onSubmit={handleSubmit} className="space-y-7">
                     
                     {/* ---------------------------------------------------- */}
                     {/* SECTION 1: GENERAL INFORMATION                       */}
                     {/* ---------------------------------------------------- */}
                     <div>
-                      <div className="border-b border-sky-100 dark:border-sky-900/60 pb-2 mb-4">
-                        <h3 className="text-xs font-bold text-[#0070ba] dark:text-sky-400 tracking-wider uppercase">
+                      <div className="flex items-center gap-2 border-b border-red-500/20 dark:border-red-900/40 pb-2 mb-4">
+                        <div className="p-1 rounded-md bg-red-500/10 text-[#E31E24] dark:text-red-400">
+                          <User className="h-3.5 w-3.5" />
+                        </div>
+                        <h3 className="text-xs font-black text-slate-900 dark:text-slate-100 tracking-wider uppercase">
                           GENERAL INFORMATION
                         </h3>
                       </div>
@@ -742,7 +786,7 @@ IT Support: Ext. 30555 or 01730701335
                             type="date"
                             value={formDate}
                             onChange={(e) => setFormDate(e.target.value)}
-                            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                           />
                         </div>
 
@@ -760,7 +804,7 @@ IT Support: Ext. 30555 or 01730701335
                                 setFoodUsername(domainId || '');
                               }
                             }}
-                            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs font-medium cursor-pointer"
+                            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs font-medium cursor-pointer"
                           >
                             {EMPLOYEE_TYPES.map((type) => (
                               <option key={type} value={type}>
@@ -775,7 +819,7 @@ IT Support: Ext. 30555 or 01730701335
                           <>
                             <div>
                               <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                                Name <span className="text-rose-500">*</span>
+                                Name <span className="text-[#E31E24]">*</span>
                               </label>
                               <input
                                 type="text"
@@ -783,7 +827,7 @@ IT Support: Ext. 30555 or 01730701335
                                 onChange={(e) => handleNameChange(e.target.value)}
                                 placeholder="Enter Full Name"
                                 required
-                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                               />
                             </div>
                             <div className="hidden sm:block" />
@@ -792,7 +836,7 @@ IT Support: Ext. 30555 or 01730701335
                           <>
                             <div>
                               <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                                PIN {employeeType === 'Permanent' && <span className="text-rose-500">*</span>}
+                                PIN {employeeType === 'Permanent' && <span className="text-[#E31E24]">*</span>}
                               </label>
                               <input
                                 type="text"
@@ -800,13 +844,13 @@ IT Support: Ext. 30555 or 01730701335
                                 onChange={(e) => handlePinChange(e.target.value)}
                                 placeholder="e.g. 5042"
                                 required={employeeType === 'Permanent'}
-                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                               />
                             </div>
 
                             <div>
                               <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                                Name <span className="text-rose-500">*</span>
+                                Name <span className="text-[#E31E24]">*</span>
                               </label>
                               <input
                                 type="text"
@@ -814,7 +858,7 @@ IT Support: Ext. 30555 or 01730701335
                                 onChange={(e) => handleNameChange(e.target.value)}
                                 placeholder="Enter Full Name"
                                 required
-                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                               />
                             </div>
                           </>
@@ -830,7 +874,7 @@ IT Support: Ext. 30555 or 01730701335
                             value={designation}
                             onChange={(e) => setDesignation(e.target.value)}
                             placeholder="Enter Designation"
-                            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                           />
                         </div>
 
@@ -844,7 +888,7 @@ IT Support: Ext. 30555 or 01730701335
                             value={department}
                             onChange={(e) => setDepartment(e.target.value)}
                             placeholder="Enter Department"
-                            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                           />
                         </div>
                       </div>
@@ -854,8 +898,11 @@ IT Support: Ext. 30555 or 01730701335
                     {/* SECTION 2: ACCOUNT CREDENTIALS                       */}
                     {/* ---------------------------------------------------- */}
                     <div>
-                      <div className="border-b border-sky-100 dark:border-sky-900/60 pb-2 mb-4">
-                        <h3 className="text-xs font-bold text-[#0070ba] dark:text-sky-400 tracking-wider uppercase">
+                      <div className="flex items-center gap-2 border-b border-red-500/20 dark:border-red-900/40 pb-2 mb-4">
+                        <div className="p-1 rounded-md bg-red-500/10 text-[#E31E24] dark:text-red-400">
+                          <KeyRound className="h-3.5 w-3.5" />
+                        </div>
+                        <h3 className="text-xs font-black text-slate-900 dark:text-slate-100 tracking-wider uppercase">
                           ACCOUNT CREDENTIALS
                         </h3>
                       </div>
@@ -873,7 +920,7 @@ IT Support: Ext. 30555 or 01730701335
                                 value={emailId}
                                 onChange={(e) => handleEmailChange(e.target.value)}
                                 placeholder="e.g. user@independent24.tv"
-                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                               />
                             </div>
 
@@ -887,7 +934,7 @@ IT Support: Ext. 30555 or 01730701335
                                   value={emailPassword}
                                   onChange={(e) => setEmailPassword(e.target.value)}
                                   placeholder="Itv4312"
-                                  className="w-full px-3.5 py-2.5 pr-10 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                                  className="w-full px-3.5 py-2.5 pr-10 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                                 />
                                 <button
                                   type="button"
@@ -914,7 +961,7 @@ IT Support: Ext. 30555 or 01730701335
                                 value={domainId}
                                 onChange={(e) => setDomainId(e.target.value)}
                                 placeholder="Enter Domain ID"
-                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                               />
                             </div>
 
@@ -928,7 +975,7 @@ IT Support: Ext. 30555 or 01730701335
                                   value={domainPassword}
                                   onChange={(e) => setDomainPassword(e.target.value)}
                                   placeholder="Itv4312"
-                                  className="w-full px-3.5 py-2.5 pr-10 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                                  className="w-full px-3.5 py-2.5 pr-10 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                                 />
                                 <button
                                   type="button"
@@ -955,7 +1002,7 @@ IT Support: Ext. 30555 or 01730701335
                                 value={hrmsUsername}
                                 onChange={(e) => setHrmsUsername(e.target.value)}
                                 placeholder="Enter HRMS Username"
-                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                               />
                             </div>
 
@@ -969,7 +1016,7 @@ IT Support: Ext. 30555 or 01730701335
                                   value={hrmsPassword}
                                   onChange={(e) => setHrmsPassword(e.target.value)}
                                   placeholder="Enter HRMS Password"
-                                  className="w-full px-3.5 py-2.5 pr-10 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                                  className="w-full px-3.5 py-2.5 pr-10 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                                 />
                                 <button
                                   type="button"
@@ -996,7 +1043,7 @@ IT Support: Ext. 30555 or 01730701335
                                 value={foodUsername}
                                 onChange={(e) => setFoodUsername(e.target.value)}
                                 placeholder="Enter Food Req Username"
-                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                               />
                             </div>
 
@@ -1010,7 +1057,7 @@ IT Support: Ext. 30555 or 01730701335
                                   value={foodPassword}
                                   onChange={(e) => setFoodPassword(e.target.value)}
                                   placeholder="123456"
-                                  className="w-full px-3.5 py-2.5 pr-10 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                                  className="w-full px-3.5 py-2.5 pr-10 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                                 />
                                 <button
                                   type="button"
@@ -1031,8 +1078,11 @@ IT Support: Ext. 30555 or 01730701335
                     {/* SECTION 3: SLIP AUTHORIZATION                        */}
                     {/* ---------------------------------------------------- */}
                     <div>
-                      <div className="border-b border-sky-100 dark:border-sky-900/60 pb-2 mb-4">
-                        <h3 className="text-xs font-bold text-[#0070ba] dark:text-sky-400 tracking-wider uppercase">
+                      <div className="flex items-center gap-2 border-b border-red-500/20 dark:border-red-900/40 pb-2 mb-4">
+                        <div className="p-1 rounded-md bg-red-500/10 text-[#E31E24] dark:text-red-400">
+                          <ShieldCheck className="h-3.5 w-3.5" />
+                        </div>
+                        <h3 className="text-xs font-black text-slate-900 dark:text-slate-100 tracking-wider uppercase">
                           SLIP AUTHORIZATION
                         </h3>
                       </div>
@@ -1041,7 +1091,7 @@ IT Support: Ext. 30555 or 01730701335
                         {/* Created By */}
                         <div>
                           <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            Created By <span className="text-rose-500">*</span>
+                            Created By <span className="text-[#E31E24]">*</span>
                           </label>
                           <input
                             type="text"
@@ -1049,14 +1099,14 @@ IT Support: Ext. 30555 or 01730701335
                             onChange={(e) => setCreatedBy(e.target.value)}
                             placeholder="Creator Name"
                             required
-                            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                           />
                         </div>
 
                         {/* Creator Designation */}
                         <div>
                           <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1.5">
-                            Creator Designation <span className="text-rose-500">*</span>
+                            Creator Designation <span className="text-[#E31E24]">*</span>
                           </label>
                           <input
                             type="text"
@@ -1064,7 +1114,7 @@ IT Support: Ext. 30555 or 01730701335
                             onChange={(e) => setCreatorDesignation(e.target.value)}
                             placeholder="Creator Designation"
                             required
-                            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500 transition shadow-xs"
+                            className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 focus:bg-background text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-red-500/25 focus:border-[#E31E24] transition shadow-xs"
                           />
                         </div>
                       </div>
@@ -1077,9 +1127,10 @@ IT Support: Ext. 30555 or 01730701335
                       <button
                         type="submit"
                         disabled={submitting}
-                        className="w-full py-3 px-6 rounded-lg bg-[#0070ba] hover:bg-[#005fa3] text-white font-bold text-sm shadow-sm transition-all active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                        className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#E31E24] via-red-600 to-[#c0151b] hover:from-red-600 hover:to-red-700 text-white font-extrabold text-sm shadow-[0_4px_16px_rgba(227,30,36,0.35)] hover:shadow-[0_6px_22px_rgba(227,30,36,0.45)] transition-all active:scale-[0.99] flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
                       >
-                        <span>{submitting ? 'Submitting Registration...' : 'Submit Registration'}</span>
+                        <CheckCircle2 className="h-4.5 w-4.5" />
+                        <span>{submitting ? 'Generating Official Slip...' : 'Submit & Generate Official Slip'}</span>
                       </button>
                     </div>
                   </form>
@@ -1092,28 +1143,31 @@ IT Support: Ext. 30555 or 01730701335
                   {/* Preview Top Header Bar */}
                   <div className="flex items-center justify-between px-1">
                     <div className="flex items-center gap-2">
-                      <Printer className="h-4 w-4 text-primary" />
+                      <Printer className="h-4 w-4 text-[#E31E24]" />
                       <span className="text-xs font-bold text-foreground">
                         Slip Live Preview
                       </span>
                     </div>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-muted text-muted-foreground border border-border">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-red-500/10 text-[#E31E24] dark:text-red-400 border border-red-500/20 font-bold">
                       Official A4 Format
                     </span>
                   </div>
 
                   {/* Clean Realistic Paper Sheet Container */}
-                  <div className="bg-white text-slate-900 border border-slate-300 rounded-xl p-4 sm:p-5 shadow-sm space-y-3 font-sans select-text text-left">
+                  <div className="bg-white text-slate-900 border border-slate-300 rounded-xl p-4 sm:p-5 shadow-sm space-y-3 font-sans select-text text-left relative overflow-hidden">
+                    {/* Top Red Accent Strip */}
+                    <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#E31E24] via-rose-600 to-red-500" />
+
                     {/* Letterhead */}
-                    <div className="flex items-start justify-between border-b border-slate-200 pb-2.5">
+                    <div className="flex items-start justify-between border-b border-slate-200 pb-2.5 pt-1">
                       <div className="flex items-center gap-2.5">
                         <img
                           src="/itv-logo.png"
                           alt="Independent Television Logo"
-                          className="h-9 w-auto object-contain"
+                          className="h-9 w-auto object-contain drop-shadow-[0_2px_4px_rgba(227,30,36,0.25)]"
                         />
                         <div>
-                          <span className="text-[9px] font-black tracking-widest text-slate-800 uppercase block">
+                          <span className="text-[9px] font-black tracking-widest text-[#E31E24] uppercase block">
                             INDEPENDENT
                           </span>
                           <span className="text-xs font-black text-slate-950 tracking-tight block">
@@ -1125,7 +1179,7 @@ IT Support: Ext. 30555 or 01730701335
                         <span className="text-[10px] font-mono font-semibold text-slate-600 block">
                           {formatOfficialDate(formDate) || 'DD/MM/YYYY'}
                         </span>
-                        <span className="text-[9px] font-bold text-[#0070ba] uppercase block">
+                        <span className="text-[9px] font-extrabold text-[#E31E24] px-1.5 py-0.5 rounded bg-red-50 border border-red-200 uppercase inline-block">
                           {employeeType}
                         </span>
                       </div>
