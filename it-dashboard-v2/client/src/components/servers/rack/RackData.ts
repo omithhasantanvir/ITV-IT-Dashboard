@@ -1,14 +1,14 @@
 import { RackEquipment } from './RackTypes';
 
 /**
- * Canonical 42U physical equipment layout for ITV RACK 01
+ * Canonical 27U physical equipment layout for ITV RACK 01
  * Core Enterprise & Newsroom Infrastructure
  * Standard 19" rack, EIA-310 standard mounting
  */
 export const RACK_01_EQUIPMENT: RackEquipment[] = [
   {
-    id: 'r1-u41',
-    uStart: 41,
+    id: 'r1-u27',
+    uStart: 27,
     uHeight: 1,
     category: 'switch',
     name: 'Core Distribution Switch',
@@ -19,8 +19,8 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
     description: 'Primary Core Distribution L3 Switch with 48x multigigabit PoE+ & 4x 25G SFP28 uplinks',
   },
   {
-    id: 'r1-u40',
-    uStart: 40,
+    id: 'r1-u26',
+    uStart: 26,
     uHeight: 1,
     category: 'patch_panel',
     name: 'Main IT Cat6A Patch Panel',
@@ -31,7 +31,7 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r1-dc1',
-    uStart: 37,
+    uStart: 24,
     uHeight: 2,
     category: 'server',
     name: 'DC-1',
@@ -48,7 +48,7 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r1-dc2',
-    uStart: 35,
+    uStart: 22,
     uHeight: 2,
     category: 'server',
     name: 'DC-2',
@@ -65,7 +65,7 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r1-dse',
-    uStart: 34,
+    uStart: 21,
     uHeight: 1,
     category: 'server',
     name: 'DSE',
@@ -81,7 +81,7 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r1-sql',
-    uStart: 32,
+    uStart: 19,
     uHeight: 2,
     category: 'server',
     name: 'SQL',
@@ -98,7 +98,7 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r1-ftp',
-    uStart: 30,
+    uStart: 17,
     uHeight: 2,
     category: 'server',
     name: 'FTP',
@@ -114,7 +114,7 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r1-dashboard',
-    uStart: 29,
+    uStart: 16,
     uHeight: 1,
     category: 'server',
     name: 'Dashboard',
@@ -130,7 +130,7 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r1-octopus',
-    uStart: 27,
+    uStart: 14,
     uHeight: 2,
     category: 'server',
     name: 'Octopus X',
@@ -146,8 +146,8 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
     description: 'Octopus X Newsroom Computer System (NRCS) Core Engine — Production Rundowns, Scripting & Wire Feeds',
   },
   {
-    id: 'r1-u24',
-    uStart: 24,
+    id: 'r1-u13',
+    uStart: 13,
     uHeight: 1,
     category: 'patch_panel',
     name: 'OM4 Fiber Optical Patch Panel',
@@ -157,8 +157,8 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
     description: 'Aqua OM4 high-speed fiber patch bay routing optical uplinks to MCR and PCR cores',
   },
   {
-    id: 'r1-u22',
-    uStart: 22,
+    id: 'r1-u11',
+    uStart: 11,
     uHeight: 2,
     category: 'storage_array',
     name: 'Enterprise SAS Storage Vault',
@@ -168,6 +168,30 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
     driveFormFactor: '3.5',
     dualPsu: true,
     description: 'High-capacity direct-attached serial storage array for raw footage and station archives',
+  },
+  {
+    id: 'r1-u08',
+    uStart: 8,
+    uHeight: 3,
+    category: 'storage_array',
+    name: 'Broadcast Ingest SAN Storage Vault',
+    model: 'Infortrend EonStor GS 16-Bay',
+    vendor: 'Generic',
+    driveBayCount: 16,
+    driveFormFactor: '3.5',
+    dualPsu: true,
+    description: '16-bay SAS broadcast ingest SAN buffer storage for continuous live studio recordings',
+  },
+  {
+    id: 'r1-u05',
+    uStart: 5,
+    uHeight: 3,
+    category: 'patch_panel',
+    name: 'High-Density SDI & MCR Routing Bay',
+    model: '3U HD-BNC & LC Patch Bay',
+    vendor: 'Blackmagic',
+    portCount: 32,
+    description: 'High-density 12G-SDI & optical MCR master control interconnect routing bay',
   },
   {
     id: 'r1-u03',
@@ -198,14 +222,14 @@ export const RACK_01_EQUIPMENT: RackEquipment[] = [
 ];
 
 /**
- * Canonical 42U physical equipment layout for ITV RACK 02
+ * Canonical 27U physical equipment layout for ITV RACK 02
  * Grass Valley Broadcast Automation & Playout Infrastructure
  * Standard 19" rack, EIA-310 standard mounting
  */
 export const RACK_02_EQUIPMENT: RackEquipment[] = [
   {
-    id: 'r2-u41',
-    uStart: 41,
+    id: 'r2-u27',
+    uStart: 27,
     uHeight: 1,
     category: 'switch',
     name: 'Broadcast Fabric Switch',
@@ -216,8 +240,8 @@ export const RACK_02_EQUIPMENT: RackEquipment[] = [
     description: 'Ultra-low-latency broadcast leaf switch with 48x 10G SFP+ and 4x 40G QSFP+ uplinks for video transport',
   },
   {
-    id: 'r2-u40',
-    uStart: 40,
+    id: 'r2-u26',
+    uStart: 26,
     uHeight: 1,
     category: 'patch_panel',
     name: 'Grass Valley OM4 Optical Bay',
@@ -228,7 +252,7 @@ export const RACK_02_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r2-gvcore',
-    uStart: 38,
+    uStart: 24,
     uHeight: 2,
     category: 'server',
     name: 'GV Core',
@@ -245,7 +269,7 @@ export const RACK_02_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r2-gvfsm1',
-    uStart: 36,
+    uStart: 22,
     uHeight: 2,
     category: 'server',
     name: 'GV FSM-1',
@@ -262,7 +286,7 @@ export const RACK_02_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r2-gvfsm2',
-    uStart: 34,
+    uStart: 20,
     uHeight: 2,
     category: 'server',
     name: 'GV FSM-2',
@@ -279,7 +303,7 @@ export const RACK_02_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r2-gvftp',
-    uStart: 32,
+    uStart: 18,
     uHeight: 2,
     category: 'server',
     name: 'GV FTP',
@@ -295,7 +319,7 @@ export const RACK_02_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r2-gvre1',
-    uStart: 30,
+    uStart: 16,
     uHeight: 2,
     category: 'server',
     name: 'GV RE-1',
@@ -312,7 +336,7 @@ export const RACK_02_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r2-gvre2',
-    uStart: 28,
+    uStart: 14,
     uHeight: 2,
     category: 'server',
     name: 'GV RE-2',
@@ -329,7 +353,7 @@ export const RACK_02_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r2-gvxre',
-    uStart: 25,
+    uStart: 11,
     uHeight: 3,
     category: 'server',
     name: 'GV XRE',
@@ -346,7 +370,7 @@ export const RACK_02_EQUIPMENT: RackEquipment[] = [
   },
   {
     id: 'r2-k2san',
-    uStart: 21,
+    uStart: 7,
     uHeight: 4,
     category: 'storage_array',
     name: 'Grass Valley K2 SAN Storage',
@@ -359,8 +383,8 @@ export const RACK_02_EQUIPMENT: RackEquipment[] = [
     description: 'Primary Mission-Critical 24/7 Broadcast SAN Array with Dual Redundant Power & 16Gb Fibre Channel Interconnects',
   },
   {
-    id: 'r2-u19',
-    uStart: 19,
+    id: 'r2-u05',
+    uStart: 5,
     uHeight: 2,
     category: 'storage_array',
     name: 'Grass Valley RAID Expansion',

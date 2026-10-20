@@ -331,7 +331,7 @@ export default function ServersPage() {
                   </span>
                 </h1>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Enterprise 42U Server Cabinets with physical slide-out rails, live ICMP latency, and power distribution.
+                  Enterprise Server Cabinets with physical slide-out rails, live ICMP latency, and power distribution.
                 </p>
               </div>
             </div>
@@ -349,7 +349,7 @@ export default function ServersPage() {
                 }`}
               >
                 <Layers className="h-3.5 w-3.5" />
-                Dual 42U Racks
+                Dual Rack View
               </button>
               <button
                 onClick={() => setViewMode('grid')}
@@ -412,7 +412,7 @@ export default function ServersPage() {
               <Server className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Dual 42U Racks</p>
+              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Dual Server Racks</p>
               <p className="text-xl font-bold text-foreground">2 Racks / {stats.total} Nodes</p>
             </div>
           </div>
@@ -505,7 +505,7 @@ export default function ServersPage() {
         </div>
 
         {/* =========================================================================
-            MAIN VIEW: DUAL 42U PHYSICAL SERVER CABINETS (SIDE-BY-SIDE)
+            MAIN VIEW: DUAL PHYSICAL SERVER CABINETS (SIDE-BY-SIDE)
             ========================================================================= */}
         {viewMode === 'rack' ? (
           loading ? (

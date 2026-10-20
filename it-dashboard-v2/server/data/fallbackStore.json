@@ -1770,7 +1770,7 @@
       "password": "$2a$10$ihSoIMniZFGWpe1ax69TsuXPdWviEnXu2g4x/TU0Fn2yOq4juHWdy",
       "department": "Finance and Accounts",
       "designation": "Head of Finance & Accounts",
-      "extensionNumber": "30480",
+      "extensionNumber": null,
       "phone": "01714170014",
       "profilePhoto": "",
       "joiningDate": "2022-04-10T00:00:00.000Z",
@@ -2466,23 +2466,6 @@
   ],
   "extensions": [
     {
-      "id": "ext-1792502878212",
-      "extensionNumber": "0",
-      "holderName": "Reception Desk",
-      "designation": "Main Front Desk",
-      "customEmployeeId": null,
-      "mobile": "",
-      "department": "General Operations",
-      "location": "",
-      "deskRoom": "Floor 1 Reception",
-      "status": "ASSIGNED",
-      "remarks": "",
-      "employeeId": null,
-      "employee": null,
-      "createdAt": "2026-10-20T13:27:58.212Z",
-      "updatedAt": "2026-10-20T13:27:58.212Z"
-    },
-    {
       "id": "ext-1",
       "extensionNumber": "1101",
       "holderName": "Omith Hasan",
@@ -2588,19 +2571,6 @@
       "customEmployeeId": "ITV-KP-02",
       "mobile": "01755515231",
       "deskRoom": "Newsroom Lead Desk",
-      "status": "ASSIGNED",
-      "createdAt": "2026-10-20T13:25:36.040Z",
-      "updatedAt": "2026-10-20T13:25:36.040Z"
-    },
-    {
-      "id": "ext-7",
-      "extensionNumber": "30480",
-      "holderName": "Md. Shajjad Hossain",
-      "designation": "Head of Finance & Accounts",
-      "department": "Finance and Accounts",
-      "customEmployeeId": "ITV-KP-17",
-      "mobile": "01714170014",
-      "deskRoom": "Room 205",
       "status": "ASSIGNED",
       "createdAt": "2026-10-20T13:25:36.040Z",
       "updatedAt": "2026-10-20T13:25:36.040Z"

@@ -38,6 +38,7 @@ interface ServerRackProps {
   soundEnabled?: boolean;
   onPlaySound?: (type: 'beep' | 'slide' | 'door' | 'alert' | 'click') => void;
   onRequestDoorAuth?: () => void;
+  totalUnits?: number;
 }
 
 export const ServerRack: React.FC<ServerRackProps> = ({
@@ -56,6 +57,7 @@ export const ServerRack: React.FC<ServerRackProps> = ({
   soundEnabled,
   onPlaySound,
   onRequestDoorAuth,
+  totalUnits = 27,
 }) => {
   // View mode inside this cabinet: 'front' | 'rear' | '3d'
   const [viewMode, setViewMode] = useState<RackViewMode>('front');
@@ -63,7 +65,7 @@ export const ServerRack: React.FC<ServerRackProps> = ({
   const [doorOpen, setDoorOpen] = useState(false);
 
   const isRack1 = rackNumber === '01';
-  const totalRackHeight = 42 * U_HEIGHT_PX; // 42 * 24px = 1008px
+  const totalRackHeight = totalUnits * U_HEIGHT_PX; // 27 * 24px = 648px
 
   // Press Escape to retract any extended server in this rack
   useEffect(() => {
@@ -112,21 +114,20 @@ export const ServerRack: React.FC<ServerRackProps> = ({
 
   // Exact vertical position calculation for beside-the-server details panel
   const selectedTopOffset = selectedEquipment
-    ? (42 - (selectedEquipment.uStart + selectedEquipment.uHeight - 1)) * U_HEIGHT_PX
+    ? (totalUnits - (selectedEquipment.uStart + selectedEquipment.uHeight - 1)) * U_HEIGHT_PX
     : 0;
-  // Clamped top position so details panel never overflows the 42U rack boundary
-  const clampedPanelTop = Math.max(8, Math.min(selectedTopOffset - 24, totalRackHeight - 420));
+  // Clamped top position so details panel never overflows the rack boundary
+  const clampedPanelTop = Math.max(8, Math.min(selectedTopOffset - 24, totalRackHeight - 380));
 
   // =========================================================================
-  // 42U SEQUENTIAL RACK SLOT RENDERER
-  // Iterates from U42 down to U01:
+  // SEQUENTIAL RACK SLOT RENDERER (Clean 27U Rack without empty bottom void)
+  // Iterates from totalUnits down to U01:
   // - Real hardware renders at its exact physical U position.
-  // - Unoccupied units render as clean, compact, realistic empty rack spaces
-  //   without fake placeholder labels or oversized black blocks.
+  // - Unoccupied units render as clean, compact empty rack spaces.
   // =========================================================================
-  const render42USlots = () => {
+  const renderSlots = () => {
     const slotElements: React.ReactNode[] = [];
-    let currentU = 42;
+    let currentU = totalUnits;
 
     while (currentU >= 1) {
       // Find equipment whose topmost rack unit matches currentU
@@ -246,7 +247,7 @@ export const ServerRack: React.FC<ServerRackProps> = ({
           {/* Center Cable Chimney & Standard Stamp */}
           <div className="px-2.5 py-0.5 rounded-full bg-black/80 border border-zinc-700 text-[7px] text-zinc-300 font-bold tracking-wider flex items-center gap-1.5 shadow-inner">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_#34d399]" />
-            <span>42U EIA-310 • APC NETSHELTER SX</span>
+            <span>{totalUnits}U EIA-310 • APC NETSHELTER SX</span>
           </div>
 
           {/* Fan 2 (Right) */}
@@ -359,19 +360,19 @@ export const ServerRack: React.FC<ServerRackProps> = ({
             Equipment occupies the full usable width. NO right-side extension!
             ================================================================= */}
         <div className="w-full border-x border-zinc-800 bg-[#08090c] relative shadow-[0_20px_50px_rgba(0,0,0,0.9)] flex">
-          {/* Vertical 42U Rails on Left */}
-          <RackRail side="left" units={42} />
+          {/* Vertical Rails on Left */}
+          <RackRail side="left" units={totalUnits} />
 
-          {/* Center Equipment Column: Exact 1008px (42 * 24px) */}
+          {/* Center Equipment Column: Exact totalRackHeight */}
           <div
             style={{ height: `${totalRackHeight}px` }}
             className="flex-1 mx-5 sm:mx-6 bg-[#090a0e] flex flex-col relative z-10 border-x border-zinc-800/90"
           >
-            {render42USlots()}
+            {renderSlots()}
           </div>
 
-          {/* Vertical 42U Rails on Right */}
-          <RackRail side="right" units={42} />
+          {/* Vertical Rails on Right */}
+          <RackRail side="right" units={totalUnits} />
 
           {/* ===============================================================
               OPTIONAL GLASS / MESH FRONT DOOR OVERLAY
