@@ -386,13 +386,21 @@ export default function SlipsPage() {
           icon: 'success',
           title: 'Employee Slip Created!',
           text: `Official Credential Slip for ${createdSlip.name} (${createdSlip.slipNumber}) is ready.`,
-          confirmButtonText: 'View & Print Slip',
+          confirmButtonText: '🖨️ Print Slip Now',
+          showDenyButton: true,
+          denyButtonText: 'View Slip',
           showCancelButton: true,
-          cancelButtonText: 'View All Slips',
+          cancelButtonText: 'Close',
+          confirmButtonColor: '#E31E24',
+          denyButtonColor: '#27272a',
         }).then((result) => {
           fetchSlips();
           resetForm();
           if (result.isConfirmed) {
+            setActiveSlip(createdSlip);
+            setMode('LIST');
+            setTimeout(() => window.print(), 350);
+          } else if (result.isDenied) {
             setActiveSlip(createdSlip);
             setMode('LIST');
           } else {
@@ -531,6 +539,36 @@ IT Support: Ext. 30555 or 01730701335
   // Print slip helper
   const handlePrintSlip = () => {
     window.print();
+  };
+
+  // Print currently active registration form as an official slip
+  const handlePrintCurrentForm = () => {
+    const draftSlip: EmployeeSlip = {
+      id: 'draft-' + Date.now(),
+      slipNumber: `ITV-${Date.now().toString().slice(-4)}`,
+      employeeType,
+      pin: pin || null,
+      name: name || 'Employee Name',
+      designation: designation || 'Staff',
+      department: department || 'General',
+      emailId: emailId || null,
+      emailPassword: emailPassword || null,
+      domainId: domainId || null,
+      domainPassword: domainPassword || null,
+      hrmsUsername: hrmsUsername || null,
+      hrmsPassword: hrmsPassword || null,
+      foodUsername: foodUsername || null,
+      foodPassword: foodPassword || null,
+      createdBy: createdBy || user?.name || 'IT Support',
+      creatorDesignation: creatorDesignation || 'IT Engineer',
+      issueDate: formDate,
+      status: 'ISSUED',
+      createdAt: new Date().toISOString(),
+    };
+    setActiveSlip(draftSlip);
+    setTimeout(() => {
+      window.print();
+    }, 350);
   };
 
   // Download PDF helper
@@ -673,6 +711,17 @@ IT Support: Ext. 30555 or 01730701335
               </div>
 
               <div className="flex items-center gap-2">
+                {/* Print Current Slip Button */}
+                <button
+                  type="button"
+                  onClick={handlePrintCurrentForm}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#E31E24] hover:bg-red-700 text-white text-xs font-semibold shadow-xs transition cursor-pointer"
+                  title="Print current slip preview directly"
+                >
+                  <Printer className="h-3.5 w-3.5" />
+                  <span>Print Slip</span>
+                </button>
+
                 {/* Toggle Side Preview */}
                 <button
                   type="button"
@@ -680,7 +729,7 @@ IT Support: Ext. 30555 or 01730701335
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition shadow-xs cursor-pointer"
                   title="Toggle side-by-side live slip preview"
                 >
-                  {showSidePreview ? <EyeOff className="h-3.5 w-3.5 text-muted-foreground" /> : <Eye className="h-3.5 w-3.5 text-primary" />}
+                  {showSidePreview ? <EyeOff className="h-3.5 w-3.5 text-muted-foreground" /> : <Eye className="h-3.5 w-3.5 text-[#E31E24]" />}
                   <span>{showSidePreview ? 'Hide Preview' : 'Side Preview'}</span>
                 </button>
 
@@ -1121,16 +1170,26 @@ IT Support: Ext. 30555 or 01730701335
                     </div>
 
                     {/* ---------------------------------------------------- */}
-                    {/* SUBMIT BUTTON                                        */}
+                    {/* SUBMIT & PRINT ACTION BUTTONS                        */}
                     {/* ---------------------------------------------------- */}
-                    <div className="pt-2">
+                    <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
                       <button
                         type="submit"
                         disabled={submitting}
-                        className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#E31E24] via-red-600 to-[#c0151b] hover:from-red-600 hover:to-red-700 text-white font-extrabold text-sm shadow-[0_4px_16px_rgba(227,30,36,0.35)] hover:shadow-[0_6px_22px_rgba(227,30,36,0.45)] transition-all active:scale-[0.99] flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
+                        className="flex-1 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#E31E24] via-red-600 to-[#c0151b] hover:from-red-600 hover:to-red-700 text-white font-extrabold text-sm shadow-[0_4px_16px_rgba(227,30,36,0.35)] hover:shadow-[0_6px_22px_rgba(227,30,36,0.45)] transition-all active:scale-[0.99] flex items-center justify-center gap-2.5 disabled:opacity-50 cursor-pointer"
                       >
                         <CheckCircle2 className="h-4.5 w-4.5" />
                         <span>{submitting ? 'Generating Official Slip...' : 'Submit & Generate Official Slip'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handlePrintCurrentForm}
+                        className="w-full sm:w-auto py-3.5 px-5 rounded-xl border border-red-500/30 bg-red-50 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-950/50 text-[#E31E24] dark:text-red-400 font-bold text-sm transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                        title="Print slip directly without saving"
+                      >
+                        <Printer className="h-4.5 w-4.5" />
+                        <span>Print Slip</span>
                       </button>
                     </div>
                   </form>
@@ -1148,9 +1207,20 @@ IT Support: Ext. 30555 or 01730701335
                         Slip Live Preview
                       </span>
                     </div>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-red-500/10 text-[#E31E24] dark:text-red-400 border border-red-500/20 font-bold">
-                      Official A4 Format
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-red-500/10 text-[#E31E24] dark:text-red-400 border border-red-500/20 font-bold">
+                        Official A4 Format
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handlePrintCurrentForm}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#E31E24] hover:bg-red-700 text-white text-[11px] font-semibold transition cursor-pointer shadow-xs"
+                        title="Print this preview slip"
+                      >
+                        <Printer className="h-3 w-3" />
+                        <span>Print</span>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Clean Realistic Paper Sheet Container */}
@@ -1539,19 +1609,33 @@ IT Support: Ext. 30555 or 01730701335
 
                           {/* Actions */}
                           <td className="p-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
+                            <div className="flex items-center justify-end gap-1.5">
+                              {/* Direct 1-Click Print */}
                               <button
-                                onClick={() => setActiveSlip(slip)}
-                                className="px-2.5 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-semibold text-xs flex items-center gap-1.5 transition"
-                                title="View & Print Official Slip"
+                                onClick={() => {
+                                  setActiveSlip(slip);
+                                  setTimeout(() => window.print(), 350);
+                                }}
+                                className="px-2.5 py-1.5 rounded-lg bg-[#E31E24] hover:bg-red-700 text-white font-semibold text-xs flex items-center gap-1.5 transition shadow-xs cursor-pointer"
+                                title="Direct Print Slip"
                               >
                                 <Printer className="h-3.5 w-3.5" />
-                                <span>Official Slip</span>
+                                <span>Print</span>
+                              </button>
+
+                              {/* View & Details Modal */}
+                              <button
+                                onClick={() => setActiveSlip(slip)}
+                                className="px-2.5 py-1.5 rounded-lg border border-border bg-card hover:bg-muted text-foreground font-semibold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                                title="View Slip Details & Export Options"
+                              >
+                                <Eye className="h-3.5 w-3.5 text-muted-foreground" />
+                                <span>View</span>
                               </button>
 
                               <button
                                 onClick={() => handleDeleteSlip(slip.id, slip.slipNumber)}
-                                className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition"
+                                className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
                                 title="Delete Slip"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
@@ -1624,7 +1708,7 @@ IT Support: Ext. 30555 or 01730701335
                   {/* Print Slip */}
                   <button
                     onClick={handlePrintSlip}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary text-primary-foreground font-bold text-xs shadow-md shadow-primary/20 hover:bg-primary/90 transition"
+                    className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gradient-to-r from-[#E31E24] via-red-600 to-[#c0151b] hover:from-red-600 hover:to-red-700 text-white font-bold text-xs shadow-md shadow-red-500/25 transition cursor-pointer"
                   >
                     <Printer className="h-3.5 w-3.5" />
                     <span>Print Slip</span>
