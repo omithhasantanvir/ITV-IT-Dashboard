@@ -15,6 +15,6 @@ router.get('/', getSSDs);
 router.get('/:id', getSSDById);
 router.post('/', authenticate, authorize([Role.SUPER_ADMIN, Role.IT_ADMIN, Role.IT_SUPPORT]), createSSD);
 router.put('/:id', authenticate, authorize([Role.SUPER_ADMIN, Role.IT_ADMIN, Role.IT_SUPPORT]), updateSSD);
-router.delete('/:id', authenticate, authorize([Role.SUPER_ADMIN, Role.IT_ADMIN]), deleteSSD);
+router.delete('/:id', authenticate, authorize([Role.SUPER_ADMIN, Role.IT_ADMIN, Role.IT_SUPPORT]), deleteSSD);
 
 export default router;

@@ -2353,5 +2353,115 @@
       "remarks": "High-Performance Multi-format Video Transcoding",
       "lastChecked": "2026-10-19T10:05:37.851Z"
     }
+  ],
+  "computers": [
+    {
+      "id": "comp-1",
+      "assetId": "COMP-001",
+      "barcode": "BC-COMP-001",
+      "brand": "Dell",
+      "model": "OptiPlex 7090 Tower",
+      "serialNumber": "SN-DELL-7090-01",
+      "processor": "Intel Core i7-11700 (8 Core, 2.50 GHz)",
+      "ram": "32 GB DDR4",
+      "storage": "512 GB NVMe SSD + 1TB HDD",
+      "monitor": "Dell 24\" P2419H IPS",
+      "operatingSystem": "Windows 11 Pro",
+      "location": "HQ Floor 4 - IT Operations",
+      "department": "Information Technology",
+      "assignedTo": "Omith Hasan",
+      "status": "ASSIGNED",
+      "condition": "EXCELLENT",
+      "assignedUser": {
+        "id": "usr-itv-08",
+        "name": "Omith Hasan",
+        "employeeId": "ITV-IT-08",
+        "email": "omith.hasan@independent24.tv",
+        "department": "Information Technology",
+        "designation": "Lead IT Systems Administrator"
+      },
+      "ssds": [
+        {
+          "id": "ssd-1",
+          "brand": "Samsung 980 Pro",
+          "capacity": "512 GB"
+        }
+      ],
+      "createdAt": "2022-01-15T00:00:00.000Z",
+      "purchaseDate": null,
+      "updatedAt": "2026-10-20T12:37:45.761Z"
+    },
+    {
+      "id": "comp-2",
+      "assetId": "COMP-002",
+      "barcode": "BC-COMP-002",
+      "brand": "HP",
+      "model": "EliteDesk 800 G6",
+      "serialNumber": "SN-HP-800G6-02",
+      "processor": "Intel Core i7-10700",
+      "ram": "32 GB DDR4",
+      "storage": "512 GB NVMe SSD",
+      "monitor": "HP 24\" Full HD IPS",
+      "operatingSystem": "Windows 11 Pro",
+      "location": "HQ Floor 4",
+      "department": "Information Technology",
+      "assignedTo": "Abu Toha Md. Anowarul Azim",
+      "status": "ASSIGNED",
+      "condition": "EXCELLENT",
+      "assignedUser": {
+        "id": "usr-itv-01",
+        "name": "Abu Toha Md. Anowarul Azim",
+        "employeeId": "ITV-IT-01",
+        "email": "anowarul.azim@independent24.tv",
+        "department": "Information Technology",
+        "designation": "Head of Broadcast Technology and IT"
+      },
+      "ssds": [
+        {
+          "id": "ssd-2",
+          "brand": "Samsung 980",
+          "capacity": "512 GB"
+        }
+      ],
+      "createdAt": "2020-01-01T00:00:00.000Z",
+      "purchaseDate": null,
+      "updatedAt": "2026-10-20T12:37:45.761Z"
+    }
+  ],
+  "ssds": [
+    {
+      "id": "ssd-1",
+      "ssdId": "SSD-001",
+      "serialNumber": "S6B0NS0W123456",
+      "brand": "Samsung",
+      "model": "980 Pro",
+      "capacity": "512GB",
+      "interface": "M.2 NVMe PCIe 4.0",
+      "health": "100% Healthy",
+      "purchaseDate": "2022-01-15T00:00:00.000Z",
+      "installedDate": "2022-01-15T00:00:00.000Z",
+      "installedBy": "Omith Hasan",
+      "warranty": "3 Years",
+      "location": "HQ Floor 4 - IT Operations",
+      "status": "INSTALLED",
+      "remarks": "High-speed boot drive for Lead IT Admin Workstation",
+      "assignedComputerId": "comp-1",
+      "assignedComputer": {
+        "id": "comp-1",
+        "assetId": "COMP-001",
+        "brand": "Dell",
+        "model": "OptiPlex 7090 Tower",
+        "computerType": "Desktop",
+        "location": "HQ Floor 4 - IT Operations",
+        "assignedTo": "Omith Hasan",
+        "assignedUser": {
+          "name": "Omith Hasan",
+          "employeeId": "ITV-IT-08",
+          "department": "Information Technology"
+        }
+      },
+      "createdAt": "2022-01-15T00:00:00.000Z",
+      "updatedAt": "2026-10-20T12:35:55.546Z"
+    }
   ]
 }

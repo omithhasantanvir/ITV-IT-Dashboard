@@ -789,37 +789,8 @@ function loadPersistedServers(): any[] {
 
 export const fallbackServers: any[] = loadPersistedServers();
 
-export function saveFallbackData(): void {
-  try {
-    const dir = path.dirname(STORE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(
-      STORE_PATH,
-      JSON.stringify({ users: fallbackUsers, servers: fallbackServers }, null, 2),
-      'utf-8'
-    );
-  } catch (err: any) {
-    console.error('Failed to save fallbackStore.json:', err.message);
-  }
-}
-
-// Ensure store is written on first run or updated if servers array is missing
-if (!fs.existsSync(STORE_PATH)) {
-  saveFallbackData();
-} else {
-  try {
-    const raw = fs.readFileSync(STORE_PATH, 'utf-8');
-    const parsed = JSON.parse(raw);
-    if (!parsed.servers || !Array.isArray(parsed.servers) || parsed.servers.length === 0) {
-      saveFallbackData();
-    }
-  } catch {}
-}
-
 // --- 5. ITV Computers (Assigned to Real ITV Personnel) ---
-export const fallbackComputers: any[] = [
+const initialComputers: any[] = [
   {
     id: 'comp-1',
     assetId: 'COMP-001',
@@ -1001,6 +972,186 @@ export const fallbackComputers: any[] = [
     createdAt: new Date('2021-11-15'),
   },
 ];
+
+// --- 5.1 ITV SSDs (Hardware Asset Store) ---
+export const initialSSDs: any[] = [
+  {
+    id: 'ssd-1',
+    ssdId: 'SSD-001',
+    serialNumber: 'S6B0NS0W123456',
+    brand: 'Samsung',
+    model: '980 Pro',
+    capacity: '512GB',
+    interface: 'M.2 NVMe PCIe 4.0',
+    health: '100% Healthy',
+    purchaseDate: new Date('2022-01-15'),
+    installedDate: new Date('2022-01-15'),
+    installedBy: 'Omith Hasan',
+    warranty: '3 Years',
+    location: 'HQ Floor 4 - IT Operations',
+    status: 'INSTALLED',
+    remarks: 'High-speed boot drive for Lead IT Admin Workstation',
+    assignedComputerId: 'comp-1',
+    assignedComputer: {
+      id: 'comp-1',
+      assetId: 'COMP-001',
+      brand: 'Dell',
+      model: 'OptiPlex 7090 Tower',
+      computerType: 'Desktop',
+      location: 'HQ Floor 4 - IT Operations',
+      assignedTo: 'Omith Hasan',
+      assignedUser: {
+        name: 'Omith Hasan',
+        employeeId: 'ITV-IT-08',
+        department: 'Information Technology',
+      },
+    },
+    createdAt: new Date('2022-01-15'),
+    updatedAt: new Date(),
+  },
+  {
+    id: 'ssd-2',
+    ssdId: 'SSD-002',
+    serialNumber: 'S6B0NS0W123457',
+    brand: 'Samsung',
+    model: '980',
+    capacity: '512GB',
+    interface: 'M.2 NVMe PCIe 3.0',
+    health: '98% Healthy',
+    purchaseDate: new Date('2020-01-01'),
+    installedDate: new Date('2020-01-01'),
+    installedBy: 'Apu Roy',
+    warranty: '3 Years',
+    location: 'HQ Floor 4',
+    status: 'INSTALLED',
+    remarks: 'Installed in Manager Workstation',
+    assignedComputerId: 'comp-2',
+    assignedComputer: {
+      id: 'comp-2',
+      assetId: 'COMP-002',
+      brand: 'HP',
+      model: 'EliteDesk 800 G6',
+      computerType: 'Desktop',
+      location: 'HQ Floor 4',
+      assignedTo: 'Abu Toha Md. Anowarul Azim',
+      assignedUser: {
+        name: 'Abu Toha Md. Anowarul Azim',
+        employeeId: 'ITV-IT-01',
+        department: 'Information Technology',
+      },
+    },
+    createdAt: new Date('2020-01-01'),
+    updatedAt: new Date(),
+  },
+  {
+    id: 'ssd-3',
+    ssdId: 'SSD-003',
+    serialNumber: 'SN-CRUCIAL-1003',
+    brand: 'Crucial',
+    model: 'P3 Plus',
+    capacity: '1TB',
+    interface: 'M.2 NVMe PCIe 4.0',
+    health: '100% Healthy',
+    purchaseDate: new Date('2023-05-10'),
+    warranty: '3 Years',
+    location: 'IT Store - Spare Locker',
+    status: 'AVAILABLE',
+    remarks: 'Spare SSD for upcoming workstation upgrades',
+    assignedComputerId: null,
+    assignedComputer: null,
+    createdAt: new Date('2023-05-10'),
+    updatedAt: new Date(),
+  },
+];
+
+function loadPersistedComputers(): any[] {
+  try {
+    if (fs.existsSync(STORE_PATH)) {
+      const raw = fs.readFileSync(STORE_PATH, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed.computers) && parsed.computers.length > 0) {
+        return parsed.computers.map((c: any) => ({
+          ...c,
+          purchaseDate: c.purchaseDate ? new Date(c.purchaseDate) : null,
+          createdAt: c.createdAt ? new Date(c.createdAt) : new Date(),
+          updatedAt: c.updatedAt ? new Date(c.updatedAt) : new Date(),
+        }));
+      }
+    }
+  } catch (err: any) {
+    console.warn('Could not read computers from fallbackStore.json:', err.message);
+  }
+  return initialComputers;
+}
+
+function loadPersistedSSDs(): any[] {
+  try {
+    if (fs.existsSync(STORE_PATH)) {
+      const raw = fs.readFileSync(STORE_PATH, 'utf-8');
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed.ssds) && parsed.ssds.length > 0) {
+        return parsed.ssds.map((s: any) => ({
+          ...s,
+          purchaseDate: s.purchaseDate ? new Date(s.purchaseDate) : null,
+          installedDate: s.installedDate ? new Date(s.installedDate) : null,
+          createdAt: s.createdAt ? new Date(s.createdAt) : new Date(),
+          updatedAt: s.updatedAt ? new Date(s.updatedAt) : new Date(),
+        }));
+      }
+    }
+  } catch (err: any) {
+    console.warn('Could not read ssds from fallbackStore.json:', err.message);
+  }
+  return initialSSDs;
+}
+
+export const fallbackComputers: any[] = loadPersistedComputers();
+export const fallbackSSDs: any[] = loadPersistedSSDs();
+
+export function saveFallbackData(): void {
+  try {
+    const dir = path.dirname(STORE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(
+      STORE_PATH,
+      JSON.stringify(
+        {
+          users: fallbackUsers,
+          servers: fallbackServers,
+          computers: fallbackComputers,
+          ssds: fallbackSSDs,
+        },
+        null,
+        2
+      ),
+      'utf-8'
+    );
+  } catch (err: any) {
+    console.error('Failed to save fallbackStore.json:', err.message);
+  }
+}
+
+// Ensure store is written on first run or updated if arrays are missing
+if (!fs.existsSync(STORE_PATH)) {
+  saveFallbackData();
+} else {
+  try {
+    const raw = fs.readFileSync(STORE_PATH, 'utf-8');
+    const parsed = JSON.parse(raw);
+    if (
+      !parsed.servers ||
+      !Array.isArray(parsed.servers) ||
+      !parsed.computers ||
+      !Array.isArray(parsed.computers) ||
+      !parsed.ssds ||
+      !Array.isArray(parsed.ssds)
+    ) {
+      saveFallbackData();
+    }
+  } catch {}
+}
 
 // --- 6. ITV Extensions (PABX Directory matching authentic ITV staff) ---
 export const fallbackExtensions: any[] = [

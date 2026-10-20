@@ -16,7 +16,7 @@ router.get('/', getComputers);
 router.get('/:id', getComputerById);
 router.post('/', authenticate, authorize([Role.SUPER_ADMIN, Role.IT_ADMIN, Role.IT_SUPPORT]), createComputer);
 router.put('/:id', authenticate, authorize([Role.SUPER_ADMIN, Role.IT_ADMIN, Role.IT_SUPPORT]), updateComputer);
-router.delete('/:id', authenticate, authorize([Role.SUPER_ADMIN, Role.IT_ADMIN]), deleteComputer);
+router.delete('/:id', authenticate, authorize([Role.SUPER_ADMIN, Role.IT_ADMIN, Role.IT_SUPPORT]), deleteComputer);
 router.patch('/:id/assign', authenticate, authorize([Role.SUPER_ADMIN, Role.IT_ADMIN, Role.IT_SUPPORT]), assignComputer);
 
 export default router;
