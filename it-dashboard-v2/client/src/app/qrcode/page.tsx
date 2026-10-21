@@ -475,7 +475,10 @@ export default function QrCodePage() {
             <iframe
               key={iframeKey}
               src={
-                !portalUrl || portalUrl === DEFAULT_PORTAL_URL || portalUrl.includes('202.84.45.240:2023/qrcode')
+                !portalUrl ||
+                portalUrl === DEFAULT_PORTAL_URL ||
+                portalUrl.includes('202.84.45.240') ||
+                portalUrl.includes('qrcode')
                   ? '/api/portal/qrcode'
                   : portalUrl
               }
