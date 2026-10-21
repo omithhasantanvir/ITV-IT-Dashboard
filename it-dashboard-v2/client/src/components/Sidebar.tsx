@@ -86,14 +86,12 @@ const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
     ],
   },
   {
-    title: 'MANAGEMENT',
+    title: 'ITV PORTALS',
     items: [
-      { name: 'New Employee Slip', href: '/slips', icon: FileSpreadsheet, module: 'slips' },
-      { name: 'QR Code Generator', href: '/qrcode', icon: QrCode, module: 'dashboard' },
       {
-        name: 'X-Factor',
-        href: 'http://202.84.45.240:2023/xfactor',
-        icon: Globe,
+        name: 'Mail',
+        href: 'https://mail.independent24.tv',
+        icon: Mail,
         module: 'dashboard',
         external: true,
       },
@@ -105,12 +103,19 @@ const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
         external: true,
       },
       {
-        name: 'Mail',
-        href: 'https://mail.independent24.tv',
-        icon: Mail,
+        name: 'X-Factor',
+        href: 'http://202.84.45.240:2023/xfactor',
+        icon: Globe,
         module: 'dashboard',
         external: true,
       },
+    ],
+  },
+  {
+    title: 'MANAGEMENT',
+    items: [
+      { name: 'New Employee Slip', href: '/slips', icon: FileSpreadsheet, module: 'slips' },
+      { name: 'QR Code Generator', href: '/qrcode', icon: QrCode, module: 'dashboard' },
       { name: 'Analytics & Reports', href: '/reports', icon: BarChart3, module: 'reports' },
       { name: 'Activity Log', href: '/activity', icon: History, module: 'activity' },
       { name: 'System Settings', href: '/settings', icon: Settings, module: 'settings' },
