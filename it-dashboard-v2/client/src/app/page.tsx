@@ -23,7 +23,6 @@ import {
   CheckCircle2,
   Wrench,
   QrCode,
-  LifeBuoy,
   ArrowRight,
   TrendingUp,
 } from 'lucide-react';
@@ -527,13 +526,6 @@ export default function DashboardPage() {
               >
                 <QrCode className="h-3.5 w-3.5 text-blue-500" />
                 <span>QR Generator</span>
-              </Link>
-              <Link
-                href="/tickets"
-                className="p-2.5 rounded-lg border border-border bg-muted/20 hover:bg-muted text-center text-foreground transition-colors flex items-center justify-center gap-1.5"
-              >
-                <LifeBuoy className="h-3.5 w-3.5 text-rose-500" />
-                <span>Support Tickets</span>
               </Link>
               <Link
                 href="/servers"

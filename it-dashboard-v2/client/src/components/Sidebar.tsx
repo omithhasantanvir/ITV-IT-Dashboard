@@ -20,7 +20,6 @@ import {
   Moon,
   Wrench,
   QrCode,
-  LifeBuoy,
   ChevronLeft,
   ChevronRight,
   Radio,
@@ -84,7 +83,6 @@ const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
   {
     title: 'MANAGEMENT',
     items: [
-      { name: 'Support Tickets', href: '/tickets', icon: LifeBuoy, module: 'dashboard', badge: 'Live' },
       { name: 'New Employee Slip', href: '/slips', icon: FileSpreadsheet, module: 'slips' },
       { name: 'QR Code Generator', href: '/qrcode', icon: QrCode, module: 'dashboard' },
       { name: 'Analytics & Reports', href: '/reports', icon: BarChart3, module: 'reports' },

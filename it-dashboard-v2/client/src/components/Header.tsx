@@ -28,7 +28,6 @@ import {
   History,
   Settings,
   Users,
-  LifeBuoy,
 } from 'lucide-react';
 import api, { getErrorMessage } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -61,7 +60,6 @@ const SEARCH_SHORTCUTS = [
   { name: 'Scheduled Maintenance Tasks', href: '/maintenance/task-submission', icon: Wrench, category: 'Operations' },
   { name: 'Daily Night Task', href: '/maintenance/night-task', icon: Calendar, category: 'Operations' },
   { name: 'PABX Extensions', href: '/extensions', icon: PhoneCall, category: 'Telephony' },
-  { name: 'Support Tickets & Helpdesk', href: '/tickets', icon: LifeBuoy, category: 'Support' },
   { name: 'New Employee Slip', href: '/slips', icon: FileSpreadsheet, category: 'Management' },
   { name: 'QR Code Generator', href: '/qrcode', icon: QrCode, category: 'Management' },
   { name: 'Live Activity Audit', href: '/activity', icon: History, category: 'Security' },
