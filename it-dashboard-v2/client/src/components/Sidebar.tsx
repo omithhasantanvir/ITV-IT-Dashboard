@@ -88,6 +88,8 @@ const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
   {
     title: 'ITV PORTALS',
     items: [
+      { name: 'New Employee Slip', href: '/slips', icon: FileSpreadsheet, module: 'slips' },
+      { name: 'QR Code Generator', href: '/qrcode', icon: QrCode, module: 'dashboard' },
       {
         name: 'Mail',
         href: 'https://mail.independent24.tv',
@@ -114,8 +116,6 @@ const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
   {
     title: 'MANAGEMENT',
     items: [
-      { name: 'New Employee Slip', href: '/slips', icon: FileSpreadsheet, module: 'slips' },
-      { name: 'QR Code Generator', href: '/qrcode', icon: QrCode, module: 'dashboard' },
       { name: 'Analytics & Reports', href: '/reports', icon: BarChart3, module: 'reports' },
       { name: 'Activity Log', href: '/activity', icon: History, module: 'activity' },
       { name: 'System Settings', href: '/settings', icon: Settings, module: 'settings' },
