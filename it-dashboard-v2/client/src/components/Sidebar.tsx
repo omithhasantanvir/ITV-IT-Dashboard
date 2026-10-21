@@ -26,6 +26,7 @@ import {
   LogOut,
   Globe,
   ExternalLink,
+  Utensils,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth, AppModule } from '@/context/AuthContext';
@@ -92,6 +93,13 @@ const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
         name: 'X-Factor',
         href: 'http://202.84.45.240:2023/xfactor',
         icon: Globe,
+        module: 'dashboard',
+        external: true,
+      },
+      {
+        name: 'Food Requisition',
+        href: 'http://202.84.45.1:50765',
+        icon: Utensils,
         module: 'dashboard',
         external: true,
       },
