@@ -28,6 +28,7 @@ import {
   History,
   Settings,
   Users,
+  Globe,
 } from 'lucide-react';
 import api, { getErrorMessage } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -62,6 +63,7 @@ const SEARCH_SHORTCUTS = [
   { name: 'PABX Extensions', href: '/extensions', icon: PhoneCall, category: 'Telephony' },
   { name: 'New Employee Slip', href: '/slips', icon: FileSpreadsheet, category: 'Management' },
   { name: 'QR Code Generator', href: '/qrcode', icon: QrCode, category: 'Management' },
+  { name: 'X-Factor Portal', href: 'http://202.84.45.240:2023/xfactor', icon: Globe, category: 'Portals' },
   { name: 'Live Activity Audit', href: '/activity', icon: History, category: 'Security' },
   { name: 'System Settings', href: '/settings', icon: Settings, category: 'Admin' },
 ];
@@ -407,7 +409,11 @@ export function Header() {
                   <button
                     key={item.href}
                     onClick={() => {
-                      router.push(item.href);
+                      if (item.href.startsWith('http://') || item.href.startsWith('https://')) {
+                        window.open(item.href, '_blank', 'noopener,noreferrer');
+                      } else {
+                        router.push(item.href);
+                      }
                       setIsSearchOpen(false);
                       setSearchQuery('');
                     }}

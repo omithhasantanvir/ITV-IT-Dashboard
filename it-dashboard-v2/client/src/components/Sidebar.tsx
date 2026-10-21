@@ -24,6 +24,8 @@ import {
   ChevronRight,
   Radio,
   LogOut,
+  Globe,
+  ExternalLink,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth, AppModule } from '@/context/AuthContext';
@@ -35,6 +37,7 @@ export interface NavItem {
   module: AppModule;
   badge?: string;
   subItems?: { name: string; href: string; icon?: any }[];
+  external?: boolean;
 }
 
 const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
@@ -85,6 +88,13 @@ const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
     items: [
       { name: 'New Employee Slip', href: '/slips', icon: FileSpreadsheet, module: 'slips' },
       { name: 'QR Code Generator', href: '/qrcode', icon: QrCode, module: 'dashboard' },
+      {
+        name: 'X-Factor',
+        href: 'http://202.84.45.240:2023/xfactor',
+        icon: Globe,
+        module: 'dashboard',
+        external: true,
+      },
       { name: 'Analytics & Reports', href: '/reports', icon: BarChart3, module: 'reports' },
       { name: 'Activity Log', href: '/activity', icon: History, module: 'activity' },
       { name: 'System Settings', href: '/settings', icon: Settings, module: 'settings' },
@@ -184,11 +194,30 @@ export function Sidebar() {
                 <div className="space-y-0.5">
                   {visibleItems.map((item) => {
                     const Icon = item.icon;
+                    const isExternal = Boolean(item.external || item.href.startsWith('http://') || item.href.startsWith('https://'));
                     const isParentActive =
-                      item.href === '/roster' ? pathname.startsWith('/roster') : pathname === item.href;
+                      !isExternal && (item.href === '/roster' ? pathname.startsWith('/roster') : pathname === item.href);
 
                     // Collapsed Tooltip Mode
                     if (isCollapsed) {
+                      if (isExternal) {
+                        return (
+                          <a
+                            key={item.href}
+                            href={item.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={`${item.name} (External Portal)`}
+                            className="h-10 w-full flex items-center justify-center rounded-lg transition-all relative group text-muted-foreground hover:text-foreground hover:bg-muted/70"
+                          >
+                            <Icon className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-foreground" />
+                            {item.badge && (
+                              <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-blue-500" />
+                            )}
+                          </a>
+                        );
+                      }
+
                       return (
                         <Link
                           key={item.href}
@@ -265,6 +294,33 @@ export function Sidebar() {
                             </div>
                           )}
                         </div>
+                      );
+                    }
+
+                    // Expanded External Link
+                    if (isExternal) {
+                      return (
+                        <a
+                          key={item.href}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 text-muted-foreground hover:text-foreground hover:bg-muted/70 group"
+                        >
+                          <div className="flex items-center gap-2.5 truncate">
+                            <Icon className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-foreground transition-colors" />
+                            <span className="truncate">{item.name}</span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            {item.badge && (
+                              <span className="text-[9px] font-bold font-mono px-1.5 py-0.2 rounded-full bg-blue-500/15 text-blue-500 font-extrabold">
+                                {item.badge}
+                              </span>
+                            )}
+                            <ExternalLink className="h-3 w-3 text-muted-foreground/60 group-hover:text-foreground transition-colors" />
+                          </div>
+                        </a>
                       );
                     }
 
