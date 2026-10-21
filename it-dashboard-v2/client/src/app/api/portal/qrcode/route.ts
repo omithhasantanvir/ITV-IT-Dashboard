@@ -3,6 +3,143 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const currentYear = new Date().getFullYear();
 
+  const logoScript = `
+    <script>
+      var highResDataUrl = "";
+
+      function embedItvLogo(canvas, callback) {
+        if (!canvas) {
+          if (callback) callback();
+          return;
+        }
+        var ctx = canvas.getContext('2d');
+        if (!ctx) {
+          if (callback) callback();
+          return;
+        }
+        var size = canvas.width;
+        var logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
+        logoImg.src = '/itv-logo.png';
+        logoImg.onload = function() {
+          var logoW = Math.floor(size * 0.20);
+          var logoH = Math.floor(logoW * (205 / 191));
+          var pad = Math.floor(logoW * 0.22);
+          var badgeRadius = (Math.max(logoW, logoH) + pad) / 2;
+          var cx = size / 2;
+          var cy = size / 2;
+
+          // White circular badge background
+          ctx.save();
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(cx, cy, badgeRadius, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Independent Television brand red ring
+          ctx.lineWidth = Math.max(2, Math.floor(size * 0.01));
+          ctx.strokeStyle = '#E31E24';
+          ctx.stroke();
+
+          // Draw ITV Logo centered
+          ctx.drawImage(logoImg, cx - logoW / 2, cy - logoH / 2, logoW, logoH);
+          ctx.restore();
+
+          if (callback) callback();
+        };
+        logoImg.onerror = function() {
+          if (callback) callback();
+        };
+      }
+
+      function setupItvGenerator() {
+        var dynYearEl = document.getElementById("dyn-current-year") || document.getElementById("currentYear");
+        if (dynYearEl) dynYearEl.textContent = new Date().getFullYear();
+
+        $('#generateBtn').off('click').on('click', function(e) {
+          e.preventDefault();
+          var qrText = $('#qrText').val();
+          if (!qrText || qrText.trim() === "") {
+            alert("Please enter text or URL for QR Code");
+            return;
+          }
+
+          var textToEncode = qrText.trim();
+          $('#qrResult').empty().html('<div class="spinner-border text-danger my-3" role="status"><span class="sr-only">Generating QR Code with ITV Logo...</span></div>');
+
+          // Generate display QR code (280x280) with Level H
+          var displayContainer = document.createElement('div');
+          new QRCode(displayContainer, {
+            text: textToEncode,
+            width: 280,
+            height: 280,
+            correctLevel: QRCode.CorrectLevel.H
+          });
+
+          // Generate high-res QR code (600x600) with Level H for download
+          var highResContainer = document.createElement('div');
+          new QRCode(highResContainer, {
+            text: textToEncode,
+            width: 600,
+            height: 600,
+            correctLevel: QRCode.CorrectLevel.H
+          });
+
+          setTimeout(function() {
+            var dispCanvas = displayContainer.querySelector('canvas');
+            var hrCanvas = highResContainer.querySelector('canvas');
+
+            if (dispCanvas) {
+              embedItvLogo(dispCanvas, function() {
+                var finalDisplayUrl = dispCanvas.toDataURL('image/png');
+                $('#qrResult').empty().append(
+                  $('<img>')
+                    .attr('src', finalDisplayUrl)
+                    .attr('alt', 'Independent Television QR Code')
+                    .css({
+                      'max-width': '100%',
+                      'height': 'auto',
+                      'border-radius': '10px',
+                      'box-shadow': '0 4px 14px rgba(0,0,0,0.12)'
+                    })
+                );
+              });
+            }
+
+            if (hrCanvas) {
+              embedItvLogo(hrCanvas, function() {
+                highResDataUrl = hrCanvas.toDataURL('image/png');
+                $('#saveBtn').removeClass('d-none');
+              });
+            }
+          }, 250);
+        });
+
+        $('#saveBtn').off('click').on('click', function(e) {
+          e.preventDefault();
+          if (!highResDataUrl) {
+            var currentImg = $('#qrResult img').attr('src');
+            if (currentImg) highResDataUrl = currentImg;
+          }
+          if (!highResDataUrl) return;
+
+          var a = document.createElement('a');
+          a.href = highResDataUrl;
+          a.download = 'itv-qrcode-' + Date.now() + '.png';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
+      }
+
+      if (window.jQuery) {
+        $(document).ready(setupItvGenerator);
+      } else {
+        document.addEventListener('DOMContentLoaded', setupItvGenerator);
+      }
+    </script>
+  `;
+
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
@@ -20,35 +157,28 @@ export async function GET() {
     if (res.ok) {
       let html = await res.text();
 
-      // Ensure base URL so relative assets (style.css, script.js, qrcode.min.js, itv.png) resolve correctly
+      // Ensure base URL so relative assets (style.css, qrcode.min.js) resolve correctly
       if (!html.includes('<base')) {
         html = html.replace('<head>', '<head><base href="http://202.84.45.240:2023/qrcode/">');
       }
 
-      // Dynamically replace the static copyright year with the current year
+      // Dynamically replace the static copyright year with the current dynamic year
       html = html.replace(
         /Developed by ITV IT © \d{4} \| All rights reserved\./gi,
-        `Developed by ITV IT © <span id="dyn-current-year">${currentYear}</span> | All rights reserved.`
+        `Developed by ITV IT &copy; <span id="dyn-current-year">${currentYear}</span> | All rights reserved.`
       );
       html = html.replace(
         /Developed by ITV IT &copy; \d{4} \| All rights reserved\./gi,
         `Developed by ITV IT &copy; <span id="dyn-current-year">${currentYear}</span> | All rights reserved.`
       );
 
-      // Client-side script injection so it updates automatically even if cached
-      const dynamicYearScript = `
-        <script>
-          try {
-            var el = document.getElementById("dyn-current-year");
-            if (el) el.textContent = new Date().getFullYear();
-          } catch(e) {}
-        </script>
-      `;
+      // Remove the old plain script.js and inject our ITV Logo-embedded generator script
+      html = html.replace(/<script[^>]*src=["']script\.js["'][^>]*><\/script>/gi, '');
 
       if (html.includes('</body>')) {
-        html = html.replace('</body>', `${dynamicYearScript}</body>`);
+        html = html.replace('</body>', `${logoScript}</body>`);
       } else {
-        html += dynamicYearScript;
+        html += logoScript;
       }
 
       return new Response(html, {
@@ -62,7 +192,7 @@ export async function GET() {
     console.warn('Remote ITV QR portal unreachable, serving dynamic local fallback:', error);
   }
 
-  // Self-contained fallback that matches the exact look, feel, and functionality with dynamic year
+  // Self-contained fallback with Independent Television logo and dynamic year
   const fallbackHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -118,7 +248,7 @@ export async function GET() {
                 </div>
                 <button class="btn btn-danger btn-block btn-lg" id="generateBtn">Generate QR Code</button><br>
                 <div class="text-center mt-4" id="qrResult"><br>
-                    <!-- QR Code will be displayed here -->
+                    <!-- QR Code with ITV Logo will be displayed here -->
                 </div><br>
                 <button class="btn btn-success btn-block mt-3 d-none" id="saveBtn">Download</button>
             </div>
@@ -133,57 +263,7 @@ export async function GET() {
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script>
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
-        $(document).ready(function() {
-            $('#generateBtn').click(function() {
-                let qrText = $('#qrText').val();
-                if (!qrText || qrText.trim() === "") {
-                    alert("Please enter some text");
-                    return;
-                }
-
-                $('#qrResult').empty();
-                let qrCode = new QRCode(document.getElementById("qrResult"), {
-                    text: qrText.trim(),
-                    width: 256,
-                    height: 256,
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-
-                let highResCanvas = document.createElement('canvas');
-                highResCanvas.width = 512;
-                highResCanvas.height = 512;
-                let highResContext = highResCanvas.getContext('2d');
-                
-                let highResQRCode = new QRCode(highResCanvas, {
-                    text: qrText.trim(),
-                    width: 512,
-                    height: 512,
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-
-                setTimeout(function() {
-                    let qrCanvas = document.querySelector('#qrResult canvas');
-                    if (qrCanvas) {
-                        highResContext.drawImage(qrCanvas, 0, 0, 512, 512);
-                    }
-                }, 500);
-
-                $('#saveBtn').removeClass('d-none');
-                $('#saveBtn').off('click').on('click', function() {
-                    let canvas = document.querySelector('#qrResult canvas') || highResCanvas;
-                    let url = canvas.toDataURL("image/png");
-                    let a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'qrcode.png';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                });
-            });
-        });
-    </script>
+    ${logoScript}
 </body>
 </html>`;
 

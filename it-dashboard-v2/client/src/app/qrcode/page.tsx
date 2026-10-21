@@ -135,25 +135,27 @@ export default function QrCodePage() {
 
           await new Promise<void>((resolve) => {
             logoImg.onload = () => {
-              const logoSize = Math.floor(qrSize * 0.22);
-              const logoX = (qrSize - logoSize) / 2;
-              const logoY = (qrSize - logoSize) / 2;
-              const pad = Math.floor(logoSize * 0.12);
+              const logoW = Math.floor(qrSize * 0.20);
+              const logoH = Math.floor(logoW * (205 / 191));
+              const pad = Math.floor(logoW * 0.22);
+              const badgeRadius = (Math.max(logoW, logoH) + pad) / 2;
+              const cx = qrSize / 2;
+              const cy = qrSize / 2;
 
               // Draw white circular/rounded badge background behind logo
               ctx.save();
-              ctx.fillStyle = bgColor;
+              ctx.fillStyle = bgColor || '#ffffff';
               ctx.beginPath();
-              ctx.arc(qrSize / 2, qrSize / 2, (logoSize + pad) / 2, 0, Math.PI * 2);
+              ctx.arc(cx, cy, badgeRadius, 0, Math.PI * 2);
               ctx.fill();
 
               // Border ring
-              ctx.lineWidth = Math.max(2, Math.floor(qrSize * 0.008));
+              ctx.lineWidth = Math.max(2, Math.floor(qrSize * 0.01));
               ctx.strokeStyle = '#E31E24';
               ctx.stroke();
 
               // Draw logo centered
-              ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+              ctx.drawImage(logoImg, cx - logoW / 2, cy - logoH / 2, logoW, logoH);
               ctx.restore();
               resolve();
             };

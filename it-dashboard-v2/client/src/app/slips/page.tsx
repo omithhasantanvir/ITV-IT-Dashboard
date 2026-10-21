@@ -161,19 +161,61 @@ export default function SlipsPage() {
   // Print ref
   const slipPrintRef = useRef<HTMLDivElement>(null);
 
-  // Generate QR codes for portals
+  // Helper to generate QR code with ITV logo in center
+  const createQrWithItvLogo = async (text: string, size = 180): Promise<string> => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      await QRCode.toCanvas(canvas, text, {
+        width: size,
+        margin: 1,
+        errorCorrectionLevel: 'H',
+      });
+
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
+        logoImg.src = '/itv-logo.png';
+        await new Promise<void>((resolve) => {
+          logoImg.onload = () => {
+            const logoW = Math.floor(size * 0.20);
+            const logoH = Math.floor(logoW * (205 / 191));
+            const pad = Math.floor(logoW * 0.22);
+            const badgeRadius = (Math.max(logoW, logoH) + pad) / 2;
+            const cx = size / 2;
+            const cy = size / 2;
+
+            ctx.save();
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(cx, cy, badgeRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.lineWidth = Math.max(1.5, Math.floor(size * 0.01));
+            ctx.strokeStyle = '#E31E24';
+            ctx.stroke();
+
+            ctx.drawImage(logoImg, cx - logoW / 2, cy - logoH / 2, logoW, logoH);
+            ctx.restore();
+            resolve();
+          };
+          logoImg.onerror = () => resolve();
+        });
+      }
+      return canvas.toDataURL('image/png');
+    } catch {
+      // Fallback to standard QR code
+      return await QRCode.toDataURL(text, { width: size, margin: 1, errorCorrectionLevel: 'H' });
+    }
+  };
+
+  // Generate QR codes for portals with ITV logo
   useEffect(() => {
-    QRCode.toDataURL('https://mail.independent24.tv', { width: 180, margin: 1, errorCorrectionLevel: 'M' })
-      .then(setEmailQr)
-      .catch((err) => console.error(err));
-
-    QRCode.toDataURL('http://202.84.45.240:2023/xfactor/', { width: 180, margin: 1, errorCorrectionLevel: 'M' })
-      .then(setHrmsQr)
-      .catch((err) => console.error(err));
-
-    QRCode.toDataURL('http://202.84.45.1:50765', { width: 180, margin: 1, errorCorrectionLevel: 'M' })
-      .then(setFoodQr)
-      .catch((err) => console.error(err));
+    createQrWithItvLogo('https://mail.independent24.tv', 200).then(setEmailQr).catch((err) => console.error(err));
+    createQrWithItvLogo('http://202.84.45.240:2023/xfactor/', 200).then(setHrmsQr).catch((err) => console.error(err));
+    createQrWithItvLogo('http://202.84.45.1:50765', 200).then(setFoodQr).catch((err) => console.error(err));
   }, []);
 
   // Prepopulate creator details when user loads
