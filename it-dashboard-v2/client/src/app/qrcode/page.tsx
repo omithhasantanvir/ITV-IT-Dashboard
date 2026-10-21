@@ -298,7 +298,7 @@ export default function QrCodePage() {
             <div class="sub">IT Operations & Asset Management</div>
             <img src="${generatedDataUrl}" alt="QR Code" />
             <div class="content">${qrText}</div>
-            <div class="footer">Developed by ITV IT © 2024 | All rights reserved.</div>
+            <div class="footer">Developed by ITV IT &copy; ${new Date().getFullYear()} | All rights reserved.</div>
           </div>
           <script>
             window.onload = function() {
@@ -472,7 +472,11 @@ export default function QrCodePage() {
 
             <iframe
               key={iframeKey}
-              src={portalUrl}
+              src={
+                !portalUrl || portalUrl === DEFAULT_PORTAL_URL || portalUrl.includes('202.84.45.240:2023/qrcode')
+                  ? '/api/portal/qrcode'
+                  : portalUrl
+              }
               title="ITV QR Code Generator"
               className="w-full h-full border-0 bg-white"
               onLoad={() => setIsIframeLoading(false)}
@@ -732,7 +736,7 @@ export default function QrCodePage() {
                   {qrText || 'No text set'}
                 </p>
                 <p className="text-[10px] text-muted-foreground/80 font-medium">
-                  Developed by ITV IT © 2024 | All rights reserved.
+                  Developed by ITV IT &copy; {new Date().getFullYear()} | All rights reserved.
                 </p>
               </div>
 

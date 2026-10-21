@@ -2102,7 +2102,7 @@ IT Support: Ext. 30555 or 01730701335
                   {/* Bottom Page Numbering / System Stamp */}
                   <div className="flex items-center justify-between text-[8px] text-slate-400 font-mono pt-0.5">
                     <span>172.19.4.7:2023/slip/view_employee.php?id={activeSlip.pin || activeSlip.id.slice(0, 8)}</span>
-                    <span className="text-slate-500 font-sans font-medium">Developed by ITV IT © 2024 | All rights reserved.</span>
+                    <span className="text-slate-500 font-sans font-medium">Developed by ITV IT &copy; {new Date().getFullYear()} | All rights reserved.</span>
                     <span>1/1</span>
                   </div>
                 </div>
