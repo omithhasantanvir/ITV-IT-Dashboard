@@ -124,6 +124,7 @@ export interface User {
   designation?: string;
   extensionNumber?: string;
   phone?: string;
+  officeLocation?: string;
   isITTeam?: boolean;
   itStatus?: 'AVAILABLE' | 'BUSY' | 'AWAY' | 'OFFLINE';
   profilePhoto?: string;

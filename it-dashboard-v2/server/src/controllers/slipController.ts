@@ -80,8 +80,8 @@ export const createSlip = async (req: AuthRequest, res: Response) => {
     const cleanEmail = !isIntern && emailId ? String(emailId).trim() : null;
     const cleanDomain = !isDistrict && domainId ? String(domainId).trim() : null;
     const cleanFood = !isDistrict && foodUsername ? String(foodUsername).trim() : (!isDistrict && !isIntern && cleanEmail ? cleanEmail : null);
-    const cleanHrmsUser = !isIntern && (hrmsUsername ? String(hrmsUsername).trim() : (pin ? String(pin).trim() : null));
-    const cleanHrmsPass = !isIntern && (hrmsPassword ? String(hrmsPassword).trim() : (pin ? String(pin).trim() : null));
+    const cleanHrmsUser = !isIntern ? (hrmsUsername ? String(hrmsUsername).trim() : (pin ? String(pin).trim() : null)) : null;
+    const cleanHrmsPass = !isIntern ? (hrmsPassword ? String(hrmsPassword).trim() : (pin ? String(pin).trim() : null)) : null;
 
     const slip = await prisma.userSlip.create({
       data: {

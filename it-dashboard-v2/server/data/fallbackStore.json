@@ -22,7 +22,8 @@
       "computers": [],
       "extensions": [],
       "createdAt": "2026-10-19T09:35:55.495Z",
-      "updatedAt": "2026-10-19T09:35:55.495Z"
+      "updatedAt": "2026-10-21T13:16:55.348Z",
+      "customPermissions": "{\"dashboard\":{\"view\":true,\"create\":false,\"edit\":false,\"delete\":false},\"employees\":{\"view\":true,\"create\":false,\"edit\":false,\"delete\":false},\"roster\":{\"view\":true,\"create\":false,\"edit\":false,\"delete\":false},\"computers\":{\"view\":true,\"create\":false,\"edit\":false,\"delete\":false},\"extensions\":{\"view\":true,\"create\":true,\"edit\":true,\"delete\":true},\"servers\":{\"view\":true,\"create\":false,\"edit\":false,\"delete\":false},\"slips\":{\"view\":true,\"create\":false,\"edit\":false,\"delete\":false},\"reports\":{\"view\":false,\"create\":false,\"edit\":false,\"delete\":false},\"activity\":{\"view\":true,\"create\":false,\"edit\":false,\"delete\":false},\"settings\":{\"view\":false,\"create\":false,\"edit\":false,\"delete\":false}}"
     },
     {
       "id": "usr-itv-01",
@@ -84,7 +85,8 @@
         }
       ],
       "createdAt": "2020-03-15T00:00:00.000Z",
-      "updatedAt": "2026-10-19T09:34:32.594Z"
+      "updatedAt": "2026-10-21T13:18:12.323Z",
+      "customPermissions": "{\"dashboard\":{\"view\":true,\"create\":false,\"edit\":false,\"delete\":false},\"employees\":{\"view\":true,\"create\":true,\"edit\":true,\"delete\":true},\"roster\":{\"view\":true,\"create\":true,\"edit\":true,\"delete\":true},\"computers\":{\"view\":true,\"create\":true,\"edit\":true,\"delete\":true},\"extensions\":{\"view\":true,\"create\":true,\"edit\":true,\"delete\":true},\"servers\":{\"view\":true,\"create\":true,\"edit\":true,\"delete\":false},\"slips\":{\"view\":true,\"create\":true,\"edit\":true,\"delete\":true},\"reports\":{\"view\":true,\"create\":true,\"edit\":true,\"delete\":true},\"activity\":{\"view\":true,\"create\":true,\"edit\":true,\"delete\":true},\"settings\":{\"view\":false,\"create\":false,\"edit\":false,\"delete\":false}}"
     },
     {
       "id": "usr-itv-03",

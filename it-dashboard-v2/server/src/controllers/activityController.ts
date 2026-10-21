@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
+import { fallbackActivityLogs } from '../lib/fallbackData';
 
 export const getActivityLogs = async (req: Request, res: Response) => {
+  const { module, action, limit = 50 } = req.query;
   try {
-    const { module, action, limit = 50 } = req.query;
-
     const where: any = {};
     if (module && typeof module === 'string') {
       where.module = module;
@@ -21,6 +21,13 @@ export const getActivityLogs = async (req: Request, res: Response) => {
 
     return res.json({ success: true, count: logs.length, data: logs });
   } catch (error: any) {
-    return res.status(500).json({ success: false, message: 'Failed to retrieve activity logs.' });
+    let filtered = [...fallbackActivityLogs];
+    if (module && typeof module === 'string') {
+      filtered = filtered.filter((l) => l.module === module);
+    }
+    if (action && typeof action === 'string') {
+      filtered = filtered.filter((l) => l.action === action);
+    }
+    return res.json({ success: true, count: filtered.length, data: filtered, isFallback: true });
   }
 };

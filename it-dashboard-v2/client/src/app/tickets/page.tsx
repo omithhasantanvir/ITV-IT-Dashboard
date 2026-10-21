@@ -41,7 +41,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { cn, formatDate } from '@/lib/utils';
-import { showSuccessAlert, showWarningAlert, confirmAction } from '@/lib/sweetalert';
+import { showSuccessAlert, showWarningAlert, confirmAction, confirmDelete } from '@/lib/sweetalert';
 import QRCode from 'qrcode';
 
 export type TicketPriority = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
@@ -634,7 +634,10 @@ export default function SupportTicketsPage() {
 
   // Delete Ticket
   const handleDeleteTicket = async (ticketId: string) => {
-    const confirmed = await confirmAction('Delete Ticket', `Are you sure you want to delete ticket #${ticketId}?`);
+    const confirmed = await confirmDelete({
+      title: 'Delete Ticket',
+      text: `Are you sure you want to delete ticket #${ticketId}?`,
+    });
     if (!confirmed) return;
 
     const updated = tickets.filter((t) => t.id !== ticketId);
@@ -709,7 +712,11 @@ export default function SupportTicketsPage() {
 
   // Reset to default sample tickets
   const handleResetDefaults = async () => {
-    const ok = await confirmAction('Reset Tickets', 'Reset to initial authentic ITV sample tickets?');
+    const ok = await confirmAction({
+      title: 'Reset Tickets',
+      text: 'Reset to initial authentic ITV sample tickets?',
+      icon: 'question',
+    });
     if (!ok) return;
     saveTickets(INITIAL_TICKETS);
     setActiveTicket(null);
