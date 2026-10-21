@@ -30,6 +30,7 @@ import {
   Users,
   Globe,
   Utensils,
+  Mail,
 } from 'lucide-react';
 import api, { getErrorMessage } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -66,6 +67,7 @@ const SEARCH_SHORTCUTS = [
   { name: 'QR Code Generator', href: '/qrcode', icon: QrCode, category: 'Management' },
   { name: 'X-Factor Portal', href: 'http://202.84.45.240:2023/xfactor', icon: Globe, category: 'Portals' },
   { name: 'Food Requisition', href: 'http://202.84.45.1:50765', icon: Utensils, category: 'Portals' },
+  { name: 'Mail', href: 'https://mail.independent24.tv', icon: Mail, category: 'Portals' },
   { name: 'Live Activity Audit', href: '/activity', icon: History, category: 'Security' },
   { name: 'System Settings', href: '/settings', icon: Settings, category: 'Admin' },
 ];
