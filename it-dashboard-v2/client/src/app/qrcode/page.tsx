@@ -298,7 +298,7 @@ export default function QrCodePage() {
             <div class="sub">IT Operations & Asset Management</div>
             <img src="${generatedDataUrl}" alt="QR Code" />
             <div class="content">${qrText}</div>
-            <div class="footer">Scan with any standard QR Scanner • ITV IT © 2026</div>
+            <div class="footer">Developed by ITV IT © 2024 | All rights reserved.</div>
           </div>
           <script>
             window.onload = function() {
@@ -727,9 +727,12 @@ export default function QrCodePage() {
               </div>
 
               {/* QR Metadata string */}
-              <div className="w-full">
+              <div className="w-full space-y-1.5">
                 <p className="text-[11px] font-mono text-muted-foreground truncate bg-muted/40 px-3 py-1.5 rounded-lg border border-border">
                   {qrText || 'No text set'}
+                </p>
+                <p className="text-[10px] text-muted-foreground/80 font-medium">
+                  Developed by ITV IT © 2024 | All rights reserved.
                 </p>
               </div>
 
